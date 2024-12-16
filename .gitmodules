@@ -1,0 +1,6 @@
+[submodule "public"]
+	path = public
+	url = git@github.com:taddyorg/inkverse-public.git
+[submodule "shared"]
+	path = shared
+	url = git@github.com:taddyorg/inkverse-client-shared.git
