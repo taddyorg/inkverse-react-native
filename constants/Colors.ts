@@ -3,24 +3,31 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+/**
+ * Colors based on website theme
+ */
+
+export enum ColorCategory {
+  Text = 'text',
+  Background = 'background',
+  NavBackground = 'navBackground',
+  Tint = 'tint',
+  Icon = 'icon',
+}
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
+    [ColorCategory.Text]: '#403B51',      // inkverse-black
+    [ColorCategory.Background]: '#FFE9E4', // paper-pink
+    [ColorCategory.Tint]: '#ED5959',       // brand-pink
+    [ColorCategory.Icon]: '#567CD6',       // taddy-blue
+    [ColorCategory.NavBackground]: '#F7F7F7', // soft-white
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    [ColorCategory.Text]: '#F7F7F7',      // soft-white
+    [ColorCategory.Background]: '#403B51', // inkverse-black
+    [ColorCategory.NavBackground]: '#2A2633', // inkverse-black-dark
+    [ColorCategory.Tint]: '#F7F7F7',      // soft-white
+    [ColorCategory.Icon]: '#3E5FBC',      // taddy-blue-dark
   },
-};
+} as const;
