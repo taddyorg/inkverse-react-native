@@ -1,16 +1,23 @@
 import * as React from 'react';
-import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
+import { Platform, useColorScheme, ColorSchemeName } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { Platform, useColorScheme, ColorSchemeName } from 'react-native';
+import * as Sentry from '@sentry/react-native';
+import { PostHogProvider } from 'posthog-react-native'
 
+import config from '@/config';
 import { HomeScreen } from './home';
 import { SearchScreen } from './search'
 import { ProfileScreen } from './profile';
 
 import { HOME_TAB, SEARCH_TAB, PROFILE_TAB, HOME_SCREEN, SEARCH_SCREEN, PROFILE_SCREEN } from '../constants/Navigation';
 import { Colors } from '../constants/Colors';
+
+Sentry.init({
+  dsn: config.SENTRY_URI,
+});
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -142,10 +149,28 @@ function RootStack() {
   );
 }
 
-export default function App() {  
+function App() {  
   return (
     <NavigationContainer>
-      <RootStack />
+      <PostHogProvider 
+        apiKey={config.POST_HOG_INFO.API_KEY}
+        options={{
+          host: config.POST_HOG_INFO.HOST_URL,
+          enableSessionReplay: true,
+          sessionReplayConfig: {
+            maskAllTextInputs: true,
+            maskAllImages: true,
+            captureLog: true,
+            captureNetworkTelemetry: true,
+            androidDebouncerDelayMs: 500,
+            iOSdebouncerDelayMs: 1000,
+          },
+        }}
+      >
+        <RootStack />
+      </PostHogProvider>
     </NavigationContainer>
   );
 }
+
+export default Sentry.wrap(App);

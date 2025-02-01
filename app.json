@@ -16,6 +16,17 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
-    }
+    },
+    "plugins": [
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "inkverse",
+          "project": "react-native",
+          "url": "https://sentry.io/"
+        }
+      ],
+      "expo-localization"
+    ]
   }
 }
