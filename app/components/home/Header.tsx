@@ -1,5 +1,5 @@
 import React from "react"
-import { Logo } from "../components/ui/Logo"
+import { Logo } from "../ui/Logo"
 import { Platform, StyleSheet, View } from "react-native"
 
 export const Header = () => {

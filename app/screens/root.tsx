@@ -12,8 +12,8 @@ import { HomeScreen } from './home';
 import { SearchScreen } from './search'
 import { ProfileScreen } from './profile';
 
-import { HOME_TAB, SEARCH_TAB, PROFILE_TAB, HOME_SCREEN, SEARCH_SCREEN, PROFILE_SCREEN } from '../constants/Navigation';
-import { Colors } from '../constants/Colors';
+import { HOME_TAB, SEARCH_TAB, PROFILE_TAB, HOME_SCREEN, SEARCH_SCREEN, PROFILE_SCREEN } from '../../constants/Navigation';
+import { Colors } from '../../constants/Colors';
 
 Sentry.init({
   dsn: config.SENTRY_URI,

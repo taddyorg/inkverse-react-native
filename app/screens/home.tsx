@@ -1,34 +1,31 @@
-import * as React from 'react';
+import { useReducer, useState, useCallback, useEffect, memo } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View, Image, RefreshControl, ActivityIndicator, FlatList, ListRenderItem } from 'react-native';
 
-import { ThemedText } from '@/app/components/ui/ThemedText';
-import { ThemedView } from '@/app/components/ui/ThemedView';
+import { Screen, ThemedText } from '@/app/components/ui';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
-import { Header } from './Header';
+import { Header } from '@/app/components/home/Header';
 import { loadHomeScreen, homefeedQueryReducerDefault, homeScreenInitialState } from '@/shared/dispatch/homefeed';
 import { publicClient } from '@/lib/apollo';
 import { ComicSeries, List } from '@/shared/graphql/types';
 
-
 export function HomeScreen() {
-  const [homeScreenState, dispatch] = React.useReducer(homefeedQueryReducerDefault, homeScreenInitialState);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [homeScreenState, dispatch] = useReducer(homefeedQueryReducerDefault, homeScreenInitialState);
+  const [refreshing, setRefreshing] = useState(false);
 
   const { isHomeScreenLoading, featuredComicSeries, curatedLists, mostPopularComicSeries, recentlyAddedComicSeries, recentlyUpdatedComicSeries } = homeScreenState;
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadHomeScreen({ publicClient }, dispatch);
   }, []);
 
-  const onRefresh = React.useCallback(async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await loadHomeScreen({ publicClient }, dispatch);
     setRefreshing(false);
   }, []);
 
   return (
-    <ThemedView style={styles.container}>
-      <Header />
+    <Screen style={styles.container}>
         <ScrollView 
           style={styles.scrollView} 
           contentContainerStyle={styles.scrollContent}
@@ -41,20 +38,21 @@ export function HomeScreen() {
               <ActivityIndicator size="large" color="#0000ff" />
             </View>
           ) : (
-            <>
+            <View>
+              <Header />
               <FeaturedWebtoons comicSeries={featuredComicSeries} />
               <MostRecommendedWebtoons comicSeries={mostPopularComicSeries} />
               <CuratedLists lists={curatedLists} />
               <RecentlyUpdatedWebtoons comicSeries={recentlyUpdatedComicSeries} />
               <RecentlyAddedWebtoons comicSeries={recentlyAddedComicSeries} />
-            </>
+            </View>
           )}
         </ScrollView>
-    </ThemedView>
+    </Screen>
   );
 }
 
-const FeaturedWebtoons = ({ comicSeries }: { comicSeries: ComicSeries[] | null | undefined }) => {
+const FeaturedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[] | null | undefined }) => {
   const firstComicSeries = comicSeries?.[0];
   return (
     <View style={styles.section}>
@@ -66,17 +64,17 @@ const FeaturedWebtoons = ({ comicSeries }: { comicSeries: ComicSeries[] | null |
       )}
     </View>
   );
-};
+});
 
-const MostRecommendedWebtoons = React.memo(({ comicSeries }: { comicSeries: ComicSeries[] | null | undefined }) => {
-  const renderItem: ListRenderItem<ComicSeries> = React.useCallback(({ item }) => (
+const MostRecommendedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[] | null | undefined }) => {
+  const renderItem: ListRenderItem<ComicSeries> = useCallback(({ item }) => (
     <ComicSeriesDetails
       comicseries={item}
       pageType={ComicSeriesPageType.MOST_POPULAR}
     />
   ), []);
 
-  const keyExtractor = React.useCallback((item: ComicSeries) => item.uuid, []);
+  const keyExtractor = useCallback((item: ComicSeries) => item.uuid, []);
 
   return (
     <View style={styles.section}>
@@ -92,8 +90,8 @@ const MostRecommendedWebtoons = React.memo(({ comicSeries }: { comicSeries: Comi
   );
 });
 
-const CuratedLists = React.memo(({ lists }: { lists: List[] | null | undefined }) => {
-  const renderItem: ListRenderItem<List> = React.useCallback(({ item }) => (
+const CuratedLists = memo(({ lists }: { lists: List[] | null | undefined }) => {
+  const renderItem: ListRenderItem<List> = useCallback(({ item }) => (
     <TouchableOpacity style={styles.curatedListItem}>
       <Image
         source={{ uri: item.bannerImageUrl ?? '' }}
@@ -103,7 +101,7 @@ const CuratedLists = React.memo(({ lists }: { lists: List[] | null | undefined }
     </TouchableOpacity>
   ), []);
 
-  const keyExtractor = React.useCallback((item: List) => item.id.toString(), []);
+  const keyExtractor = useCallback((item: List) => item.id.toString(), []);
 
   return (
     <View style={styles.section}>
@@ -120,8 +118,8 @@ const CuratedLists = React.memo(({ lists }: { lists: List[] | null | undefined }
   );
 });
 
-const RecentlyUpdatedWebtoons = React.memo(({ comicSeries }: { comicSeries: ComicSeries[] | null | undefined }) => {
-  const renderItem: ListRenderItem<ComicSeries> = React.useCallback(({ item }) => (
+const RecentlyUpdatedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[] | null | undefined }) => {
+  const renderItem: ListRenderItem<ComicSeries> = useCallback(({ item }) => (
     <View style={styles.horizontalComicItem}>
       <ComicSeriesDetails
         comicseries={item}
@@ -130,7 +128,7 @@ const RecentlyUpdatedWebtoons = React.memo(({ comicSeries }: { comicSeries: Comi
     </View>
   ), []);
 
-  const keyExtractor = React.useCallback((item: ComicSeries) => item.uuid, []);
+  const keyExtractor = useCallback((item: ComicSeries) => item.uuid, []);
 
   return (
     <View style={styles.section}>
@@ -147,8 +145,8 @@ const RecentlyUpdatedWebtoons = React.memo(({ comicSeries }: { comicSeries: Comi
   );
 });
 
-const RecentlyAddedWebtoons = React.memo(({ comicSeries }: { comicSeries: ComicSeries[] | null | undefined }) => {
-  const renderItem: ListRenderItem<ComicSeries> = React.useCallback(({ item }) => (
+const RecentlyAddedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[] | null | undefined }) => {
+  const renderItem: ListRenderItem<ComicSeries> = useCallback(({ item }) => (
     <View style={styles.horizontalComicItem}>
       <ComicSeriesDetails
         comicseries={item}
@@ -157,7 +155,7 @@ const RecentlyAddedWebtoons = React.memo(({ comicSeries }: { comicSeries: ComicS
     </View>
   ), []);
 
-  const keyExtractor = React.useCallback((item: ComicSeries) => item.uuid, []);
+  const keyExtractor = useCallback((item: ComicSeries) => item.uuid, []);
 
   return (
     <View style={styles.section}>
