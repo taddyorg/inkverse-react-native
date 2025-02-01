@@ -68,7 +68,7 @@ function ProfileStack() {
 }
 
 const tabBarOptions = (colorScheme: ColorSchemeName) => {
-  const navBackground = Colors[colorScheme ?? 'light'].navBackground;
+  const navBackground = Colors[colorScheme ?? 'light'].background;
   const tabBarActiveTintColor = Colors[colorScheme ?? 'light'].text;
 
   return {
