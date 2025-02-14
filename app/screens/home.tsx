@@ -4,9 +4,10 @@ import { ScrollView, StyleSheet, TouchableOpacity, View, Image, RefreshControl, 
 import { Screen, ThemedText } from '@/app/components/ui';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
 import { Header } from '@/app/components/home/Header';
-import { loadHomeScreen, homefeedQueryReducerDefault, homeScreenInitialState } from '@/shared/dispatch/homefeed';
+
 import { publicClient } from '@/lib/apollo';
 import { ComicSeries, List } from '@/shared/graphql/types';
+import { loadHomeScreen, homefeedQueryReducerDefault, homeScreenInitialState } from '@/shared/dispatch/homefeed';
 
 export function HomeScreen() {
   const [homeScreenState, dispatch] = useReducer(homefeedQueryReducerDefault, homeScreenInitialState);
@@ -158,7 +159,7 @@ const RecentlyAddedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[
   const keyExtractor = useCallback((item: ComicSeries) => item.uuid, []);
 
   return (
-    <View style={styles.section}>
+    <View style={[styles.section, { marginBottom: 6 }]}>
       <ThemedText style={styles.sectionTitle}>Recently Added</ThemedText>
       <FlatList
         data={comicSeries ?? []}

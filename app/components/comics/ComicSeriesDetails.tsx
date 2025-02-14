@@ -1,15 +1,18 @@
 import * as React from 'react';
-import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Dimensions, Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
+import { useState } from 'react';
 
-import { ThemedText } from '../ui/ThemedText';
+import { ThemedText, ThemedTextFont, ThemedTextSize } from '../ui/ThemedText';
 import { ThemedView } from '../ui/ThemedView';
 
+import { COMICSERIES_SCREEN, CREATOR_SCREEN } from '@/constants/Navigation';
 import { ComicSeries, Genre } from '@/shared/graphql/types';
 import { getBannerImageUrl, getCoverImageUrl, getThumbnailImageUrl } from '@/public/comicseries';
 import { ComicSeriesImageVariant } from '@/public/comicseries';
 import { getPrettyGenre } from '@/public/genres';
+import { getAvatarImageUrl } from '@/public/creator';
 
 export enum ComicSeriesPageType {
   COMICSERIES_SCREEN = 'COMICSERIES_SCREEN',
@@ -25,16 +28,25 @@ interface ComicSeriesDetailsProps {
   pageType: ComicSeriesPageType;
   firstIssue?: any;
   index?: number;
+  onHeaderVisibilityChange?: (isVisible: boolean) => void;
 }
 
-export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index }: ComicSeriesDetailsProps) {
+export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, onHeaderVisibilityChange }: ComicSeriesDetailsProps) {
   const navigation = useNavigation();
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
 
   if (!comicseries) return null;
 
-  const handlePress = () => {
-    // TODO: Implement navigation using shortUrl
-    // navigation.navigate('ComicSeriesDetail', { shortUrl: comicseries.shortUrl });
+  const handlePressForNavigation = () => {
+    navigation.navigate(COMICSERIES_SCREEN, { 
+      uuid: comicseries.uuid
+    });
+  };
+
+  const handlePressForShowAndHideHeader = () => {
+    const newVisibility = !isHeaderVisible;
+    setIsHeaderVisible(newVisibility);
+    onHeaderVisibilityChange?.(newVisibility);
   };
 
   const formatGenres = (comicseries: ComicSeries) => {
@@ -45,7 +57,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index }:
   switch (pageType) {
     case ComicSeriesPageType.MOST_POPULAR:
       return (
-        <TouchableOpacity onPress={handlePress} style={styles.popularContainer}>
+        <TouchableOpacity onPress={handlePressForNavigation} style={styles.popularContainer}>
           <Image
             source={getThumbnailImageUrl({ thumbnailImageAsString: comicseries.thumbnailImageAsString })}
             style={styles.popularImage}
@@ -60,7 +72,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index }:
 
     case ComicSeriesPageType.FEATURED_BANNER:
       return (
-        <TouchableOpacity onPress={handlePress} style={styles.featuredContainer}>
+        <TouchableOpacity onPress={handlePressForNavigation} style={styles.featuredContainer}>
           <Image
             source={getBannerImageUrl({ bannerImageAsString: comicseries.bannerImageAsString, variant: ComicSeriesImageVariant.LARGE })}
             style={styles.featuredImage}
@@ -71,7 +83,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index }:
 
     case ComicSeriesPageType.COVER:
       return (
-        <TouchableOpacity onPress={handlePress}>
+        <TouchableOpacity onPress={handlePressForNavigation}>
           <Image
             source={getCoverImageUrl({ coverImageAsString: comicseries.coverImageAsString })}
             style={styles.coverImage}
@@ -80,12 +92,144 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index }:
         </TouchableOpacity>
       );
 
+    case ComicSeriesPageType.COMICSERIES_SCREEN:
+      return (
+        <ThemedView style={styles.container}>
+          <Pressable onPress={handlePressForShowAndHideHeader}>
+            <Image
+              source={getCoverImageUrl({ coverImageAsString: comicseries.coverImageAsString })}
+              style={styles.coverImageFullWidth}
+              contentFit="cover"
+            />
+          </Pressable>
+          <View style={styles.infoContainer}>
+            <ThemedText size={ThemedTextSize.title} style={styles.title}>{comicseries.name} </ThemedText>
+            <ThemedText style={styles.genreText}>
+              {formatGenres(comicseries)}
+            </ThemedText>
+            <View style={styles.creatorContainer}>
+              <View style={styles.creatorGrid}>
+                {comicseries.creators?.map((creator, index) => (
+                  <TouchableOpacity 
+                    key={index}
+                    onPress={() => {
+                      // if (!creator) { return; }
+                      // navigation.navigate(CREATOR_SCREEN, { uuid: creator.uuid });
+                    }}
+                    style={styles.creatorWrapper}
+                  >
+                    <View style={styles.creator}>
+                      <Image
+                        source={{ uri: getAvatarImageUrl({ avatarImageAsString: creator?.avatarImageAsString }) }}
+                        style={styles.creatorAvatar}
+                        contentFit="contain"
+                      />
+                      <ThemedText size={ThemedTextSize.subtitle} style={styles.creatorText}>
+                        {creator?.name}
+                      </ThemedText>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+            <ThemedText style={styles.description}>
+              {comicseries.description?.trim()}
+            </ThemedText>
+            <View style={styles.tagsContainer}>
+              {comicseries.tags?.map((tag, index) => (
+                <View key={index} style={styles.tag}>
+                  <ThemedText style={styles.tagText}>
+                    {tag?.toLowerCase()}
+                  </ThemedText>
+                </View>
+              ))}
+            </View>
+          </View>
+        </ThemedView>
+      );
+
     default:
       return null;
   }
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  coverImage: {
+    height: 220,
+    aspectRatio: 4 / 6,
+    borderRadius: 6,
+  },
+  coverImageFullWidth: {
+    height: Dimensions.get('window').width * 6 / 4,
+    width: '100%',
+    borderRadius: 1,
+  },
+  infoContainer: {
+    marginHorizontal: 16,
+  },
+  genreInfoContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  genreText: {
+    fontSize: 16,
+    fontWeight: '500',
+    fontFamily: ThemedTextFont.semiBold,
+    marginBottom: 8,
+  },
+  title: {
+    marginTop: 12,
+    marginBottom: 2,
+  },
+  creatorContainer: {
+    marginBottom: 2,
+  },
+  creatorGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginHorizontal: -8,
+  },
+  creatorWrapper: {
+    width: '50%',
+    paddingHorizontal: 8,
+  },
+  creator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  creatorAvatar: {
+    height: 32,
+    width: 32,
+    borderRadius: 16,
+    marginRight: 8,
+  },
+  creatorText: {
+    fontSize: 18,
+  },
+  description: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 8,
+  },
+  tag: {
+    backgroundColor: '#fff',
+    borderRadius: 100,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  tagText: {
+    fontSize: 16,
+  },
   featuredContainer: {
     width: '100%',
     aspectRatio: 16 / 9,
@@ -113,22 +257,6 @@ const styles = StyleSheet.create({
   },
   popularTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
     marginBottom: 8,
-  },
-  genreText: {
-    marginTop: 8,
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  coverImage: {
-    height: 220,
-    aspectRatio: 4 / 6,
-    borderRadius: 6,
-  },
-  coverTitle: {
-    fontSize: 14,
-    marginTop: 8,
-    textAlign: 'center',
   },
 }); 

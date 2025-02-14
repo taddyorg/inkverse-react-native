@@ -11,8 +11,10 @@ import config from '@/config';
 import { HomeScreen } from './home';
 import { SearchScreen } from './search'
 import { ProfileScreen } from './profile';
+import { ComicSeriesScreen } from './comicseries';
+import { AppLoaderProvider } from '../components/providers/AppLoaderProvider';
 
-import { HOME_TAB, SEARCH_TAB, PROFILE_TAB, HOME_SCREEN, SEARCH_SCREEN, PROFILE_SCREEN } from '../../constants/Navigation';
+import { HOME_TAB, SEARCH_TAB, PROFILE_TAB, HOME_SCREEN, SEARCH_SCREEN, PROFILE_SCREEN, COMICSERIES_SCREEN, CREATOR_SCREEN } from '../../constants/Navigation';
 import { Colors } from '../../constants/Colors';
 
 Sentry.init({
@@ -21,6 +23,15 @@ Sentry.init({
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
+
+const comicSeriesScreenConfig = {
+  name: COMICSERIES_SCREEN,
+  component: ComicSeriesScreen,
+  options: {
+    title: '',
+    headerShown: false,
+  }
+};
 
 function HomeStack() {
   return (
@@ -33,6 +44,7 @@ function HomeStack() {
           headerShown: false
         }}
       />
+      <Stack.Screen {...comicSeriesScreenConfig} />
     </Stack.Navigator>
   );
 }
@@ -48,6 +60,7 @@ function SearchStack() {
           headerShown: false
         }}
       />
+      <Stack.Screen {...comicSeriesScreenConfig} />
     </Stack.Navigator>
   );
 }
@@ -63,6 +76,7 @@ function ProfileStack() {
           headerShown: false
         }}
       />
+      <Stack.Screen {...comicSeriesScreenConfig} />
     </Stack.Navigator>
   );
 }
@@ -151,25 +165,27 @@ function RootStack() {
 
 function App() {  
   return (
-    <NavigationContainer>
-      <PostHogProvider 
-        apiKey={config.POST_HOG_INFO.API_KEY}
-        options={{
-          host: config.POST_HOG_INFO.HOST_URL,
-          enableSessionReplay: true,
-          sessionReplayConfig: {
-            maskAllTextInputs: true,
-            maskAllImages: true,
-            captureLog: true,
-            captureNetworkTelemetry: true,
-            androidDebouncerDelayMs: 500,
-            iOSdebouncerDelayMs: 1000,
-          },
-        }}
-      >
-        <RootStack />
-      </PostHogProvider>
-    </NavigationContainer>
+    <AppLoaderProvider>
+      <NavigationContainer>
+        <PostHogProvider 
+          apiKey={config.POST_HOG_INFO.API_KEY}
+          options={{
+            host: config.POST_HOG_INFO.HOST_URL,
+            enableSessionReplay: true,
+            sessionReplayConfig: {
+              maskAllTextInputs: true,
+              maskAllImages: true,
+              captureLog: true,
+              captureNetworkTelemetry: true,
+              androidDebouncerDelayMs: 500,
+              iOSdebouncerDelayMs: 1000,
+            },
+          }}
+        >
+          <RootStack />
+        </PostHogProvider>
+      </NavigationContainer>
+    </AppLoaderProvider>
   );
 }
 

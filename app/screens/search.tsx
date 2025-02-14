@@ -1,10 +1,35 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+
+import { Screen, ThemedText, ThemeToggleButton } from '@/app/components/ui';
 
 export function SearchScreen() {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Search Screen</Text>
-    </View>
+    <Screen>
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <ThemeToggleButton />
+        </View>
+      </View>
+    </Screen>
   );
-} 
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  header: {
+    marginBottom: 24,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+}); 

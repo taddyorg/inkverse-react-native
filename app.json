@@ -26,7 +26,17 @@
           "url": "https://sentry.io/"
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "assets/fonts/SourceSans3-Regular.ttf",
+            "assets/fonts/SourceSans3-SemiBold.ttf",
+            "assets/fonts/SourceSans3-Bold.ttf"
+          ]
+        }
+      ]
     ]
   }
 }

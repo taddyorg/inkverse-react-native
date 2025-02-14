@@ -15,7 +15,7 @@ export const Logo = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    paddingVertical: 20,
   },
   logo: {
     height: 42,
