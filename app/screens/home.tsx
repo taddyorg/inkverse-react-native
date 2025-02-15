@@ -1,5 +1,6 @@
-import { useReducer, useState, useCallback, useEffect, memo } from 'react';
+import { useReducer, useState, useCallback, useEffect, memo, useRef } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View, Image, RefreshControl, ActivityIndicator, FlatList, ListRenderItem } from 'react-native';
+import { useScrollToTop } from '@react-navigation/native';
 
 import { Screen, ThemedText } from '@/app/components/ui';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
@@ -12,6 +13,9 @@ import { loadHomeScreen, homefeedQueryReducerDefault, homeScreenInitialState } f
 export function HomeScreen() {
   const [homeScreenState, dispatch] = useReducer(homefeedQueryReducerDefault, homeScreenInitialState);
   const [refreshing, setRefreshing] = useState(false);
+  const scrollViewRef = useRef<ScrollView>(null);
+  
+  useScrollToTop(scrollViewRef);
 
   const { isHomeScreenLoading, featuredComicSeries, curatedLists, mostPopularComicSeries, recentlyAddedComicSeries, recentlyUpdatedComicSeries } = homeScreenState;
 
@@ -27,28 +31,29 @@ export function HomeScreen() {
 
   return (
     <Screen style={styles.container}>
-        <ScrollView 
-          style={styles.scrollView} 
-          contentContainerStyle={styles.scrollContent}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-        >
-          {isHomeScreenLoading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#0000ff" />
-            </View>
-          ) : (
-            <View>
-              <Header />
-              <FeaturedWebtoons comicSeries={featuredComicSeries} />
-              <MostRecommendedWebtoons comicSeries={mostPopularComicSeries} />
-              <CuratedLists lists={curatedLists} />
-              <RecentlyUpdatedWebtoons comicSeries={recentlyUpdatedComicSeries} />
-              <RecentlyAddedWebtoons comicSeries={recentlyAddedComicSeries} />
-            </View>
-          )}
-        </ScrollView>
+      <ScrollView 
+        ref={scrollViewRef}
+        style={styles.scrollView} 
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        {isHomeScreenLoading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        ) : (
+          <View>
+            <Header />
+            <FeaturedWebtoons comicSeries={featuredComicSeries} />
+            <MostRecommendedWebtoons comicSeries={mostPopularComicSeries} />
+            <CuratedLists lists={curatedLists} />
+            <RecentlyUpdatedWebtoons comicSeries={recentlyUpdatedComicSeries} />
+            <RecentlyAddedWebtoons comicSeries={recentlyAddedComicSeries} />
+          </View>
+        )}
+      </ScrollView>
     </Screen>
   );
 }

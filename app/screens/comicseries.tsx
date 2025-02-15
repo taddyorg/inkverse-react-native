@@ -49,6 +49,7 @@ export function ComicSeriesScreen() {
             comicseries={item.data}
             firstIssue={issues[0]}
             pageType={ComicSeriesPageType.COMICSERIES_SCREEN}
+            isHeaderVisible={isHeaderVisible}
             onHeaderVisibilityChange={setIsHeaderVisible}
           />
         );
@@ -57,7 +58,7 @@ export function ComicSeriesScreen() {
       default:
         return null;
     }
-  }, [comicseries, issues]);
+  }, [comicseries, issues, isHeaderVisible, setIsHeaderVisible]);
 
   const keyExtractor = useCallback((item: ListItem) => {
     return item.type === 'header' 
@@ -91,6 +92,12 @@ export function ComicSeriesScreen() {
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
         estimatedItemSize={300}
+        onScroll={(event) => {
+          const yOffset = event.nativeEvent.contentOffset.y;
+          if (yOffset <= 0) {
+            setIsHeaderVisible(true);
+          }
+        }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }

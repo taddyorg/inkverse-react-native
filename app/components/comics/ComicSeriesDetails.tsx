@@ -2,7 +2,6 @@ import * as React from 'react';
 import { StyleSheet, TouchableOpacity, View, Dimensions, Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
-import { useState } from 'react';
 
 import { ThemedText, ThemedTextFont, ThemedTextSize } from '../ui/ThemedText';
 import { ThemedView } from '../ui/ThemedView';
@@ -28,12 +27,12 @@ interface ComicSeriesDetailsProps {
   pageType: ComicSeriesPageType;
   firstIssue?: any;
   index?: number;
+  isHeaderVisible?: boolean;
   onHeaderVisibilityChange?: (isVisible: boolean) => void;
 }
 
-export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, onHeaderVisibilityChange }: ComicSeriesDetailsProps) {
+export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, isHeaderVisible, onHeaderVisibilityChange }: ComicSeriesDetailsProps) {
   const navigation = useNavigation();
-  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
 
   if (!comicseries) return null;
 
@@ -45,7 +44,6 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, o
 
   const handlePressForShowAndHideHeader = () => {
     const newVisibility = !isHeaderVisible;
-    setIsHeaderVisible(newVisibility);
     onHeaderVisibilityChange?.(newVisibility);
   };
 
