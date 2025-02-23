@@ -52,7 +52,7 @@ export function ComicIssueScreen() {
       seriesUuid,
       forceRefresh
     }, dispatch);
-  }, [issueUuid, seriesUuid]);
+  }, [issueUuid]);
 
   useEffect(() => {
     loadData();
@@ -72,7 +72,7 @@ export function ComicIssueScreen() {
     } catch (error) {
       console.warn('Error preloading images:', error);
     }
-  }, [preloadImagesInBatch]);
+  }, [issueUuid]);
 
   // Preload images when stories data is available
   useEffect(() => {
@@ -82,7 +82,7 @@ export function ComicIssueScreen() {
         console.warn('Failed to preload some images:', error);
       });
     }
-  }, [comicissue?.stories, preloadImages]);
+  }, [issueUuid]);
 
   const listData = useMemo(() => {
     if (!comicissue || !comicseries) return [];
@@ -149,6 +149,7 @@ export function ComicIssueScreen() {
         data={listData}
         renderItem={renderItem}
         keyExtractor={(item) => item.key}
+        showsVerticalScrollIndicator={false}
         estimatedItemSize={screenDetails.height * 0.8}
         refreshControl={
           <RefreshControl refreshing={isComicIssueLoading} onRefresh={handleRefresh} />
