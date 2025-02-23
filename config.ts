@@ -2,9 +2,10 @@ import { Platform } from 'react-native';
 
 const getGraphQLURL = () => {
   if (__DEV__) {
-    return Platform.OS === 'ios' 
-      ? `http://inkverse.test:3010/api/graphql` 
-      : `http://10.0.2.2:3010/api/graphql`
+    return Platform.OS === 'android' 
+      ? `http://10.0.2.2:3010/api/graphql`
+      : `http://inkverse.test:3010/api/graphql` 
+      
   } else {
     return "https://api-v2.inkverse.co"
   }

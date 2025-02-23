@@ -5,13 +5,13 @@ import { useNavigation } from '@react-navigation/native';
 
 import { ThemedText, ThemedTextFont, ThemedTextSize } from '../ui/ThemedText';
 import { ThemedView } from '../ui/ThemedView';
+import { CreatorDetails, CreatorPageType } from '../creator/CreatorDetails';
 
 import { COMICSERIES_SCREEN, CREATOR_SCREEN } from '@/constants/Navigation';
 import { ComicSeries, Genre } from '@/shared/graphql/types';
 import { getBannerImageUrl, getCoverImageUrl, getThumbnailImageUrl } from '@/public/comicseries';
 import { ComicSeriesImageVariant } from '@/public/comicseries';
 import { getPrettyGenre } from '@/public/genres';
-import { getAvatarImageUrl } from '@/public/creator';
 
 export enum ComicSeriesPageType {
   COMICSERIES_SCREEN = 'COMICSERIES_SCREEN',
@@ -108,25 +108,11 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, i
             <View style={styles.creatorContainer}>
               <View style={styles.creatorGrid}>
                 {comicseries.creators?.map((creator, index) => (
-                  <TouchableOpacity 
-                    key={index}
-                    onPress={() => {
-                      // if (!creator) { return; }
-                      // navigation.navigate(CREATOR_SCREEN, { uuid: creator.uuid });
-                    }}
-                    style={styles.creatorWrapper}
-                  >
-                    <View style={styles.creator}>
-                      <Image
-                        source={{ uri: getAvatarImageUrl({ avatarImageAsString: creator?.avatarImageAsString }) }}
-                        style={styles.creatorAvatar}
-                        contentFit="contain"
-                      />
-                      <ThemedText size={ThemedTextSize.subtitle} style={styles.creatorText}>
-                        {creator?.name}
-                      </ThemedText>
-                    </View>
-                  </TouchableOpacity>
+                  <CreatorDetails 
+                    key={creator?.uuid} 
+                    creator={creator} 
+                    pageType={CreatorPageType.MINI_CREATOR} 
+                  />
                 ))}
               </View>
             </View>
@@ -135,7 +121,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, i
             </ThemedText>
             <View style={styles.tagsContainer}>
               {comicseries.tags?.map((tag, index) => (
-                <View key={index} style={styles.tag}>
+                <View key={tag?.toLowerCase()} style={styles.tag}>
                   <ThemedText style={styles.tagText}>
                     {tag?.toLowerCase()}
                   </ThemedText>

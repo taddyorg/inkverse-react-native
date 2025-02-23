@@ -14,9 +14,10 @@ import { SearchScreen } from './search'
 import { ProfileScreen } from './profile';
 import { ComicSeriesScreen } from './comicseries';
 import { ComicIssueScreen } from './comicissue';
+import { CreatorScreen } from './creator';
 import { AppLoaderProvider } from '../components/providers/AppLoaderProvider';
 
-import { HOME_TAB, SEARCH_TAB, PROFILE_TAB, HOME_SCREEN, SEARCH_SCREEN, PROFILE_SCREEN, COMICSERIES_SCREEN, COMICISSUE_SCREEN } from '../../constants/Navigation';
+import { HOME_TAB, SEARCH_TAB, PROFILE_TAB, HOME_SCREEN, SEARCH_SCREEN, PROFILE_SCREEN, COMICSERIES_SCREEN, COMICISSUE_SCREEN, CREATOR_SCREEN } from '../../constants/Navigation';
 import { Colors } from '../../constants/Colors';
 
 Sentry.init({
@@ -38,6 +39,15 @@ const comicSeriesScreenConfig = {
 const comicIssueScreenConfig = {
   name: COMICISSUE_SCREEN,
   component: ComicIssueScreen,
+  options: {
+    title: '',
+    headerShown: false,
+  }
+};
+
+const creatorScreenConfig = {
+  name: CREATOR_SCREEN,
+  component: CreatorScreen,
   options: {
     title: '',
     headerShown: false,
@@ -66,6 +76,7 @@ function HomeStack() {
       />
       <Stack.Screen {...comicSeriesScreenConfig} />
       <Stack.Screen {...comicIssueScreenConfig} />
+      <Stack.Screen {...creatorScreenConfig} />
     </Stack.Navigator>
   );
 }
@@ -83,6 +94,7 @@ function SearchStack() {
       />
       <Stack.Screen {...comicSeriesScreenConfig} />
       <Stack.Screen {...comicIssueScreenConfig} />
+      <Stack.Screen {...creatorScreenConfig} />
     </Stack.Navigator>
   );
 }
@@ -100,6 +112,7 @@ function ProfileStack() {
       />
       <Stack.Screen {...comicSeriesScreenConfig} />
       <Stack.Screen {...comicIssueScreenConfig} />
+      <Stack.Screen {...creatorScreenConfig} />
     </Stack.Navigator>
   );
 }
@@ -205,15 +218,15 @@ function App() {
           apiKey={config.POST_HOG_INFO.API_KEY}
           options={{
             host: config.POST_HOG_INFO.HOST_URL,
-            enableSessionReplay: true,
-            sessionReplayConfig: {
-              maskAllTextInputs: true,
-              maskAllImages: true,
-              captureLog: true,
-              captureNetworkTelemetry: true,
-              androidDebouncerDelayMs: 500,
-              iOSdebouncerDelayMs: 1000,
-            },
+            // enableSessionReplay: true,
+            // sessionReplayConfig: {
+            //   maskAllTextInputs: true,
+            //   maskAllImages: true,
+            //   captureLog: true,
+            //   captureNetworkTelemetry: true,
+            //   androidDebouncerDelayMs: 500,
+            //   iOSdebouncerDelayMs: 1000,
+            // },
           }}
         >
           <RootStack />
