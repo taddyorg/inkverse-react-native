@@ -2,11 +2,11 @@ import React from 'react';
 import { View, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 
 import { ThemedTextSize, ThemedText, ThemedView } from '../ui';
-
 import { getAvatarImageUrl } from '@/public/creator';
 import { type Creator } from '@/shared/graphql/operations';
 import { CREATOR_SCREEN } from '@/constants/Navigation';
 import { useNavigation } from '@react-navigation/native';
+import { CreatorLinks } from './CreatorLinks';
 
 export enum CreatorPageType {
   CREATOR_SCREEN = 'CREATOR_SCREEN',
@@ -50,29 +50,33 @@ export function CreatorDetails({ creator, pageType }: CreatorDetailsProps) {
   }
 
   return (
-    <ThemedView style={styles.container}>
-      <Image 
-        source={{ uri: avatarUrl }} 
-        style={styles.avatar}
-        resizeMode="cover"
-      />
-      <ThemedView style={styles.infoContainer}>
-        <ThemedText style={styles.name}>{creator.name}</ThemedText>
-        {creator.bio && (
-          <ThemedText style={styles.bio} numberOfLines={3}>
-            {creator.bio}
-          </ThemedText>
-        )}
-      </ThemedView>
-    </ThemedView>
+    <View>
+      <View style={styles.container}>
+        <Image 
+          source={{ uri: avatarUrl }} 
+          style={styles.avatar}
+          resizeMode="cover"
+        />
+        <View style={styles.infoContainer}>
+          <ThemedText size={ThemedTextSize.title} style={styles.name}>{creator.name}</ThemedText>
+          {creator.bio && (
+            <ThemedText style={styles.bio} numberOfLines={3}>
+              {creator.bio}
+            </ThemedText>
+          )}
+        </View>
+      </View>
+      <CreatorLinks links={creator.links} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    padding: 16,
-    borderRadius: 8,
+    marginBottom: 8,
+  },
+  header: {
     marginBottom: 16,
   },
   avatar: {
@@ -85,14 +89,12 @@ const styles = StyleSheet.create({
     marginLeft: 16,
   },
   name: {
-    fontSize: 20,
-    fontWeight: 'bold',
     marginBottom: 8,
   },
   bio: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: 16,
     lineHeight: 20,
+    marginBottom: 12,
   },
   creatorWrapper: {
     width: '50%',

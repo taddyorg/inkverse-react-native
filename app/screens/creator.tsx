@@ -1,5 +1,5 @@
-import React, { useEffect, useReducer, useMemo, useCallback } from 'react';
-import { View, RefreshControl, ActivityIndicator, StyleSheet } from 'react-native';
+import React, { useEffect, useReducer, useMemo, useCallback, memo } from 'react';
+import { RefreshControl, ActivityIndicator, StyleSheet, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlashList } from '@shopify/flash-list';
 import { useRoute } from '@react-navigation/native';
@@ -8,11 +8,10 @@ import { publicClient } from '@/lib/apollo';
 
 import { CreatorDetails, CreatorPageType } from '@/app/components/creator/CreatorDetails';
 import { CreatorComics } from '@/app/components/creator/CreatorComics';
-import { Screen } from '@/app/components/ui';
+import { HeaderBackButton, HeaderShareButton, Screen, ThemedView } from '@/app/components/ui';
 
 import { creatorQueryReducer, getCreatorScreen } from '@/shared/dispatch/creator';
 import { ComicSeries, Creator } from '@/shared/graphql/types';
-
 
 type ListItem =
   | { type: 'details'; key: string; data: Creator }
@@ -45,7 +44,7 @@ export function CreatorScreen() {
     if (!creator) return [];
     return [
       { type: 'details', key: 'creator-details', data: creator },
-      { type: 'comics', key: 'creator-comics', data: { comicseries: comicseries?.filter((series) => series !== null) } },
+      { type: 'comics', key: 'creator-comics', data: { comicseries: comicseries?.filter((series) => series !== null) || [] } },
     ];
   }, [creator, comicseries]);
 
@@ -71,14 +70,14 @@ export function CreatorScreen() {
 
   if (isLoading || !creator) {
     return (
-      <Screen style={styles.loadingContainer}>
+      <CreatorScreenWrapper>
         <ActivityIndicator size="large" />
-      </Screen>
+      </CreatorScreenWrapper>
     );
   }
 
   return (
-    <Screen>
+    <CreatorScreenWrapper>
       <FlashList
         data={listData}
         renderItem={renderItem}
@@ -91,14 +90,30 @@ export function CreatorScreen() {
           />
         }
       />
-    </Screen>
+    </CreatorScreenWrapper>
   );
 }
+
+const CreatorScreenWrapper = memo(({ children }: { children: React.ReactNode }) => {
+  return (
+    <Screen>
+      <View>
+        <HeaderBackButton />
+        <HeaderShareButton />
+      </View>
+      <ThemedView style={styles.topPadding}></ThemedView>
+      {children}
+    </Screen>
+  );
+});
 
 const styles = StyleSheet.create({
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  topPadding: {
+    height: 76,
   },
 });

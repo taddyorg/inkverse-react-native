@@ -5,7 +5,6 @@ const getGraphQLURL = () => {
     return Platform.OS === 'android' 
       ? `http://10.0.2.2:3010/api/graphql`
       : `http://inkverse.test:3010/api/graphql` 
-      
   } else {
     return "https://api-v2.inkverse.co"
   }
@@ -13,7 +12,9 @@ const getGraphQLURL = () => {
 
 const getServiceAtPort = (port: number, route: string) => {
   if (__DEV__) {
-    return Platform.OS === 'ios' ? `http://inkverse.test:${port}${route}` : `http://10.0.2.2:${port}${route}`
+    return Platform.OS === 'android' 
+      ? `http://10.0.2.2:${port}${route}` 
+      : `http://inkverse.test:${port}${route}`
   }else {
     return "https://inkverse.co/api" + route
   }

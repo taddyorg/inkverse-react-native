@@ -59,17 +59,10 @@ export const ComicIssuesList = (props: ComicIssuesListProps) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
   sectionHeader: {
-    flex: 1,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    marginBottom: 16,
+    paddingHorizontal: 12,
+    marginBottom: 12,
   },
   flashListContainer: {
     flex: 1,

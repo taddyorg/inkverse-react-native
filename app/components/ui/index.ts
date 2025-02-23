@@ -5,6 +5,8 @@ import { ThemedView } from "./ThemedView"
 import { ThemeToggleButton } from "./ThemeToggleButton"
 import { ThemeButton } from "./ThemeButton"
 import { PressableOpacity } from "./PressableOpacity"
+import { HeaderBackButton } from "./HeaderBackButton"
+import { HeaderShareButton } from "./HeaderShareButton"
 
 export { 
     Logo,
@@ -16,4 +18,6 @@ export {
     ThemeToggleButton,
     ThemeButton,
     PressableOpacity,
+    HeaderBackButton,
+    HeaderShareButton,
 }

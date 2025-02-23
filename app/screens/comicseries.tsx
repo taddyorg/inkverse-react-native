@@ -1,11 +1,10 @@
 import { useReducer, useState, useCallback, useEffect, memo } from 'react';
-import { StyleSheet, View, RefreshControl, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, RefreshControl, ActivityIndicator } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import { StatusBar } from 'expo-status-bar';
-import { Ionicons } from '@expo/vector-icons';
 
-import { Screen } from '@/app/components/ui';
+import { Screen, HeaderBackButton, HeaderShareButton } from '@/app/components/ui';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
 import { ComicIssuesList, ComicIssuesListProps } from '@/app/components/comics/ComicIssuesList';
 
@@ -80,7 +79,7 @@ export function ComicSeriesScreen() {
     return (
       <ComicSeriesScreenWrapper isHeaderVisible={isHeaderVisible}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large"/>
         </View>
       </ComicSeriesScreenWrapper>
     );
@@ -114,25 +113,13 @@ interface ComicSeriesScreenWrapperProps {
 }
 
 const ComicSeriesScreenWrapper = memo(({ children, isHeaderVisible }: ComicSeriesScreenWrapperProps) => {
-  const navigation = useNavigation();
-  
   return (
     <Screen style={styles.container}>
       <StatusBar hidden={true} />
       {isHeaderVisible && (
         <View>
-          <TouchableOpacity 
-            style={styles.backButton} 
-            onPress={() => navigation.goBack()}
-          >
-            <Ionicons name="arrow-back" size={24} color="black" />
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={styles.shareButton} 
-            onPress={() => {/* TODO: Implement share functionality */}}
-          >
-            <Ionicons name="share-outline" size={24} color="black" />
-          </TouchableOpacity>
+          <HeaderBackButton />
+          <HeaderShareButton />
         </View>
       )}
       {children}
@@ -148,23 +135,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  backButton: {
-    position: 'absolute',
-    top: 40,
-    left: 16,
-    zIndex: 1,
-    padding: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 20,
-  },
-  shareButton: {
-    position: 'absolute',
-    top: 40,
-    right: 16,
-    zIndex: 1,
-    padding: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 20,
   },
 }); 

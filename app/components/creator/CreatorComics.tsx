@@ -7,7 +7,7 @@ import { FlashList } from '@shopify/flash-list';
 import { COMICSERIES_SCREEN } from '@/constants/Navigation';
 import { getCoverImageUrl } from '@/public/comicseries';
 import { type ComicSeries } from '@/shared/graphql/operations';
-import { ThemedText, ThemedView } from '../ui';
+import { ThemedText, ThemedTextSize, ThemedView } from '../ui';
 
 interface CreatorComicsProps {
   comicseries: ComicSeries[] | null | undefined;
@@ -41,12 +41,13 @@ export function CreatorComics({ comicseries }: CreatorComicsProps) {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText style={styles.sectionTitle}>Comics</ThemedText>
+      <ThemedText size={ThemedTextSize.subtitle} style={styles.sectionTitle}>Comics</ThemedText>
       <FlashList
         data={comicseries}
+        keyExtractor={(item) => item.uuid}
         estimatedItemSize={200}
         renderItem={renderComicItem}
-        keyExtractor={(item) => item.uuid}
+        numColumns={2}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
       />
@@ -57,24 +58,22 @@ export function CreatorComics({ comicseries }: CreatorComicsProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    paddingHorizontal: 16,
+    marginBottom: 8,
+    paddingHorizontal: 12,
   },
   listContent: {
-    padding: 8,
+    paddingHorizontal: 8,
   },
   comicItem: {
-    width: 160,
-    marginHorizontal: 8,
-    marginBottom: 16,
+    flex: 1,
+    margin: 4,
   },
   comicCover: {
     width: '100%',
-    height: 240,
+    aspectRatio: 4/6,
     borderRadius: 8,
     marginBottom: 8,
   },

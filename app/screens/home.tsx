@@ -41,7 +41,7 @@ export function HomeScreen() {
       >
         {isHomeScreenLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#0000ff" />
+            <ActivityIndicator size="large"/>
           </View>
         ) : (
           <View>
