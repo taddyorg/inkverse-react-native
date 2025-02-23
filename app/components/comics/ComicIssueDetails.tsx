@@ -8,23 +8,33 @@ import { ComicIssue, ComicSeries } from '@/shared/graphql/types';
 import { prettyFormattedDate, prettyFormattedFreeInDays } from '@/shared/utils/date';
 import { Colors } from '@/constants/Colors';
 import { getThumbnailImageUrl } from '@/public/comicseries';
+import { useNavigation } from '@react-navigation/native';
+import { COMICISSUE_SCREEN } from '@/constants/Navigation';
 
 interface ComicIssueDetailsProps {
-  issue: ComicIssue;
-  series: ComicSeries;
+  comicissue: ComicIssue;
+  comicseries: ComicSeries;
   position: number;
 }
 
-export const ComicIssueDetails = memo(({ issue, series, position }: ComicIssueDetailsProps) => {
-  const isPatreonExclusive = issue.scopesForExclusiveContent?.includes('patreon');
-  const freeInDays = issue.dateExclusiveContentAvailable != null ? 
-    prettyFormattedFreeInDays(issue.dateExclusiveContentAvailable) : 
+export const ComicIssueDetails = memo(({ comicissue, comicseries, position }: ComicIssueDetailsProps) => {
+  const navigation = useNavigation();
+  const isPatreonExclusive = comicissue.scopesForExclusiveContent?.includes('patreon');
+  const freeInDays = comicissue.dateExclusiveContentAvailable != null ? 
+    prettyFormattedFreeInDays(comicissue.dateExclusiveContentAvailable) : 
     undefined;
 
-  const thumbnailImageUrl = getThumbnailImageUrl({ thumbnailImageAsString: issue.thumbnailImageAsString });
+  const thumbnailImageUrl = getThumbnailImageUrl({ thumbnailImageAsString: comicissue.thumbnailImageAsString });
+
+  const handlePress = () => {
+    navigation.navigate(COMICISSUE_SCREEN, {
+      issueUuid: comicissue.uuid,
+      seriesUuid: comicseries.uuid,
+    });
+  };
 
   return (
-    <PressableOpacity>
+    <PressableOpacity onPress={handlePress}>
       <View style={styles.episodeItemContainer}>
         <View style={styles.episodeItemLeft}>
           <View style={[styles.thumbnailContainer, isPatreonExclusive && styles.patreonExclusiveContainer]}>
@@ -45,12 +55,12 @@ export const ComicIssueDetails = memo(({ issue, series, position }: ComicIssueDe
               style={styles.episodeName}
               numberOfLines={1}
             >
-              {issue.name}
+              {comicissue.name}
             </ThemedText>
             <View style={styles.episodeMetadata}>
-              {issue.datePublished && (
+                {comicissue.datePublished && (
                 <ThemedText style={styles.dateText}>
-                  {prettyFormattedDate(new Date(issue.datePublished * 1000))}
+                  {prettyFormattedDate(new Date(comicissue.datePublished * 1000))}
                 </ThemedText>
               )}
               {freeInDays && freeInDays > 0 && (

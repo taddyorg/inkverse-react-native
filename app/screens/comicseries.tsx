@@ -12,6 +12,8 @@ import { ComicIssuesList, ComicIssuesListProps } from '@/app/components/comics/C
 import { publicClient } from '@/lib/apollo';
 import { ComicSeries } from '@/shared/graphql/types';
 import { loadComicSeries, comicSeriesQueryReducerDefault, comicSeriesInitialState } from '@/shared/dispatch/comicseries';
+import { RootStackParamList, COMICSERIES_SCREEN } from '@/constants/Navigation';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export interface ComicSeriesScreenParams {
   uuid: string;
@@ -22,8 +24,8 @@ type ListItem =
   | { type: 'issues'; data: ComicIssuesListProps };
 
 export function ComicSeriesScreen() {
-  const route = useRoute();
-  const { uuid } = route.params as ComicSeriesScreenParams;
+  const route = useRoute<NativeStackScreenProps<RootStackParamList, typeof COMICSERIES_SCREEN>['route']>();
+  const { uuid } = route.params;
   
   const [comicSeriesState, dispatch] = useReducer(comicSeriesQueryReducerDefault, comicSeriesInitialState);
   const [refreshing, setRefreshing] = useState(false);
@@ -54,7 +56,7 @@ export function ComicSeriesScreen() {
           />
         );
       case 'issues':
-        return <ComicIssuesList issues={item.data.issues} comicseries={item.data.comicseries} />;
+        return <ComicIssuesList comicissues={item.data.comicissues} comicseries={item.data.comicseries} />;
       default:
         return null;
     }
@@ -70,7 +72,7 @@ export function ComicSeriesScreen() {
     if (!comicseries) return [];
     return [
       { type: 'header', data: comicseries },
-      { type: 'issues', data: { issues, comicseries } },
+      { type: 'issues', data: { comicissues: issues, comicseries } },
     ];
   }, [comicseries, issues]);
 

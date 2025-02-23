@@ -27,32 +27,32 @@ import { ComicIssueDetails } from './ComicIssueDetails';
 // }
 
 export interface ComicIssuesListProps {
-  issues: ComicIssue[];
+  comicissues: ComicIssue[];
   comicseries: ComicSeries;
 }
 
 export const ComicIssuesList = (props: ComicIssuesListProps) => {
-  const { issues, comicseries } = props;
+  const { comicissues, comicseries } = props;
 
   const [tokenQuery, tokenDispatch] = useReducer((state: any, action: any) => state, {});
   const { isSavingTokens } = tokenQuery;
-  const anyIssueHasScope = issues.some((issue) => issue.scopesForExclusiveContent ? issue.scopesForExclusiveContent.length > 0 : false);
+  const anyIssueHasScope = comicissues.some((comicissue) => comicissue.scopesForExclusiveContent ? comicissue.scopesForExclusiveContent.length > 0 : false);
   const items = new Set<string>(); // TODO: Replace with actual implementation
   const userHasUnlockedEpisodes = items && items.size > 0;
   const creator = comicseries.creators?.[0];
 
-  const listData = useMemo(() => issues.map((issue, index) => ({
-    key: issue.uuid,
+  const listData = useMemo(() => comicissues.map((comicissue, index) => ({
+    key: comicissue.uuid,
     type: "issue",
-    issue,
+    comicissue,
     comicseries,
     position: index,
-  })), [issues, comicseries]);
+  })), [comicissues, comicseries]);
 
   const renderItem = ({ item }: { item: any }) => (
     <ComicIssueDetails
-      issue={item.issue}
-      series={item.comicseries}
+      comicissue={item.comicissue}
+      comicseries={item.comicseries}
       position={item.position}
     />
   );

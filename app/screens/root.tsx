@@ -1,20 +1,22 @@
 import * as React from 'react';
-import { Platform, useColorScheme, ColorSchemeName } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
+import { Platform, useColorScheme, ColorSchemeName, View } from 'react-native';
+import { NavigationContainer, ParamListBase, RouteProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome5 } from '@expo/vector-icons';
 import * as Sentry from '@sentry/react-native';
 import { PostHogProvider } from 'posthog-react-native'
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 import config from '@/config';
 import { HomeScreen } from './home';
 import { SearchScreen } from './search'
 import { ProfileScreen } from './profile';
 import { ComicSeriesScreen } from './comicseries';
+import { ComicIssueScreen } from './comicissue';
 import { AppLoaderProvider } from '../components/providers/AppLoaderProvider';
 
-import { HOME_TAB, SEARCH_TAB, PROFILE_TAB, HOME_SCREEN, SEARCH_SCREEN, PROFILE_SCREEN, COMICSERIES_SCREEN, CREATOR_SCREEN } from '../../constants/Navigation';
+import { HOME_TAB, SEARCH_TAB, PROFILE_TAB, HOME_SCREEN, SEARCH_SCREEN, PROFILE_SCREEN, COMICSERIES_SCREEN, COMICISSUE_SCREEN } from '../../constants/Navigation';
 import { Colors } from '../../constants/Colors';
 
 Sentry.init({
@@ -33,9 +35,27 @@ const comicSeriesScreenConfig = {
   }
 };
 
+const comicIssueScreenConfig = {
+  name: COMICISSUE_SCREEN,
+  component: ComicIssueScreen,
+  options: {
+    title: '',
+    headerShown: false,
+  }
+};
+
+const stackScreenOptions = {
+  ...Platform.select({
+    android: {
+      animation: 'slide_from_right' as const,
+      presentation: 'transparentModal' as const,
+    },
+  }),
+};
+
 function HomeStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={stackScreenOptions}>
       <Stack.Screen 
         name={HOME_SCREEN} 
         component={HomeScreen}
@@ -45,13 +65,14 @@ function HomeStack() {
         }}
       />
       <Stack.Screen {...comicSeriesScreenConfig} />
+      <Stack.Screen {...comicIssueScreenConfig} />
     </Stack.Navigator>
   );
 }
 
 function SearchStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={stackScreenOptions}>
       <Stack.Screen 
         name={SEARCH_SCREEN} 
         component={SearchScreen}
@@ -61,13 +82,14 @@ function SearchStack() {
         }}
       />
       <Stack.Screen {...comicSeriesScreenConfig} />
+      <Stack.Screen {...comicIssueScreenConfig} />
     </Stack.Navigator>
   );
 }
 
 function ProfileStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={stackScreenOptions}>
       <Stack.Screen 
         name={PROFILE_SCREEN} 
         component={ProfileScreen}
@@ -77,34 +99,46 @@ function ProfileStack() {
         }}
       />
       <Stack.Screen {...comicSeriesScreenConfig} />
+      <Stack.Screen {...comicIssueScreenConfig} />
     </Stack.Navigator>
   );
 }
 
-const tabBarOptions = (colorScheme: ColorSchemeName) => {
+const tabBarStyleOptions = (colorScheme: ColorSchemeName) => {
   const navBackground = Colors[colorScheme ?? 'light'].background;
   const tabBarActiveTintColor = Colors[colorScheme ?? 'light'].text;
 
-  return {
-    headerShown: false,
-    tabBarStyle: {
-      backgroundColor: navBackground,
-      borderTopWidth: 0,
-    },
-    tabBarActiveTintColor,
-    ...Platform.select({
-      ios: {
-      tabBarLabelStyle: {
-        fontSize: 11
-      },
-      tabBarIconStyle: {
-        marginTop: 5,
-        marginBottom: 3
+  return ({ route }: { route: RouteProp<ParamListBase, string> }) => {
+    const isComicIssueScreen = getFocusedRouteNameFromRoute(route) === COMICISSUE_SCREEN;
+    const tabBarStyleDisplay = isComicIssueScreen 
+      ? { display: 'none' as const }
+      : { display: 'flex' as const };
+    
+    return {
+      headerShown: false,
+      tabBarStyle: {
+        backgroundColor: navBackground,
+        borderTopWidth: 0,
+        ...tabBarStyleDisplay,
+        tabBarVisibilityAnimationConfig: {
+          animation: 'slide_from_bottom'
         }
-      }
-    })
-  }
-}
+      },
+      tabBarActiveTintColor,
+      ...Platform.select({
+        ios: {
+          tabBarLabelStyle: {
+            fontSize: 11
+          },
+          tabBarIconStyle: {
+            marginTop: 5,
+            marginBottom: 3
+          }
+        },
+      })
+    };
+  };
+};
 
 const iconSize = 22;
 
@@ -127,7 +161,7 @@ function RootStack() {
   return (
     <Tab.Navigator 
       initialRouteName={HOME_TAB}
-      screenOptions={tabBarOptions(colorScheme)}
+      screenOptions={tabBarStyleOptions(colorScheme)}
     >
       <Tab.Screen 
         name={HOME_TAB} 
