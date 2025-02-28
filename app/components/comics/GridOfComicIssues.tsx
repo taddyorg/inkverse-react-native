@@ -121,7 +121,7 @@ export const GridOfComicIssues = ({ comicseries, comicissue, allIssues }: GridOf
         horizontal
         showsHorizontalScrollIndicator={false}
         // snapToInterval={styles.gridItem.width as number}
-        decelerationRate="fast"
+        // decelerationRate="fast"
         getItemLayout={getItemLayout}
         style={styles.scrollView}
         onScrollToIndexFailed={(info) => {

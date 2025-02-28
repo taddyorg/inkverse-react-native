@@ -6,6 +6,8 @@ interface OpenURLProps {
 
 interface OpenEmailProps {
   toAddress: string;
+  subject?: string;
+  body?: string;
 }
 
 export async function openURL({ url }: OpenURLProps) {
@@ -16,9 +18,17 @@ export async function openURL({ url }: OpenURLProps) {
   }
 }
 
-export async function openEmail({ toAddress }: OpenEmailProps) {
+export async function openEmail({ toAddress, subject, body }: OpenEmailProps) {
+  const params = [
+    ...(subject ? [`subject=${encodeURIComponent(subject)}`] : []),
+    ...(body ? [`body=${encodeURIComponent(body)}`] : [])
+  ];
+  
+  const queryString = params.length > 0 ? `?${params.join('&')}` : '';
+  const mailtoUrl = `mailto:${toAddress}${queryString}`;
+  
   try {
-    await Linking.openURL(`mailto:${toAddress}`);
+    await Linking.openURL(mailtoUrl);
   } catch (error) {
     console.error('Error opening email:', error);
   }

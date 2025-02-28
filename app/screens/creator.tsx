@@ -8,12 +8,13 @@ import { publicClient } from '@/lib/apollo';
 
 import { CreatorDetails, CreatorPageType } from '@/app/components/creator/CreatorDetails';
 import { CreatorComics } from '@/app/components/creator/CreatorComics';
-import { HeaderBackButton, HeaderShareButton, Screen, ThemedView } from '@/app/components/ui';
+import { HeaderBackButton, HeaderShareButton, Screen, ScreenHeader } from '@/app/components/ui';
 
 import { creatorQueryReducer, getCreatorScreen } from '@/shared/dispatch/creator';
 import { ComicSeries, Creator } from '@/shared/graphql/types';
 
 type ListItem =
+  | { type: 'screen-header'; key: string; data: { name: string } }
   | { type: 'details'; key: string; data: Creator }
   | { type: 'comics'; key: string; data: { comicseries: ComicSeries[] | null | undefined } };
 
@@ -43,6 +44,7 @@ export function CreatorScreen() {
   const listData = useMemo((): ListItem[] => {
     if (!creator) return [];
     return [
+      { type: 'screen-header', key: 'screen-header', data: { name: creator.name || '' } },
       { type: 'details', key: 'creator-details', data: creator },
       { type: 'comics', key: 'creator-comics', data: { comicseries: comicseries?.filter((series) => series !== null) || [] } },
     ];
@@ -50,6 +52,10 @@ export function CreatorScreen() {
 
   const renderItem = useCallback(({ item }: { item: ListItem }) => {
     switch (item.type) {
+      case 'screen-header':
+        return (
+            <ScreenHeader />
+        );
       case 'details':
         return (
           <CreatorDetails 
@@ -82,7 +88,7 @@ export function CreatorScreen() {
         data={listData}
         renderItem={renderItem}
         estimatedItemSize={300}
-        contentContainerStyle={{ padding: 16 }}
+        contentContainerStyle={styles.contentContainer}
         refreshControl={
           <RefreshControl
             refreshing={isLoading}
@@ -101,7 +107,6 @@ const CreatorScreenWrapper = memo(({ children }: { children: React.ReactNode }) 
         <HeaderBackButton />
         <HeaderShareButton />
       </View>
-      <ThemedView style={styles.topPadding}></ThemedView>
       {children}
     </Screen>
   );
@@ -113,7 +118,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  topPadding: {
-    height: 76,
+  contentContainer: {
+    padding: 16,
   },
 });

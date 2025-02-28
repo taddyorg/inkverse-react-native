@@ -7,10 +7,12 @@ export const PROFILE_SCREEN = "ProfileScreen";
 export const COMICSERIES_SCREEN = "ComicSeriesScreen";
 export const COMICISSUE_SCREEN = "ComicIssueScreen";
 export const CREATOR_SCREEN = "CreatorScreen";
+export const SETTINGS_SCREEN = "SettingsScreen";
 
 import { ComicSeriesScreenParams } from "@/app/screens/comicseries";
 import { ComicIssueScreenParams } from "@/app/screens/comicissue";
 import { CreatorScreenParams } from "@/app/screens/creator";
+import { SettingsScreenParams } from "@/app/screens/settings";
 
 export type RootStackParamList = {
   [HOME_TAB]: undefined;
@@ -22,6 +24,7 @@ export type RootStackParamList = {
   [CREATOR_SCREEN]: CreatorScreenParams;
   [SEARCH_SCREEN]: undefined;
   [PROFILE_SCREEN]: undefined;
+  [SETTINGS_SCREEN]: SettingsScreenParams;
 };
 
 declare global {

@@ -15,9 +15,10 @@ import { ProfileScreen } from './profile';
 import { ComicSeriesScreen } from './comicseries';
 import { ComicIssueScreen } from './comicissue';
 import { CreatorScreen } from './creator';
+import { SettingsScreen } from './settings';
 import { AppLoaderProvider } from '../components/providers/AppLoaderProvider';
 
-import { HOME_TAB, SEARCH_TAB, PROFILE_TAB, HOME_SCREEN, SEARCH_SCREEN, PROFILE_SCREEN, COMICSERIES_SCREEN, COMICISSUE_SCREEN, CREATOR_SCREEN } from '../../constants/Navigation';
+import { HOME_TAB, SEARCH_TAB, PROFILE_TAB, HOME_SCREEN, SEARCH_SCREEN, PROFILE_SCREEN, COMICSERIES_SCREEN, COMICISSUE_SCREEN, CREATOR_SCREEN, SETTINGS_SCREEN } from '../../constants/Navigation';
 import { Colors } from '../../constants/Colors';
 
 Sentry.init({
@@ -48,6 +49,15 @@ const comicIssueScreenConfig = {
 const creatorScreenConfig = {
   name: CREATOR_SCREEN,
   component: CreatorScreen,
+  options: {
+    title: '',
+    headerShown: false,
+  }
+};
+
+const settingsScreenConfig = {
+  name: SETTINGS_SCREEN,
+  component: SettingsScreen,
   options: {
     title: '',
     headerShown: false,
@@ -113,6 +123,7 @@ function ProfileStack() {
       <Stack.Screen {...comicSeriesScreenConfig} />
       <Stack.Screen {...comicIssueScreenConfig} />
       <Stack.Screen {...creatorScreenConfig} />
+      <Stack.Screen {...settingsScreenConfig} />
     </Stack.Navigator>
   );
 }

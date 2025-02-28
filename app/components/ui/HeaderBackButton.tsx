@@ -3,13 +3,13 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { PressableOpacity } from './PressableOpacity';
 
-export function HeaderBackButton() {
+export function HeaderBackButton({ onPress }: { onPress?: () => void }) {
   const navigation = useNavigation();
   
   return (
     <PressableOpacity 
       style={styles.backButton} 
-      onPress={() => navigation.goBack()}>
+      onPress={onPress || (() => navigation.goBack())}>
       <Ionicons name="arrow-back" size={24} color="black" />
     </PressableOpacity>
   );

@@ -1,14 +1,14 @@
 import * as React from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { Screen, ThemedText, ThemeToggleButton } from '@/app/components/ui';
+import { Screen } from '@/app/components/ui';
 
 export function SearchScreen() {
   return (
     <Screen>
       <View style={styles.container}>
         <View style={styles.content}>
-          <ThemeToggleButton />
+          
         </View>
       </View>
     </Screen>
