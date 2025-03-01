@@ -63,7 +63,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, i
           />
           <View style={styles.popularContent}>
             <ThemedText style={styles.popularTitle}>{comicseries.name}</ThemedText>
-            <ThemedText style={styles.genreText}>{formatGenres(comicseries)}</ThemedText>
+            <ThemedText style={styles.genreTextAlt}>{formatGenres(comicseries)}</ThemedText>
           </View>
         </TouchableOpacity>
       );
@@ -160,8 +160,11 @@ const styles = StyleSheet.create({
   },
   genreText: {
     fontSize: 16,
-    fontWeight: '500',
-    fontFamily: ThemedTextFont.semiBold,
+    fontFamily: ThemedTextFont.bold,
+    marginBottom: 8,
+  },
+  genreTextAlt: {
+    fontSize: 16,
     marginBottom: 8,
   },
   title: {
@@ -241,6 +244,7 @@ const styles = StyleSheet.create({
   },
   popularTitle: {
     fontSize: 18,
+    fontFamily: ThemedTextFont.bold,
     marginBottom: 8,
   },
 }); 

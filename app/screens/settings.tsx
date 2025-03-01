@@ -135,10 +135,10 @@ export function SettingsScreen() {
       setIsDarkMode(newColorScheme === 'dark');
       Appearance.setColorScheme(newColorScheme);
     }},
-    { id: 'update-profile', type: 'button', name: '📸 Edit Profile', onPress: updateProfilePressed },
-    { id: 'signup', type: 'button', name: '✨ Unlock all features!', onPress: signupButtonPressed },
+    // { id: 'update-profile', type: 'button', name: '📸 Edit Profile', onPress: updateProfilePressed },
+    // { id: 'signup', type: 'button', name: '✨ Unlock Your Profile!', onPress: signupButtonPressed },
     { id: 'add-your-comic', type: 'button', name: '✚ Publish your webtoon on Inkverse', onPress: addYourComicButtonPressed },
-    { id: 'logout', type: 'button', name: '✌️ Logout', onPress: logoutButtonPressed },
+    // { id: 'logout', type: 'button', name: '✌️ Logout', onPress: logoutButtonPressed },
   ];
 
   const devItems: SettingItem[] = __DEV__
@@ -151,14 +151,17 @@ export function SettingsScreen() {
   const supportItems: SettingItem[] = [
     { id: 'email-help', type: 'button', name: '📧 Email me', onPress: emailHelpButtonPressed },
     { id: 'suggest-feature', type: 'button', name: '💡 Suggest a new feature', onPress: suggestFeatureButtonPressed },
-    { id: 'rate-app', type: 'button', name: `🏅 Rate App (5 stars 🙏)`, onPress: rateAppButtonPressed },
     { id: 'share-inkverse', type: 'button', name: '🤩 Share Inkverse with your friends', onPress: shareInkverseButtonPressed },
+  ];
+
+  const shareItems: SettingItem[] = [
+    { id: 'rate-app', type: 'button', name: `🏅 Rate App (5 stars 🙏)`, onPress: rateAppButtonPressed },
   ];
 
   // Combine all items for the main list
   const allSettingsItems: SettingItem[] = [
     ...accountItems,
-    ...devItems,
+    // ...devItems,
   ];
 
   const founderAvatar = 'https://cdn.glitch.global/19129de7-9e65-4c13-b8ab-f21bd83e6c81/daniel-profile-pic.jpg?v=1732220401242';
@@ -174,7 +177,6 @@ export function SettingsScreen() {
           <Switch
             value={isDarkMode}
             onValueChange={(value) => {
-              console.log('Switch value changed:', value);
               item.onPress();
             }}
             trackColor={{ false: Colors.light.tint, true: Colors.dark.tint }}
@@ -227,30 +229,32 @@ export function SettingsScreen() {
             source={{ uri: founderAvatar }}
             style={styles.founderAvatar}
           />
-          <ThemedView style={styles.founderContent}>
-            <ThemedText style={styles.founderDescription}>
-              {founderDescription}
-            </ThemedText>
-          </ThemedView>
+          <View style={styles.founderRightContainer}>
+            <ThemedView style={styles.founderContent}>
+              <ThemedText style={styles.founderDescription}>
+                {founderDescription}
+              </ThemedText>
+            </ThemedView>
+            <ThemedView style={styles.supportCardsContainer}>
+            {supportItems.map((item) => (
+              <PressableOpacity 
+                key={item.id} 
+                style={styles.supportCard}
+                onPress={item.onPress}
+              >
+                <ThemedView style={styles.supportCardContent}>
+                  <ThemedText style={styles.supportCardText}>
+                    {item.name}
+                  </ThemedText>
+                  <ThemedIcon size={ThemedIconSize.small} style={styles.supportCardArrow}>
+                    <FontAwesome5 name="arrow-right" />
+                  </ThemedIcon>
+                </ThemedView>
+              </PressableOpacity>
+            ))}
+            </ThemedView>    
+          </View>
         </ThemedView>  
-        <ThemedView style={styles.supportCardsContainer}>
-          {supportItems.map((item) => (
-            <PressableOpacity 
-              key={item.id} 
-              style={styles.supportCard}
-              onPress={item.onPress}
-            >
-              <ThemedView style={styles.supportCardContent}>
-                <ThemedText style={styles.supportCardText}>
-                  {item.name}
-                </ThemedText>
-                <ThemedIcon size={ThemedIconSize.small} style={styles.supportCardArrow}>
-                  <FontAwesome5 name="arrow-right" />
-                </ThemedIcon>
-              </ThemedView>
-            </PressableOpacity>
-          ))}
-        </ThemedView>      
       </ThemedView>
     );
   };
@@ -340,7 +344,7 @@ const styles = StyleSheet.create({
   founderCard: {
     borderRadius: 16,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   founderAvatar: {
     width: 70,
@@ -350,8 +354,13 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#fff',
   },
+  founderRightContainer: {
+    flex: 1,
+    paddingTop: 2,
+  },
   founderContent: {
     flex: 1,
+    justifyContent: 'flex-start',
   },
   founderName: {
     fontSize: 18,
@@ -365,6 +374,7 @@ const styles = StyleSheet.create({
   },
   founderDescription: {
     fontSize: 16,
+    paddingTop: 0,
   },
   supportSectionTitle: {
     fontSize: 18,
@@ -381,8 +391,8 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 12,
     marginBottom: 6,
-    paddingVertical: 4,
-    paddingHorizontal: 16,
+    paddingVertical: 2,
+    // paddingHorizontal: 16,
     // shadowColor: '#000',
     // shadowOffset: { width: 0, height: 1 },
     // shadowOpacity: 0.1,

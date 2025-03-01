@@ -107,7 +107,7 @@ const CuratedLists = memo(({ lists }: { lists: List[] | null | undefined }) => {
     </TouchableOpacity>
   ), []);
 
-  const keyExtractor = useCallback((item: List) => item.id.toString(), []);
+  const keyExtractor = (item: List) => item.id;
 
   return (
     <View style={styles.section}>
