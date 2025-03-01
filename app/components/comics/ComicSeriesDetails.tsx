@@ -12,6 +12,7 @@ import { ComicSeries, Genre } from '@/shared/graphql/types';
 import { getBannerImageUrl, getCoverImageUrl, getThumbnailImageUrl } from '@/public/comicseries';
 import { ComicSeriesImageVariant } from '@/public/comicseries';
 import { getPrettyGenre } from '@/public/genres';
+import { Colors } from '@/constants/Colors';
 
 export enum ComicSeriesPageType {
   COMICSERIES_SCREEN = 'COMICSERIES_SCREEN',
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   tag: {
-    backgroundColor: '#fff',
+    backgroundColor: Colors.dark.text,
     borderRadius: 100,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -216,6 +217,7 @@ const styles = StyleSheet.create({
   },
   tagText: {
     fontSize: 16,
+    color: Colors.dark.background,
   },
   featuredContainer: {
     width: '100%',

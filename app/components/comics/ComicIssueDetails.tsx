@@ -2,14 +2,16 @@ import React, { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import { useNavigation } from '@react-navigation/native';
 
-import { ThemedText, ThemedTextSize, PressableOpacity } from '@/app/components/ui';
+import { ThemedText, ThemedTextSize, PressableOpacity, ThemedTextFont } from '@/app/components/ui';
 import { ComicIssue, ComicSeries } from '@/shared/graphql/types';
 import { prettyFormattedDate, prettyFormattedFreeInDays } from '@/shared/utils/date';
-import { Colors } from '@/constants/Colors';
+import { ColorCategory, Colors } from '@/constants/Colors';
 import { getThumbnailImageUrl } from '@/public/comicseries';
-import { useNavigation } from '@react-navigation/native';
+
 import { COMICISSUE_SCREEN } from '@/constants/Navigation';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 interface ComicIssueDetailsProps {
   comicissue: ComicIssue;
@@ -20,6 +22,7 @@ interface ComicIssueDetailsProps {
 
 export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCurrentIssue }: ComicIssueDetailsProps) => {
   const navigation = useNavigation();
+
   const isPatreonExclusive = comicissue.scopesForExclusiveContent?.includes('patreon');
   const freeInDays = comicissue.dateExclusiveContentAvailable != null 
     ? prettyFormattedFreeInDays(comicissue.dateExclusiveContentAvailable) 
@@ -34,11 +37,15 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCu
     });
   };
 
+  const actionColor = useThemeColor({}, ColorCategory.Action);
+  const actionTextColor = useThemeColor({}, ColorCategory.ActionText);
+
   return (
     <PressableOpacity onPress={handlePress}>
       <View style={[
         styles.episodeItemContainer, 
-        isCurrentIssue && styles.currentIssueContainer
+        isCurrentIssue && styles.currentIssueContainer,
+        isCurrentIssue && { backgroundColor: actionColor }
       ]}>
         <View style={styles.episodeItemLeft}>
           <View style={[
@@ -64,7 +71,7 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCu
               size={ThemedTextSize.title}
               style={[
                 styles.episodeName,
-                isCurrentIssue && styles.currentIssueText
+                isCurrentIssue && { color: actionTextColor }
               ]}
               numberOfLines={1}
             >
@@ -74,7 +81,7 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCu
                 {comicissue.datePublished && (
                 <ThemedText style={[
                   styles.dateText,
-                  isCurrentIssue && styles.currentIssueText
+                  isCurrentIssue && { color: actionTextColor }
                 ]}>
                   {prettyFormattedDate(new Date(comicissue.datePublished * 1000))}
                 </ThemedText>
@@ -83,11 +90,11 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCu
                 <View style={styles.freeInDaysContainer}>
                   <ThemedText style={[
                     styles.bulletPoint,
-                    isCurrentIssue && styles.currentIssueText
+                    isCurrentIssue && { color: actionTextColor }
                   ]}>·</ThemedText>
                   <ThemedText style={[
                     styles.freeInDaysText,
-                    isCurrentIssue && styles.currentIssueText
+                    isCurrentIssue && { color: actionTextColor }
                   ]}>
                     Free in {freeInDays} day{freeInDays > 1 ? 's' : ''}
                   </ThemedText>
@@ -96,7 +103,7 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCu
               {isPatreonExclusive && (
                 <ThemedText style={[
                   styles.patreonExclusiveText,
-                  isCurrentIssue && styles.currentIssueText
+                  isCurrentIssue && { color: actionTextColor }
                 ]}>
                   PATREON EXCLUSIVE
                 </ThemedText>
@@ -105,7 +112,7 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCu
           </View>
           <ThemedText style={[
             styles.episodeNumber,
-            isCurrentIssue && styles.currentIssueText
+            isCurrentIssue && { color: actionTextColor, fontFamily: ThemedTextFont.bold }
           ]}>#{position + 1}</ThemedText>
         </View>
       </View>
@@ -122,10 +129,10 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   currentIssueContainer: {
-    backgroundColor: Colors.light.action,
     paddingVertical: 8,
+    paddingHorizontal: 8,
+    marginHorizontal: 6,
     borderRadius: 16,
-    // marginVertical: 12,
   },
   episodeItemLeft: {
     flexDirection: 'row',
