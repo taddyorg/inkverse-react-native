@@ -161,7 +161,7 @@ export function SettingsScreen() {
   // Combine all items for the main list
   const allSettingsItems: SettingItem[] = [
     ...accountItems,
-    // ...devItems,
+    ...devItems,
   ];
 
   const founderAvatar = 'https://cdn.glitch.global/19129de7-9e65-4c13-b8ab-f21bd83e6c81/daniel-profile-pic.jpg?v=1732220401242';
