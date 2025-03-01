@@ -11,10 +11,11 @@ import { ComicIssueDetails } from './ComicIssueDetails';
 export interface ComicIssuesListProps {
   comicissues: ComicIssue[];
   comicseries: ComicSeries;
+  currentIssueUuid: string | undefined;
 }
 
 export const ComicIssuesList = (props: ComicIssuesListProps) => {
-  const { comicissues, comicseries } = props;
+  const { comicissues, comicseries, currentIssueUuid } = props;
 
   const [tokenQuery, tokenDispatch] = useReducer((state: any, action: any) => state, {});
   const { isSavingTokens } = tokenQuery;
@@ -35,6 +36,7 @@ export const ComicIssuesList = (props: ComicIssuesListProps) => {
       comicissue={item.comicissue}
       comicseries={item.comicseries}
       position={item.position}
+      isCurrentIssue={item.comicissue.uuid === currentIssueUuid}
     />
   );
 
@@ -46,7 +48,6 @@ export const ComicIssuesList = (props: ComicIssuesListProps) => {
       <View style={styles.flashListContainer}>
         <FlashList
           data={listData}
-          contentContainerStyle={styles.flashList}
           estimatedItemSize={72}
           renderItem={renderItem}
           keyExtractor={(item) => item.key}
@@ -67,9 +68,6 @@ const styles = StyleSheet.create({
   flashListContainer: {
     flex: 1,
     width: "100%",
-  },
-  flashList: {
-    paddingRight: 16,
   },
   patreonCard: {
     flex: 1,

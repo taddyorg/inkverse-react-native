@@ -13,6 +13,8 @@ export enum ColorCategory {
   NavBackground = 'navBackground',
   Tint = 'tint',
   Icon = 'icon',
+  Action = 'action',
+  ActionText = 'actionText',
 }
 
 export const Colors = {
@@ -22,6 +24,8 @@ export const Colors = {
     [ColorCategory.Tint]: '#ED5959',       // brand-pink
     [ColorCategory.Icon]: '#567CD6',       // taddy-blue
     [ColorCategory.NavBackground]: '#F7F7F7', // soft-white
+    [ColorCategory.Action]: '#55BC31', // action-green
+    [ColorCategory.ActionText]: '#F7F7F7', // action-green-text
   },
   dark: {
     [ColorCategory.Text]: '#F7F7F7',      // soft-white
@@ -29,5 +33,7 @@ export const Colors = {
     [ColorCategory.NavBackground]: '#2A2633', // inkverse-black-dark
     [ColorCategory.Tint]: '#F7F7F7',      // soft-white
     [ColorCategory.Icon]: '#3E5FBC',      // taddy-blue-dark
+    [ColorCategory.Action]: '#55BC31', // action-green
+    [ColorCategory.ActionText]: '#F7F7F7', // action-green-text
   },
 } as const;

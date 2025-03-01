@@ -15,14 +15,15 @@ interface ComicIssueDetailsProps {
   comicissue: ComicIssue;
   comicseries: ComicSeries;
   position: number;
+  isCurrentIssue: boolean;
 }
 
-export const ComicIssueDetails = memo(({ comicissue, comicseries, position }: ComicIssueDetailsProps) => {
+export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCurrentIssue }: ComicIssueDetailsProps) => {
   const navigation = useNavigation();
   const isPatreonExclusive = comicissue.scopesForExclusiveContent?.includes('patreon');
-  const freeInDays = comicissue.dateExclusiveContentAvailable != null ? 
-    prettyFormattedFreeInDays(comicissue.dateExclusiveContentAvailable) : 
-    undefined;
+  const freeInDays = comicissue.dateExclusiveContentAvailable != null 
+    ? prettyFormattedFreeInDays(comicissue.dateExclusiveContentAvailable) 
+    : undefined;
 
   const thumbnailImageUrl = getThumbnailImageUrl({ thumbnailImageAsString: comicissue.thumbnailImageAsString });
 
@@ -35,11 +36,20 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position }: Co
 
   return (
     <PressableOpacity onPress={handlePress}>
-      <View style={styles.episodeItemContainer}>
+      <View style={[
+        styles.episodeItemContainer, 
+        isCurrentIssue && styles.currentIssueContainer
+      ]}>
         <View style={styles.episodeItemLeft}>
-          <View style={[styles.thumbnailContainer, isPatreonExclusive && styles.patreonExclusiveContainer]}>
+          <View style={[
+            styles.thumbnailContainer, 
+            isPatreonExclusive && styles.patreonExclusiveContainer,
+          ]}>
             <Image
-              style={[styles.thumbnailImage, isPatreonExclusive && styles.thumbnailImageLocked]}
+              style={[
+                styles.thumbnailImage, 
+                isPatreonExclusive && styles.thumbnailImageLocked,
+              ]}
               source={{ uri: thumbnailImageUrl }}
               contentFit="cover"
             />
@@ -52,33 +62,51 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position }: Co
           <View style={styles.episodeItemContent}>
             <ThemedText 
               size={ThemedTextSize.title}
-              style={styles.episodeName}
+              style={[
+                styles.episodeName,
+                isCurrentIssue && styles.currentIssueText
+              ]}
               numberOfLines={1}
             >
               {comicissue.name}
             </ThemedText>
             <View style={styles.episodeMetadata}>
                 {comicissue.datePublished && (
-                <ThemedText style={styles.dateText}>
+                <ThemedText style={[
+                  styles.dateText,
+                  isCurrentIssue && styles.currentIssueText
+                ]}>
                   {prettyFormattedDate(new Date(comicissue.datePublished * 1000))}
                 </ThemedText>
               )}
               {freeInDays && freeInDays > 0 && (
                 <View style={styles.freeInDaysContainer}>
-                  <ThemedText style={styles.bulletPoint}>·</ThemedText>
-                  <ThemedText style={styles.freeInDaysText}>
+                  <ThemedText style={[
+                    styles.bulletPoint,
+                    isCurrentIssue && styles.currentIssueText
+                  ]}>·</ThemedText>
+                  <ThemedText style={[
+                    styles.freeInDaysText,
+                    isCurrentIssue && styles.currentIssueText
+                  ]}>
                     Free in {freeInDays} day{freeInDays > 1 ? 's' : ''}
                   </ThemedText>
                 </View>
               )}
               {isPatreonExclusive && (
-                <ThemedText style={styles.patreonExclusiveText}>
+                <ThemedText style={[
+                  styles.patreonExclusiveText,
+                  isCurrentIssue && styles.currentIssueText
+                ]}>
                   PATREON EXCLUSIVE
                 </ThemedText>
               )}
             </View>
           </View>
-          <ThemedText style={styles.episodeNumber}>#{position + 1}</ThemedText>
+          <ThemedText style={[
+            styles.episodeNumber,
+            isCurrentIssue && styles.currentIssueText
+          ]}>#{position + 1}</ThemedText>
         </View>
       </View>
     </PressableOpacity>
@@ -92,7 +120,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 12,
     marginBottom: 8,
-    height: 64,
+  },
+  currentIssueContainer: {
+    backgroundColor: Colors.light.action,
+    paddingVertical: 8,
+    borderRadius: 16,
+    // marginVertical: 12,
   },
   episodeItemLeft: {
     flexDirection: 'row',
@@ -101,7 +134,6 @@ const styles = StyleSheet.create({
   episodeItemContent: {
     marginLeft: 16,
     flex: 1,
-    marginRight: 8,
   },
   episodeName: {
     flexShrink: 1,
@@ -109,6 +141,9 @@ const styles = StyleSheet.create({
     paddingRight: 4,
     fontSize: 16,
     lineHeight: 20,
+  },
+  currentIssueText: {
+    color: Colors.light.actionText,
   },
   thumbnailContainer: {
     width: 64,
@@ -125,6 +160,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 4,
+    flexWrap: 'wrap',
   },
   dateText: {
     fontSize: 14,

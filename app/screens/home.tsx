@@ -2,7 +2,7 @@ import { useReducer, useState, useCallback, useEffect, memo, useRef } from 'reac
 import { ScrollView, StyleSheet, TouchableOpacity, View, Image, RefreshControl, ActivityIndicator, FlatList, ListRenderItem } from 'react-native';
 import { useScrollToTop } from '@react-navigation/native';
 
-import { Screen, ThemedText } from '@/app/components/ui';
+import { Screen, ThemedText, ThemedTextFont } from '@/app/components/ui';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
 import { Header } from '@/app/components/home/Header';
 
@@ -39,11 +39,13 @@ export function HomeScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
-        {isHomeScreenLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large"/>
-          </View>
-        ) : (
+        {isHomeScreenLoading 
+        ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large"/>
+            </View>
+          ) 
+        : (
           <View>
             <Header />
             <FeaturedWebtoons comicSeries={featuredComicSeries} />
@@ -205,8 +207,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 16,
+    fontFamily: ThemedTextFont.bold,
+    marginBottom: 8,
   },
   horizontalScroll: {
     flexGrow: 0,

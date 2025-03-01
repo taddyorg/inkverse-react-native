@@ -7,7 +7,7 @@ import { ThemedText, ThemedTextFont, ThemedTextSize } from '../ui/ThemedText';
 import { ThemedView } from '../ui/ThemedView';
 import { CreatorDetails, CreatorPageType } from '../creator/CreatorDetails';
 
-import { COMICSERIES_SCREEN, CREATOR_SCREEN } from '@/constants/Navigation';
+import { COMICSERIES_SCREEN } from '@/constants/Navigation';
 import { ComicSeries, Genre } from '@/shared/graphql/types';
 import { getBannerImageUrl, getCoverImageUrl, getThumbnailImageUrl } from '@/public/comicseries';
 import { ComicSeriesImageVariant } from '@/public/comicseries';
@@ -230,7 +230,6 @@ const styles = StyleSheet.create({
   },
   popularContainer: {
     flexDirection: 'row',
-    padding: 8,
     marginBottom: 12,
   },
   popularImage: {

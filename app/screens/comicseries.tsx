@@ -55,7 +55,13 @@ export function ComicSeriesScreen() {
           />
         );
       case 'issues':
-        return <ComicIssuesList comicissues={item.data.comicissues} comicseries={item.data.comicseries} />;
+        return (
+          <ComicIssuesList 
+            comicissues={item.data.comicissues} 
+            comicseries={item.data.comicseries} 
+            currentIssueUuid={item.data.comicissues?.[0]?.uuid}
+          />
+        );
       default:
         return null;
     }
@@ -71,7 +77,7 @@ export function ComicSeriesScreen() {
     if (!comicseries) return [];
     return [
       { type: 'header', data: comicseries },
-      { type: 'issues', data: { comicissues: issues, comicseries } },
+      { type: 'issues', data: { comicissues: issues, comicseries, currentIssueUuid: issues[0]?.uuid } },
     ];
   }, [comicseries, issues]);
 
