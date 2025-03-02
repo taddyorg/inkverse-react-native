@@ -1,18 +1,18 @@
 import React, { useCallback, useReducer, useEffect, useMemo, useRef, useState } from 'react';
-import { RefreshControl, ActivityIndicator, StyleSheet, StatusBar, useWindowDimensions, Animated, View, NativeSyntheticEvent, NativeScrollEvent, TouchableWithoutFeedback, Pressable, GestureResponderEvent } from 'react-native';
+import { RefreshControl, ActivityIndicator, StyleSheet, StatusBar, useWindowDimensions, Animated, View, NativeSyntheticEvent, NativeScrollEvent, TouchableWithoutFeedback, Pressable, GestureResponderEvent, TouchableOpacity, Text } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, COMICISSUE_SCREEN } from '@/constants/Navigation';
 import { FlashList } from '@shopify/flash-list';
 import { Image } from 'expo-image';
 
-import { Screen } from '../components/ui';
-
-import { publicClient } from '@/lib/apollo';
 import { StoryImage } from '../components/comics/StoryImage';
 import { GridOfComicIssues } from '../components/comics/GridOfComicIssues';
 import { ComicHeader, HEADER_HEIGHT } from '../components/comics/ComicHeader';
 import { ComicFooter, FOOTER_HEIGHT } from '../components/comics/ComicFooter';
+import { Screen, ScrollIndicator } from '../components/ui';
+
+import { publicClient } from '@/lib/apollo';
 import { comicIssueQueryReducer, comicIssueInitialState, loadComicIssue } from '@/shared/dispatch/comicissue';
 import { ComicIssue } from '@/shared/graphql/types';
 import { getStoryImageUrl } from '@/public/comicstory';
@@ -57,6 +57,10 @@ export function ComicIssueScreen() {
   const footerTranslateY = useRef(new Animated.Value(FOOTER_OPEN_POSITION)).current;
   const isHeaderOpen = useRef(true);
   const isFooterOpen = useRef(true);
+  
+  // Scroll indicator state
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [contentHeight, setContentHeight] = useState(0);
   
   // Animate header and footer with spring animation
   const animateHeaderPosition = useCallback((toValue: number) => {
@@ -195,6 +199,10 @@ export function ComicIssueScreen() {
     const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
     const y = contentOffset.y;
     
+    // Update scroll position for scroll indicator
+    setScrollPosition(y);
+    setContentHeight(contentSize.height);
+    
     // Show header and footer when at top
     if (y <= 0 && (!isHeaderOpen.current || !isFooterOpen.current)) {
       animateHeaderPosition(HEADER_OPEN_POSITION);
@@ -211,6 +219,11 @@ export function ComicIssueScreen() {
       animateFooterPosition(FOOTER_OPEN_POSITION);
     }
   }, [animateHeaderPosition, animateFooterPosition]);
+
+  // Handle scroll to position from scroll indicator
+  const handleScrollTo = useCallback((position: number) => {
+    flatListRef.current?.scrollToOffset({ offset: position, animated: true });
+  }, []);
 
   // Custom wrapper for FlashList items to handle taps
   const TappableItem = useCallback(({ item }: { item: ListItem }) => {
@@ -271,6 +284,16 @@ export function ComicIssueScreen() {
         allIssues={allIssues || []}
         onNavigateToIssue={handleNavigateToIssue}
       />
+      
+      {/* Scroll Indicator */}
+      {contentHeight > screenDetails.height && (
+        <ScrollIndicator 
+          scrollPosition={scrollPosition}
+          contentHeight={contentHeight}
+          screenHeight={screenDetails.height}
+          onScrollTo={handleScrollTo}
+        />
+      )}
     </Screen>
   );
 }
