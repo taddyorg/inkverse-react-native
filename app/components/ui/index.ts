@@ -8,6 +8,7 @@ import { PressableOpacity } from "./PressableOpacity"
 import { HeaderBackButton } from "./HeaderBackButton"
 import { HeaderShareButton } from "./HeaderShareButton"
 import { ThemedIcon, ThemedIconSize } from "./ThemedIcon"
+import { ScrollIndicator } from "./ScrollIndicator"
 
 export { 
     Logo,
@@ -23,4 +24,5 @@ export {
     HeaderShareButton,
     ThemedIcon,
     ThemedIconSize,
+    ScrollIndicator,
 }

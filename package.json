@@ -37,6 +37,7 @@
     "expo-application": "~6.0.2",
     "expo-blur": "~14.0.1",
     "expo-constants": "~17.0.3",
+    "expo-dev-client": "~5.0.12",
     "expo-device": "~7.0.2",
     "expo-file-system": "~18.0.7",
     "expo-font": "~13.0.2",

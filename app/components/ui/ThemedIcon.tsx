@@ -1,7 +1,6 @@
 import React, { ReactNode } from 'react';
 import { View, ViewStyle } from 'react-native';
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { ColorCategory } from '@/constants/Colors';
+import { useThemeColor, ColorCategory } from '@/constants/Colors';
 
 export enum ThemedIconSize {
   small = 'small',

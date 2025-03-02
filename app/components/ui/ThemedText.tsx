@@ -1,7 +1,6 @@
 import { Text, type TextProps, StyleSheet } from 'react-native';
 
-import { useThemeColor } from '@/hooks/useThemeColor';
-import { ColorCategory } from '@/constants/Colors';
+import { ColorCategory, useThemeColor } from '@/constants/Colors';
 
 export enum ThemedTextSize {
   default = 'default',

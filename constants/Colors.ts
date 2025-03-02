@@ -1,12 +1,3 @@
-/**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
- */
-
-/**
- * Colors based on website theme
- */
-
 export enum ColorCategory {
   Text = 'text',
   Background = 'background',
@@ -47,3 +38,18 @@ export const Colors = {
     [ColorCategory.ActionText]: '#F7F7F7', // action-text
   },
 } as const;
+
+import { useMemo } from 'react';
+import { useColorScheme } from 'react-native';
+
+type ColorName = keyof typeof Colors.light & keyof typeof Colors.dark;
+type ThemeProps = { light?: string; dark?: string };
+
+export function useThemeColor(props: ThemeProps, colorName: ColorName) {
+  const theme = useColorScheme() ?? 'light';
+  
+  return useMemo(() => {
+    const colorPassedInFromProps = props[theme];
+    return colorPassedInFromProps || Colors[theme][colorName];
+  }, [props, theme, colorName]);
+}
