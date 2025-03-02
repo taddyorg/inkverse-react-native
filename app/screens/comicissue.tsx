@@ -12,6 +12,7 @@ import { publicClient } from '@/lib/apollo';
 import { StoryImage } from '../components/comics/StoryImage';
 import { GridOfComicIssues } from '../components/comics/GridOfComicIssues';
 import { ComicHeader, HEADER_HEIGHT } from '../components/comics/ComicHeader';
+import { ComicFooter, FOOTER_HEIGHT } from '../components/comics/ComicFooter';
 import { comicIssueQueryReducer, comicIssueInitialState, loadComicIssue } from '@/shared/dispatch/comicissue';
 import { ComicIssue } from '@/shared/graphql/types';
 import { getStoryImageUrl } from '@/public/comicstory';
@@ -31,9 +32,11 @@ export type ComicIssueScreenParams = {
 
 const PRELOAD_BATCH_SIZE = 3;
 
-// Define header position constants
+// Define header and footer position constants
 const HEADER_OPEN_POSITION = 0;
 const HEADER_CLOSED_POSITION = -HEADER_HEIGHT;
+const FOOTER_OPEN_POSITION = 0;
+const FOOTER_CLOSED_POSITION = FOOTER_HEIGHT;
 
 const preloadImagesInBatch = async (imageUrls: string[]) => {
   for (let i = 0; i < imageUrls.length; i += PRELOAD_BATCH_SIZE) {
@@ -44,15 +47,18 @@ const preloadImagesInBatch = async (imageUrls: string[]) => {
 
 export function ComicIssueScreen() {
   const route = useRoute<NativeStackScreenProps<RootStackParamList, typeof COMICISSUE_SCREEN>['route']>();
+  const navigation = useNavigation();
   const { issueUuid, seriesUuid } = route.params;
   const screenDetails = useWindowDimensions();
   const flatListRef = useRef<FlashList<ListItem>>(null);
   
-  // Header animation state
+  // Header and footer animation state
   const headerTranslateY = useRef(new Animated.Value(HEADER_OPEN_POSITION)).current;
+  const footerTranslateY = useRef(new Animated.Value(FOOTER_OPEN_POSITION)).current;
   const isHeaderOpen = useRef(true);
+  const isFooterOpen = useRef(true);
   
-  // Animate header with spring animation
+  // Animate header and footer with spring animation
   const animateHeaderPosition = useCallback((toValue: number) => {
     if (toValue === HEADER_OPEN_POSITION) {
       isHeaderOpen.current = true;
@@ -61,6 +67,19 @@ export function ComicIssueScreen() {
     }
     
     Animated.spring(headerTranslateY, {
+      toValue,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  const animateFooterPosition = useCallback((toValue: number) => {
+    if (toValue === FOOTER_OPEN_POSITION) {
+      isFooterOpen.current = true;
+    } else {
+      isFooterOpen.current = false;
+    }
+    
+    Animated.spring(footerTranslateY, {
       toValue,
       useNativeDriver: true,
     }).start();
@@ -152,33 +171,46 @@ export function ComicIssueScreen() {
     }
   }, [screenDetails]);
 
-  // Handle tap on content to toggle header
+  // Handle navigation to a different issue
+  const handleNavigateToIssue = useCallback((newIssueUuid: string, newSeriesUuid: string) => {
+    navigation.navigate(COMICISSUE_SCREEN, {
+      issueUuid: newIssueUuid,
+      seriesUuid: newSeriesUuid,
+    });
+  }, [navigation]);
+
+  // Handle tap on content to toggle header and footer
   const handleTap = useCallback(() => {
     if (isHeaderOpen.current) {
       animateHeaderPosition(HEADER_CLOSED_POSITION);
+      animateFooterPosition(FOOTER_CLOSED_POSITION);
     } else {
       animateHeaderPosition(HEADER_OPEN_POSITION);
+      animateFooterPosition(FOOTER_OPEN_POSITION);
     }
-  }, [animateHeaderPosition]);
+  }, [animateHeaderPosition, animateFooterPosition]);
 
-  // Handle scroll events to show/hide header
+  // Handle scroll events to show/hide header and footer
   const handleScroll = useCallback((event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
     const y = contentOffset.y;
     
-    // Show header when at top
-    if (y <= 0 && !isHeaderOpen.current) {
+    // Show header and footer when at top
+    if (y <= 0 && (!isHeaderOpen.current || !isFooterOpen.current)) {
       animateHeaderPosition(HEADER_OPEN_POSITION);
+      animateFooterPosition(FOOTER_OPEN_POSITION);
     } 
-    // Hide header when scrolling in the middle
-    else if (y > 0 && y <= (contentSize.height) - (layoutMeasurement.height + 50) && isHeaderOpen.current) {
+    // Hide header and footer when scrolling in the middle
+    else if (y > 0 && y <= (contentSize.height) - (layoutMeasurement.height + 50) && (isHeaderOpen.current || isFooterOpen.current)) {
       animateHeaderPosition(HEADER_CLOSED_POSITION);
+      animateFooterPosition(FOOTER_CLOSED_POSITION);
     } 
-    // Show header when at bottom
-    else if (y > (contentSize.height) - layoutMeasurement.height && !isHeaderOpen.current) {
+    // Show header and footer when at bottom
+    else if (y > (contentSize.height) - layoutMeasurement.height && (!isHeaderOpen.current || !isFooterOpen.current)) {
       animateHeaderPosition(HEADER_OPEN_POSITION);
+      animateFooterPosition(FOOTER_OPEN_POSITION);
     }
-  }, [animateHeaderPosition]);
+  }, [animateHeaderPosition, animateFooterPosition]);
 
   // Custom wrapper for FlashList items to handle taps
   const TappableItem = useCallback(({ item }: { item: ListItem }) => {
@@ -186,14 +218,14 @@ export function ComicIssueScreen() {
     
     return (
       <TouchableWithoutFeedback onPress={handleTap}>
-        <View style={{ flex: 1 }}>
+        <View style={styles.container}>
           {content}
         </View>
       </TouchableWithoutFeedback>
     );
   }, [renderItem, handleTap]);
 
-  if (isComicIssueLoading && !comicissue) {
+  if (isComicIssueLoading) {
     return (
       <Screen style={styles.loadingContainer}>
         <ActivityIndicator size="large" />
@@ -231,6 +263,13 @@ export function ComicIssueScreen() {
           height: screenDetails.height,
           width: screenDetails.width
         }}
+        contentContainerStyle={{ paddingBottom: FOOTER_HEIGHT }}
+      />
+      <ComicFooter
+        footerPosition={footerTranslateY}
+        comicissue={comicissue}
+        allIssues={allIssues || []}
+        onNavigateToIssue={handleNavigateToIssue}
       />
     </Screen>
   );

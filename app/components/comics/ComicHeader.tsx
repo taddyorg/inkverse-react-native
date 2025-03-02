@@ -18,36 +18,38 @@ export function ComicHeader({ headerPosition, comicseries, comicissue }: ComicHe
   
   return (
     <Animated.View style={[styles.header, { transform: [{ translateY: headerPosition }] }]}>
-      <View style={styles.left}>
-        <PressableOpacity  
+      <View style={styles.container}>
+        <PressableOpacity
+          style={styles.backButton}
           onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </PressableOpacity>
-      </View>
-      <View style={styles.center}>
-        {comicseries && 
-          <ThemedText 
-            style={styles.comicTitle} 
-            ellipsizeMode="tail" 
-            numberOfLines={1}
-            font={ThemedTextFont.semiBold}
-          >
-            {comicseries.name}
-          </ThemedText>
-        }
-        {comicissue && 
-          <ThemedText 
-            style={styles.episodeTitle} 
-            ellipsizeMode='tail' 
-            numberOfLines={1}
-            font={ThemedTextFont.semiBold}
-          >
-            {comicissue.name}
-          </ThemedText>
-        }
-      </View>
-      <View style={styles.right}>
-        {/* Add episode list button or other controls here if needed */}
+        <View style={styles.center}>
+          {comicseries && 
+            <ThemedText 
+              style={styles.comicTitle} 
+              ellipsizeMode="tail" 
+              numberOfLines={1}
+              font={ThemedTextFont.semiBold}
+            >
+              {comicseries.name}
+            </ThemedText>
+          }
+          {comicissue && 
+            <ThemedText 
+              style={styles.episodeTitle} 
+              ellipsizeMode='tail' 
+              numberOfLines={1}
+              font={ThemedTextFont.semiBold}
+            >
+              {comicissue.name}
+            </ThemedText>
+          }
+        </View>
+        <PressableOpacity
+          style={styles.shareButton}> 
+          <Ionicons name="share-outline" size={24} color="white" />
+        </PressableOpacity>
       </View>
     </Animated.View>
   );
@@ -67,17 +69,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000',
     zIndex: 10,
   },
-  left: {
-    width: '10%',
-    paddingLeft: 16,
+  container: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  backButton: {
+    paddingHorizontal: 16,
+  },
+  shareButton: {
+    paddingHorizontal: 16,
   },
   center: {
-    width: '80%',
     alignItems: 'center',
     justifyContent: 'flex-end',
-  },
-  right: {
-    width: '10%',
   },
   comicTitle: {
     fontSize: 14,
