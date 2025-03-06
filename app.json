@@ -9,31 +9,27 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "bundleIdentifier": "art.bamcomics.taddy",
+      "buildNumber": "3.0.0",
+      "displayName": "Inkverse",
       "supportsTablet": true,
       "infoPlist": {
         "LSApplicationQueriesSchemes": [
-          "itms-apps",
-          "itms",
-          "https"
+          "https",
+          "mailto",
+          "itms-apps"
         ]
       }
     },
     "android": {
+      "package": "com.bamtoons",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "intentFilters": [
-        {
-          "action": "VIEW",
-          "category": ["BROWSABLE", "DEFAULT"],
-          "data": [
-            {
-              "scheme": "market",
-              "host": "details"
-            }
-          ]
-        }
+      "permissions": [
+        "android.permission.INTERNET"
       ]
     },
     "plugins": [

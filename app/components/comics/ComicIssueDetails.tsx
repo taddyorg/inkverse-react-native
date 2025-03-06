@@ -7,11 +7,10 @@ import { useNavigation } from '@react-navigation/native';
 import { ThemedText, ThemedTextSize, PressableOpacity, ThemedTextFont } from '@/app/components/ui';
 import { ComicIssue, ComicSeries } from '@/shared/graphql/types';
 import { prettyFormattedDate, prettyFormattedFreeInDays } from '@/shared/utils/date';
-import { ColorCategory, Colors } from '@/constants/Colors';
+import { ColorCategory, Colors, useThemeColor } from '@/constants/Colors';
 import { getThumbnailImageUrl } from '@/public/comicseries';
 
 import { COMICISSUE_SCREEN } from '@/constants/Navigation';
-import { useThemeColor } from '@/hooks/useThemeColor';
 
 interface ComicIssueDetailsProps {
   comicissue: ComicIssue;
