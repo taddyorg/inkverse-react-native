@@ -222,7 +222,7 @@ export function ComicIssueScreen() {
 
   // Handle scroll to position from scroll indicator
   const handleScrollTo = useCallback((position: number) => {
-    flatListRef.current?.scrollToOffset({ offset: position, animated: true });
+    flatListRef.current?.scrollToOffset({ offset: position, animated: false });
   }, []);
 
   // Custom wrapper for FlashList items to handle taps
@@ -284,16 +284,12 @@ export function ComicIssueScreen() {
         allIssues={allIssues || []}
         onNavigateToIssue={handleNavigateToIssue}
       />
-      
-      {/* Scroll Indicator */}
-      {contentHeight > screenDetails.height && (
-        <ScrollIndicator 
-          scrollPosition={scrollPosition}
-          contentHeight={contentHeight}
-          screenHeight={screenDetails.height}
-          onScrollTo={handleScrollTo}
-        />
-      )}
+      <ScrollIndicator 
+        scrollPosition={scrollPosition}
+        contentHeight={contentHeight}
+        screenHeight={screenDetails.height}
+        onScrollTo={handleScrollTo}
+      />
     </Screen>
   );
 }

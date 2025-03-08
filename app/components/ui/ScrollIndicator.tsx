@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { StyleSheet, View, PanResponder, GestureResponderEvent, PanResponderGestureState, Animated } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
@@ -10,8 +10,6 @@ interface ScrollIndicatorProps {
 }
 
 export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, onScrollTo }: ScrollIndicatorProps) {
-  const [isDragging, setIsDragging] = useState(false);
-  
   // Use Animated values for smoother transitions
   const animatedScale = useRef(new Animated.Value(1)).current;
   const animatedPosition = useRef(new Animated.Value(0)).current;
@@ -19,33 +17,36 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, o
   const totalScrollable = Math.max(0, contentHeight - screenHeight);
   const containerHeight = screenHeight - 100; // Account for top/bottom margins
   
-  // Update animated position directly when scrollPosition changes
+  // Update animated position when scrollPosition changes (when not controlled by pan)
   useEffect(() => {
-    if (!isDragging) {
-      // Calculate indicator position based on scroll percentage
-      const scrollPercentage = totalScrollable > 0 ? scrollPosition / totalScrollable : 0;
-      const newPosition = scrollPercentage * containerHeight;
-      
-      // Update animated value directly without animation when not dragging
-      animatedPosition.setValue(newPosition);
-    }
-  }, [scrollPosition, isDragging, totalScrollable, containerHeight, animatedPosition]);
-  
-  // Animate scale when dragging starts/ends
-  useEffect(() => {
-    Animated.spring(animatedScale, {
-      toValue: isDragging ? 1.2 : 1,
-      friction: 7,
-      tension: 40,
+    // Calculate indicator position based on scroll percentage
+    const scrollPercentage = totalScrollable > 0 ? scrollPosition / totalScrollable : 0;
+    const newPosition = scrollPercentage * containerHeight;
+    
+    // Use setValue for immediate updates during scrolling instead of animation
+    animatedPosition.setValue(newPosition);
+    
+    // Alternatively, use a very short duration animation for smoother movement
+    // but without noticeable delay
+    /*
+    Animated.timing(animatedPosition, {
+      toValue: newPosition,
+      duration: 100,
       useNativeDriver: true
     }).start();
-  }, [isDragging, animatedScale]);
+    */
+  }, [scrollPosition, totalScrollable, containerHeight, animatedPosition]);
   
   const panResponder = React.useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: () => true,
     onPanResponderGrant: () => {
-      setIsDragging(true);
+      // Scale up when touch starts - use timing for more direct control
+      Animated.timing(animatedScale, {
+        toValue: 1.2,
+        duration: 150,
+        useNativeDriver: true
+      }).start();
     },
     onPanResponderMove: (evt: GestureResponderEvent, _: PanResponderGestureState) => {
       // Get the touch position relative to the container
@@ -63,21 +64,30 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, o
       const newScrollPos = touchPercentage * totalScrollable;
       
       // Update animated position directly for immediate visual feedback
-      const newIndicatorPosition = touchPercentage * containerHeight;
-      animatedPosition.setValue(newIndicatorPosition);
+      // This provides the smoothest possible movement during dragging
+      animatedPosition.setValue(touchPercentage * containerHeight);
       
       // Update scroll position in parent
-      requestAnimationFrame(() => {
-        onScrollTo(newScrollPos);
-      });
+      // Remove requestAnimationFrame for more immediate updates
+      onScrollTo(newScrollPos);
     },
     onPanResponderRelease: () => {
-      setIsDragging(false);
+      // Scale down when touch ends
+      Animated.timing(animatedScale, {
+        toValue: 1,
+        duration: 150,
+        useNativeDriver: true
+      }).start();
     },
     onPanResponderTerminate: () => {
-      setIsDragging(false);
+      // Scale down when touch is terminated
+      Animated.timing(animatedScale, {
+        toValue: 1,
+        duration: 150,
+        useNativeDriver: true
+      }).start();
     },
-  }), [containerHeight, totalScrollable, onScrollTo, animatedPosition]);
+  }), [containerHeight, totalScrollable, onScrollTo, animatedPosition, animatedScale]);
   
   // Don't show scroll tip if content fits in screen
   if (contentHeight <= screenHeight) {
@@ -95,8 +105,7 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, o
                 { translateY: animatedPosition },
                 { scale: animatedScale }
               ] 
-            },
-            isDragging && styles.scrollTipActive
+            }
           ]}
         >
           <Feather 
@@ -144,9 +153,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  scrollTipActive: {
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
   upIcon: {
     marginBottom: 4,
