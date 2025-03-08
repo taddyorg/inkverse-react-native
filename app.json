@@ -8,6 +8,7 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "jsEngine": "hermes",
     "ios": {
       "bundleIdentifier": "art.bamcomics.taddy",
       "buildNumber": "3.0.0",
@@ -18,7 +19,8 @@
           "https",
           "mailto",
           "itms-apps"
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -52,6 +54,11 @@
           ]
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "149ba335-e117-4b21-8359-41b61b059885"
+      }
+    }
   }
 }
