@@ -1,13 +1,15 @@
-import { StyleSheet, Platform } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ThemedView } from './ThemedView';
 
-export function ScreenHeader() {
-  return (<ThemedView style={styles.topPadding}></ThemedView>)
+type ScreenHeaderProps = {
+  additionalTopPadding?: number;
 }
 
-const styles = StyleSheet.create({
-  topPadding: {
-    height: Platform.OS === 'ios' ? 80 : 20,
-  },
-});
+export function ScreenHeader({ additionalTopPadding = 15 }: ScreenHeaderProps) {
+  const insets = useSafeAreaInsets();
+  
+  return (
+    <ThemedView style={[{ paddingTop: insets.top + additionalTopPadding }]}/>
+  );
+};

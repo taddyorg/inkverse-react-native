@@ -1,5 +1,5 @@
 import React, { useCallback, useReducer, useEffect, useMemo, useRef, useState } from 'react';
-import { RefreshControl, ActivityIndicator, StyleSheet, StatusBar, useWindowDimensions, Animated, View, NativeSyntheticEvent, NativeScrollEvent, TouchableWithoutFeedback, Pressable, GestureResponderEvent, TouchableOpacity, Text } from 'react-native';
+import { RefreshControl, ActivityIndicator, StyleSheet, StatusBar, useWindowDimensions, Animated, View, NativeSyntheticEvent, NativeScrollEvent, TouchableWithoutFeedback } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, COMICISSUE_SCREEN } from '@/constants/Navigation';
@@ -119,7 +119,7 @@ export function ComicIssueScreen() {
     } catch (error) {
       console.warn('Error preloading images:', error);
     }
-  }, [issueUuid]);
+  }, [issueUuid, comicissue?.uuid]);
 
   // Preload images when stories data is available
   useEffect(() => {
@@ -129,7 +129,7 @@ export function ComicIssueScreen() {
         console.warn('Failed to preload some images:', error);
       });
     }
-  }, [issueUuid]);
+  }, [issueUuid, comicissue?.uuid]);
 
   const listData = useMemo(() => {
     if (!comicissue || !comicseries) return [];
@@ -266,7 +266,7 @@ export function ComicIssueScreen() {
         renderItem={TappableItem}
         keyExtractor={(item) => item.key}
         showsVerticalScrollIndicator={false}
-        estimatedItemSize={screenDetails.height * 0.8}
+        estimatedItemSize={300}
         onScroll={handleScroll}
         scrollEventThrottle={16}
         refreshControl={

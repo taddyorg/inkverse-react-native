@@ -291,30 +291,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  backButton: {
-    padding: 8,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  placeholder: {
-    width: 36,
-  },
   contentContainer: {
     flex: 1,
     borderRadius: 12,
-    overflow: 'hidden',
   },
   flashListContent: {
-    padding: 16,
+    paddingHorizontal: 16,
   },
   settingItem: {
     paddingVertical: 16,
