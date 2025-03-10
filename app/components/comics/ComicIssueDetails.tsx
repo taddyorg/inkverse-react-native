@@ -17,9 +17,10 @@ interface ComicIssueDetailsProps {
   comicseries: ComicSeries;
   position: number;
   isCurrentIssue: boolean;
+  imagePriority?: 'high' | 'normal' | 'low';
 }
 
-export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCurrentIssue }: ComicIssueDetailsProps) => {
+export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCurrentIssue, imagePriority }: ComicIssueDetailsProps) => {
   const navigation = useNavigation();
 
   const isPatreonExclusive = comicissue.scopesForExclusiveContent?.includes('patreon');
@@ -57,7 +58,9 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCu
                 isPatreonExclusive && styles.thumbnailImageLocked,
               ]}
               source={{ uri: thumbnailImageUrl }}
+              recyclingKey={comicissue.uuid}
               contentFit="cover"
+              priority={imagePriority}
             />
             {isPatreonExclusive && (
               <View style={styles.lockIcon}>

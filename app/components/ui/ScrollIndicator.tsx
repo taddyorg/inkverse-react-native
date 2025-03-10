@@ -1,21 +1,24 @@
 import React, { useRef, useEffect } from 'react';
 import { StyleSheet, View, PanResponder, GestureResponderEvent, PanResponderGestureState, Animated } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { Colors } from '@/constants/Colors';
 
 interface ScrollIndicatorProps {
   scrollPosition: number;
   contentHeight: number;
   screenHeight: number;
+  headerHeight: number;
+  footerHeight: number;
   onScrollTo: (position: number) => void;
 }
 
-export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, onScrollTo }: ScrollIndicatorProps) {
+export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, headerHeight, footerHeight, onScrollTo }: ScrollIndicatorProps) {
   // Use Animated values for smoother transitions
   const animatedScale = useRef(new Animated.Value(1)).current;
   const animatedPosition = useRef(new Animated.Value(0)).current;
   
   const totalScrollable = Math.max(0, contentHeight - screenHeight);
-  const containerHeight = screenHeight - 100; // Account for top/bottom margins
+  const containerHeight = screenHeight - headerHeight - footerHeight; // Account for top/bottom margins
   
   // Update animated position when scrollPosition changes (when not controlled by pan)
   useEffect(() => {
@@ -26,15 +29,6 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, o
     // Use setValue for immediate updates during scrolling instead of animation
     animatedPosition.setValue(newPosition);
     
-    // Alternatively, use a very short duration animation for smoother movement
-    // but without noticeable delay
-    /*
-    Animated.timing(animatedPosition, {
-      toValue: newPosition,
-      duration: 100,
-      useNativeDriver: true
-    }).start();
-    */
   }, [scrollPosition, totalScrollable, containerHeight, animatedPosition]);
   
   const panResponder = React.useMemo(() => PanResponder.create({
@@ -95,7 +89,7 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, o
   }
   
   return (
-    <View style={styles.scrollIndicatorContainer}>
+    <View style={[styles.scrollIndicatorContainer]}>
       <View style={styles.touchArea} {...panResponder.panHandlers}>
         <Animated.View 
           style={[
@@ -149,7 +143,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: '#000000',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',

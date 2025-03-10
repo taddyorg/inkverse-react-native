@@ -1,8 +1,9 @@
-import React, { useRef, useEffect } from 'react';
-import { View, StyleSheet, Pressable, FlatList } from 'react-native';
+import React, { useRef, useEffect, useLayoutEffect, memo } from 'react';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
+import { FlashList } from '@shopify/flash-list';
 
 import { ThemedText, PressableOpacity } from '../ui';
 import { ComicIssue, ComicSeries } from '@/shared/graphql/types';
@@ -21,7 +22,13 @@ interface PreviewComicIssueProps {
   onPress: () => void;
 }
 
-const PreviewComicIssue = ({ 
+const PatreonLockBadge = () => (
+  <View style={styles.lockIconContainer}>
+    <MaterialIcons name="lock" size={40} color="white" />
+  </View>
+);
+
+const PreviewComicIssue = memo(({ 
   comicissue, 
   isCurrentIssue, 
   onPress 
@@ -31,44 +38,81 @@ const PreviewComicIssue = ({
   
   if (!thumbnailImageUrl) return null;
 
-  return (
-    <PressableOpacity
-      style={[
-        styles.gridItem,
-        isCurrentIssue && styles.currentIssue
-      ]}
-      disabled={isCurrentIssue}
-      onPress={onPress}
-    >
+  // Create the content that will be used in both cases
+  const content = (
+    <>
       <View style={styles.imageContainer}>
         <Image
           style={[
             styles.thumbnailImage,
-            isPatreonExclusive && styles.patreeonExclusiveImage
+            isPatreonExclusive && styles.patreonExclusiveImage
           ]}
           source={{ uri: thumbnailImageUrl }}
+          recyclingKey={comicissue.uuid}
           contentFit="cover"
+          priority="low"
         />
-        {isPatreonExclusive && (
-          <View style={styles.lockIconContainer}>
-            <MaterialIcons name="lock" size={40} color="white" />
-          </View>
-        )}
+        {isPatreonExclusive && <PatreonLockBadge />}
       </View>
-      <ThemedText style={[
-        styles.episodeTitle,
-        isCurrentIssue && styles.currentEpisodeTitle,
-        isPatreonExclusive && styles.patreonExclusiveTitle
-      ]}>
-        {comicissue.name} {isPatreonExclusive ? "(PATREON EXCLUSIVE)" : ""}
+      <ThemedText 
+        style={[
+          styles.episodeTitle,
+          isCurrentIssue && styles.currentEpisodeTitle,
+          isPatreonExclusive && styles.patreonExclusiveTitle
+        ]}
+      >
+        {comicissue.name}
+        {isPatreonExclusive && <ThemedText style={styles.patreonLabel}> (PATREON EXCLUSIVE)</ThemedText>}
       </ThemedText>
+    </>
+  );
+
+  // Use Pressable for both cases, but disable onPress for current issue
+  // This allows touch events to propagate for scrolling
+  return (
+    <PressableOpacity 
+      style={[
+        styles.gridItem, 
+        isCurrentIssue && styles.currentIssue
+      ]}
+      fadeLevel={isCurrentIssue ? 1 : 0.5}
+      onPress={isCurrentIssue ? undefined : onPress}
+      // Allow touch events to propagate for scrolling
+      android_disableSound={isCurrentIssue}
+      android_ripple={isCurrentIssue ? null : { color: 'rgba(0, 0, 0, 0.1)' }}
+    >
+      {content}
     </PressableOpacity>
   );
-};
+});
+
+// const PreviewComicIssueWrapper = memo(({ 
+//   children, 
+//   isCurrentIssue, 
+//   onPress 
+// }: { 
+//   children: React.ReactNode, 
+//   isCurrentIssue: boolean, 
+//   onPress: () => void 
+// }) => {
+//   if (isCurrentIssue) {
+//     return (
+//       <View style={[styles.gridItem, styles.currentIssue]}>
+//         {children}
+//       </View>
+//     );
+//   }
+  
+//   return (
+//       {children}
+//     </PressableOpacity>
+//   );
+// });
 
 export const GridOfComicIssues = ({ comicseries, comicissue, allIssues }: GridOfComicIssuesProps) => {
   const navigation = useNavigation();
-  const flatListRef = useRef<FlatList>(null);
+  const flashListRef = useRef<FlashList<ComicIssue>>(null);
+  const currentIndex = comicissue ? allIssues.findIndex(issue => issue.uuid === comicissue.uuid) : -1;
 
   const handleIssuePress = (issue: ComicIssue) => {
     if (!comicseries?.uuid) return;
@@ -79,18 +123,42 @@ export const GridOfComicIssues = ({ comicseries, comicissue, allIssues }: GridOf
     });
   };
 
-  useEffect(() => {
-    if (flatListRef.current && comicissue?.uuid) {
-      const currentIndex = allIssues.findIndex(issue => issue.uuid === comicissue.uuid);
-      if (currentIndex !== -1) {
-        flatListRef.current.scrollToIndex({
+  // Function to handle scrolling to the current issue
+  const scrollToCurrentIssue = () => {
+    if (!flashListRef.current || !comicissue?.uuid || allIssues.length === 0 || currentIndex === -1) return;
+    
+    // Delay to ensure the FlashList has rendered properly
+    setTimeout(() => {
+      if (!flashListRef.current) return;
+      
+      try {
+        flashListRef.current.scrollToIndex({
           index: currentIndex,
           animated: true,
           viewPosition: 0.5 // Center the item
         });
+      } catch (error) {
+        console.log('Failed to scroll to index, retrying...', error);
+        
+        // Retry with a longer delay if first attempt fails
+        setTimeout(() => {
+          if (!flashListRef.current) return;
+          flashListRef.current.scrollToIndex({
+            index: currentIndex,
+            animated: false, // Try without animation as fallback
+            viewPosition: 0.5
+          });
+        }, 500);
       }
+    }, 300);
+  };
+
+  // Use useLayoutEffect to ensure this runs after layout but before paint
+  useLayoutEffect(() => {
+    if (currentIndex !== -1) {
+      scrollToCurrentIssue();
     }
-  }, [comicissue?.uuid]);
+  }, [comicissue?.uuid, allIssues]);
 
   const renderItem = ({ item }: { item: ComicIssue }) => (
     <PreviewComicIssue
@@ -100,12 +168,6 @@ export const GridOfComicIssues = ({ comicseries, comicissue, allIssues }: GridOf
     />
   );
 
-  const getItemLayout = (_: any, index: number) => ({
-    length: styles.gridItem.width as number,
-    offset: (styles.gridItem.width as number) * index,
-    index,
-  });
-
   if (!comicseries || !comicissue || allIssues.length === 0) {
     return null;
   }
@@ -113,26 +175,18 @@ export const GridOfComicIssues = ({ comicseries, comicissue, allIssues }: GridOf
   return (
     <View style={styles.container}>
       <ThemedText style={styles.title}>More Episodes</ThemedText>
-      <FlatList
-        ref={flatListRef}
-        data={allIssues}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.uuid}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        // snapToInterval={styles.gridItem.width as number}
-        // decelerationRate="fast"
-        getItemLayout={getItemLayout}
-        style={styles.scrollView}
-        onScrollToIndexFailed={(info) => {
-          const wait = new Promise(resolve => setTimeout(resolve, 500));
-          wait.then(() => {
-            if (flatListRef.current) {
-              flatListRef.current.scrollToIndex({ index: info.index, animated: true });
-            }
-          });
-        }}
-      />
+      <View style={styles.flashListContainer}>
+        <FlashList
+          ref={flashListRef}
+          data={allIssues}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.uuid}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          estimatedItemSize={styles.gridItem.width as number}
+          initialScrollIndex={currentIndex > -1 ? currentIndex : undefined}
+        />
+      </View>
     </View>
   );
 };
@@ -146,8 +200,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
   },
-  scrollView: {
-    flexGrow: 0,
+  flashListContainer: {
+    height: 220, // Height for thumbnail + title text + padding
+    width: '100%',
   },
   gridItem: {
     width: 140,
@@ -167,7 +222,7 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRadius: 8,
   },
-  patreeonExclusiveImage: {
+  patreonExclusiveImage: {
     opacity: 0.5,
   },
   lockIconContainer: {
@@ -191,5 +246,9 @@ const styles = StyleSheet.create({
   },
   patreonExclusiveTitle: {
     opacity: 0.6,
+  },
+  patreonLabel: {
+    fontSize: 11,
+    fontWeight: '400',
   },
 }); 

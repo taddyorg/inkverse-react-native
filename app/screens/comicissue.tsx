@@ -125,6 +125,7 @@ export function ComicIssueScreen() {
   useEffect(() => {
     const stories = comicissue?.stories;
     if (stories && stories.length > 0) {
+      setContentHeight(stories.length * 300);
       preloadImages(stories).catch(error => {
         console.warn('Failed to preload some images:', error);
       });
@@ -284,12 +285,14 @@ export function ComicIssueScreen() {
         allIssues={allIssues || []}
         onNavigateToIssue={handleNavigateToIssue}
       />
-      <ScrollIndicator 
+      {/* <ScrollIndicator 
         scrollPosition={scrollPosition}
         contentHeight={contentHeight}
         screenHeight={screenDetails.height}
+        headerHeight={HEADER_HEIGHT}
+        footerHeight={FOOTER_HEIGHT}
         onScrollTo={handleScrollTo}
-      />
+      /> */}
     </Screen>
   );
 }

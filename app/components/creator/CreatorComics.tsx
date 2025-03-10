@@ -34,6 +34,7 @@ export function CreatorComics({ comicseries }: CreatorComicsProps) {
           source={{ uri: coverUrl }}
           style={styles.comicCover}
           contentFit="cover"
+          recyclingKey={item.uuid}
         />
       </TouchableOpacity>
     );

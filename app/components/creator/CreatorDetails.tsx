@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { Image } from 'expo-image';
 
 import { ThemedTextSize, ThemedText, ThemedView } from '../ui';
 import { getAvatarImageUrl } from '@/public/creator';
@@ -40,6 +41,8 @@ export function CreatorDetails({ creator, pageType }: CreatorDetailsProps) {
             <Image
               source={{ uri: getAvatarImageUrl({ avatarImageAsString: creator?.avatarImageAsString }) }}
               style={styles.creatorAvatar}
+              contentFit="cover"
+              recyclingKey={creator.uuid}
             />
             <ThemedText size={ThemedTextSize.subtitle} style={styles.creatorText}>
               {creator?.name}
@@ -55,7 +58,8 @@ export function CreatorDetails({ creator, pageType }: CreatorDetailsProps) {
         <Image 
           source={{ uri: avatarUrl }} 
           style={styles.avatar}
-          resizeMode="cover"
+          contentFit="cover"
+          recyclingKey={creator.uuid}
         />
         <View style={styles.infoContainer}>
           <ThemedText size={ThemedTextSize.title} style={styles.name}>{creator.name}</ThemedText>

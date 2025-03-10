@@ -1,6 +1,8 @@
 import { useReducer, useState, useCallback, useEffect, memo, useRef } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View, Image, RefreshControl, ActivityIndicator, FlatList, ListRenderItem } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, RefreshControl, ActivityIndicator, FlatList, ListRenderItem, StatusBar } from 'react-native';
 import { useScrollToTop } from '@react-navigation/native';
+import { Image } from 'expo-image';
+import { FlashList } from '@shopify/flash-list';
 
 import { Screen, ThemedText, ThemedTextFont } from '@/app/components/ui';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
@@ -10,12 +12,21 @@ import { publicClient } from '@/lib/apollo';
 import { ComicSeries, List } from '@/shared/graphql/types';
 import { loadHomeScreen, homefeedQueryReducerDefault, homeScreenInitialState } from '@/shared/dispatch/homefeed';
 
+// Section types for FlashList
+type SectionType = 
+  | { type: 'header' }
+  | { type: 'featured'; data: ComicSeries[] | null | undefined }
+  | { type: 'mostRecommended'; data: ComicSeries[] | null | undefined }
+  | { type: 'curatedLists'; data: List[] | null | undefined }
+  | { type: 'recentlyUpdated'; data: ComicSeries[] | null | undefined }
+  | { type: 'recentlyAdded'; data: ComicSeries[] | null | undefined };
+
 export function HomeScreen() {
   const [homeScreenState, dispatch] = useReducer(homefeedQueryReducerDefault, homeScreenInitialState);
   const [refreshing, setRefreshing] = useState(false);
-  const scrollViewRef = useRef<ScrollView>(null);
+  const flashListRef = useRef<FlashList<SectionType>>(null);
   
-  useScrollToTop(scrollViewRef);
+  useScrollToTop(flashListRef);
 
   const { isHomeScreenLoading, featuredComicSeries, curatedLists, mostPopularComicSeries, recentlyAddedComicSeries, recentlyUpdatedComicSeries } = homeScreenState;
 
@@ -29,33 +40,76 @@ export function HomeScreen() {
     setRefreshing(false);
   }, []);
 
+  // Create data for FlashList
+  const sections = useCallback((): SectionType[] => {
+    if (isHomeScreenLoading) {
+      return [];
+    }
+    
+    return [
+      { type: 'header' },
+      { type: 'featured', data: featuredComicSeries },
+      { type: 'mostRecommended', data: mostPopularComicSeries },
+      { type: 'curatedLists', data: curatedLists },
+      { type: 'recentlyUpdated', data: recentlyUpdatedComicSeries },
+      { type: 'recentlyAdded', data: recentlyAddedComicSeries },
+    ];
+  }, [
+    isHomeScreenLoading, 
+    featuredComicSeries, 
+    mostPopularComicSeries, 
+    curatedLists, 
+    recentlyUpdatedComicSeries, 
+    recentlyAddedComicSeries
+  ]);
+
+  // Render each section type
+  const renderItem = useCallback(({ item }: { item: SectionType }) => {
+    switch (item.type) {
+      case 'header':
+        return <Header />;
+      case 'featured':
+        return <FeaturedWebtoons comicSeries={item.data} />;
+      case 'mostRecommended':
+        return <MostRecommendedWebtoons comicSeries={item.data} />;
+      case 'curatedLists':
+        return <CuratedLists lists={item.data} />;
+      case 'recentlyUpdated':
+        return <RecentlyUpdatedWebtoons comicSeries={item.data} />;
+      case 'recentlyAdded':
+        return <RecentlyAddedWebtoons comicSeries={item.data} />;
+      default:
+        return null;
+    }
+  }, []);
+
+  const keyExtractor = useCallback((item: SectionType, index: number) => `${item.type}-${index}`, []);
+
+  if (isHomeScreenLoading) {
+    return (
+      <Screen style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large"/>
+        </View>
+      </Screen>
+    );
+  }
+
   return (
     <Screen style={styles.container}>
-      <ScrollView 
-        ref={scrollViewRef}
-        style={styles.scrollView} 
+      <StatusBar hidden={true} />
+      <FlashList
+        ref={flashListRef}
+        data={sections()}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        estimatedItemSize={300}
         contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-      >
-        {isHomeScreenLoading 
-        ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large"/>
-            </View>
-          ) 
-        : (
-          <View>
-            <Header />
-            <FeaturedWebtoons comicSeries={featuredComicSeries} />
-            <MostRecommendedWebtoons comicSeries={mostPopularComicSeries} />
-            <CuratedLists lists={curatedLists} />
-            <RecentlyUpdatedWebtoons comicSeries={recentlyUpdatedComicSeries} />
-            <RecentlyAddedWebtoons comicSeries={recentlyAddedComicSeries} />
-          </View>
-        )}
-      </ScrollView>
+      />
     </Screen>
   );
 }
@@ -68,6 +122,7 @@ const FeaturedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[] | n
         <ComicSeriesDetails
           comicseries={firstComicSeries}
           pageType={ComicSeriesPageType.FEATURED_BANNER}
+          imagePriority="high"
         />
       )}
     </View>
@@ -75,10 +130,11 @@ const FeaturedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[] | n
 });
 
 const MostRecommendedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[] | null | undefined }) => {
-  const renderItem: ListRenderItem<ComicSeries> = useCallback(({ item }) => (
+  const renderItem: ListRenderItem<ComicSeries> = useCallback(({ item, index }) => (
     <ComicSeriesDetails
       comicseries={item}
       pageType={ComicSeriesPageType.MOST_POPULAR}
+      imagePriority={index === 0 ? 'normal' : 'low'}
     />
   ), []);
 
@@ -99,12 +155,14 @@ const MostRecommendedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSerie
 });
 
 const CuratedLists = memo(({ lists }: { lists: List[] | null | undefined }) => {
-  const renderItem: ListRenderItem<List> = useCallback(({ item }) => (
+  const renderItem: ListRenderItem<List> = useCallback(({ item, index }) => (
     <TouchableOpacity style={styles.curatedListItem}>
       <Image
         source={{ uri: item.bannerImageUrl ?? '' }}
         style={styles.curatedListImage}
-        resizeMode="cover"
+        contentFit="cover"
+        recyclingKey={item.id}
+        priority={index === 0 ? 'normal' : 'low'}
       />
     </TouchableOpacity>
   ), []);
@@ -127,11 +185,12 @@ const CuratedLists = memo(({ lists }: { lists: List[] | null | undefined }) => {
 });
 
 const RecentlyUpdatedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[] | null | undefined }) => {
-  const renderItem: ListRenderItem<ComicSeries> = useCallback(({ item }) => (
+  const renderItem: ListRenderItem<ComicSeries> = useCallback(({ item, index }) => (
     <View style={styles.horizontalComicItem}>
       <ComicSeriesDetails
         comicseries={item}
         pageType={ComicSeriesPageType.COVER}
+        imagePriority={index === 0 ? 'normal' : 'low'}
       />
     </View>
   ), []);
@@ -154,11 +213,12 @@ const RecentlyUpdatedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSerie
 });
 
 const RecentlyAddedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[] | null | undefined }) => {
-  const renderItem: ListRenderItem<ComicSeries> = useCallback(({ item }) => (
+  const renderItem: ListRenderItem<ComicSeries> = useCallback(({ item, index }) => (
     <View style={styles.horizontalComicItem}>
       <ComicSeriesDetails
         comicseries={item}
         pageType={ComicSeriesPageType.COVER}
+        imagePriority={index === 0 ? 'normal' : 'low'}
       />
     </View>
   ), []);
@@ -182,9 +242,6 @@ const RecentlyAddedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-  },
-  scrollView: {
     flex: 1,
   },
   scrollContent: {

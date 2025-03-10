@@ -31,12 +31,13 @@ export const ComicIssuesList = (props: ComicIssuesListProps) => {
     position: index,
   })), [comicissues, comicseries]);
 
-  const renderItem = ({ item }: { item: any }) => (
+  const renderItem = ({ item, index }: { item: any, index: number }) => (
     <ComicIssueDetails
       comicissue={item.comicissue}
       comicseries={item.comicseries}
       position={item.position}
       isCurrentIssue={item.comicissue.uuid === currentIssueUuid}
+      imagePriority={index <= 4 ? 'normal' : 'low'}
     />
   );
 

@@ -30,9 +30,10 @@ interface ComicSeriesDetailsProps {
   index?: number;
   isHeaderVisible?: boolean;
   onHeaderVisibilityChange?: (isVisible: boolean) => void;
+  imagePriority?: 'high' | 'normal' | 'low';
 }
 
-export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, isHeaderVisible, onHeaderVisibilityChange }: ComicSeriesDetailsProps) {
+export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, isHeaderVisible, onHeaderVisibilityChange, imagePriority }: ComicSeriesDetailsProps) {
   const navigation = useNavigation();
 
   if (!comicseries) return null;
@@ -61,6 +62,8 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, i
             source={getThumbnailImageUrl({ thumbnailImageAsString: comicseries.thumbnailImageAsString })}
             style={styles.popularImage}
             contentFit="contain"
+            recyclingKey={comicseries.uuid}
+            priority={imagePriority}
           />
           <View style={styles.popularContent}>
             <ThemedText style={styles.popularTitle}>{comicseries.name}</ThemedText>
@@ -76,6 +79,8 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, i
             source={getBannerImageUrl({ bannerImageAsString: comicseries.bannerImageAsString, variant: ComicSeriesImageVariant.LARGE })}
             style={styles.featuredImage}
             contentFit="cover"
+            recyclingKey={comicseries.uuid}
+            priority={imagePriority}
           />
         </TouchableOpacity>
       );
@@ -87,6 +92,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, i
             source={getCoverImageUrl({ coverImageAsString: comicseries.coverImageAsString })}
             style={styles.coverImage}
             contentFit="contain"
+            recyclingKey={comicseries.uuid}
           />
         </TouchableOpacity>
       );
@@ -99,6 +105,8 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, i
               source={getCoverImageUrl({ coverImageAsString: comicseries.coverImageAsString })}
               style={styles.coverImageFullWidth}
               contentFit="cover"
+              recyclingKey={comicseries.uuid}
+              priority="high"
             />
           </Pressable>
           <View style={styles.infoContainer}>

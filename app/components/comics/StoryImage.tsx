@@ -15,17 +15,17 @@ export const StoryImage = ({ story, screenDetails }: StoryImageProps) => {
   if (!storyImageUrl) return null;
   const [aspectRatio, setAspectRatio] = useState(getInitialAspectRatio(story?.width, story?.height, screenDetails));
 
-
   const handleImageLoad = useCallback((event: ImageLoadEventData) => {
     const { width, height } = event.source;
     setAspectRatio(width / height);
-  }, []);
+  }, [story?.uuid]);
 
   return (
     <Image
       style={{ width: screenDetails.width, height: screenDetails.width / aspectRatio }}
       source={{ uri: storyImageUrl }}
       onLoad={handleImageLoad}
+      recyclingKey={story?.uuid}
       contentFit="cover"
     />
   );
@@ -40,7 +40,7 @@ function getInitialAspectRatio(width: number | null | undefined, height: number 
 }
 
 function arePropsEqual(prevProps: StoryImageProps, nextProps: StoryImageProps) {
-  return prevProps.story?.storyImageAsString === nextProps.story?.storyImageAsString;
+  return prevProps.story?.uuid === nextProps.story?.uuid;
 }
 
 export default memo(StoryImage, arePropsEqual);
