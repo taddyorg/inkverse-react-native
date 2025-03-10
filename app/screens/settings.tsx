@@ -164,7 +164,7 @@ export function SettingsScreen() {
     ...devItems,
   ];
 
-  const founderAvatar = 'https://cdn.glitch.global/19129de7-9e65-4c13-b8ab-f21bd83e6c81/daniel-profile-pic.jpg?v=1732220401242';
+  const founderAvatar = 'https://ax0.taddy.org/general/danny-avatar-2.jpg';
   const founderDescription = "👋 Hey! I'm Danny, the founder & developer of Inkverse. I'd love to hear your feedback!";
 
   const renderLightDarkToggle = (item: SettingItem) => {
@@ -179,7 +179,7 @@ export function SettingsScreen() {
             onValueChange={(value) => {
               item.onPress();
             }}
-            trackColor={{ false: Colors.light.tint, true: Colors.dark.tint }}
+            trackColor={{ true: Colors.dark.tint }}
             thumbColor={isDarkMode ? Colors.dark.background : Colors.light.background}
           />
         </ThemedView>
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     // shadowOffset: { width: 0, height: 1 },
     // shadowOpacity: 0.1,
     // shadowRadius: 2,
-    elevation: 2,
+    // elevation: 2,
   },
   supportCardContent: {
     flexDirection: 'row',

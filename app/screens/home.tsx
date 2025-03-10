@@ -1,7 +1,8 @@
 import { useReducer, useState, useCallback, useEffect, memo, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, View, RefreshControl, ActivityIndicator, FlatList, ListRenderItem, StatusBar } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, RefreshControl, ActivityIndicator, FlatList, ListRenderItem } from 'react-native';
 import { useScrollToTop } from '@react-navigation/native';
 import { Image } from 'expo-image';
+import { StatusBar } from 'expo-status-bar';
 import { FlashList } from '@shopify/flash-list';
 
 import { Screen, ThemedText, ThemedTextFont } from '@/app/components/ui';
@@ -246,9 +247,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
-  },
-  header: {
-    marginBottom: 24,
   },
   title: {
     fontSize: 28,

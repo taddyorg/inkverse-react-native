@@ -121,7 +121,6 @@ interface ComicSeriesScreenWrapperProps {
 const ComicSeriesScreenWrapper = memo(({ children, isHeaderVisible }: ComicSeriesScreenWrapperProps) => {
   return (
     <Screen style={styles.container}>
-      <StatusBar hidden={true} />
       {isHeaderVisible && (
         <View>
           <HeaderBackButton />

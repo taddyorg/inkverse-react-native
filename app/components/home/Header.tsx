@@ -4,7 +4,7 @@ import { Platform, StyleSheet, View } from "react-native"
 
 export const Header = () => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container]}>
       <View style={styles.sideContainer} />
       <View style={styles.logoContainer}>
         <Logo />
@@ -23,10 +23,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     ...Platform.select({
       ios: {
-        marginTop: 30,
+        paddingTop: 30,
       },
       android: {
-        marginTop: -20,
+        paddingTop: 10,
       },
     }),
   },

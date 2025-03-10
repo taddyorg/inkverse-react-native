@@ -1,5 +1,5 @@
 import React, { useCallback, useReducer, useEffect, useMemo, useRef, useState } from 'react';
-import { RefreshControl, ActivityIndicator, StyleSheet, StatusBar, useWindowDimensions, Animated, View, NativeSyntheticEvent, NativeScrollEvent, TouchableWithoutFeedback } from 'react-native';
+import { RefreshControl, ActivityIndicator, StyleSheet, useWindowDimensions, Animated, View, NativeSyntheticEvent, NativeScrollEvent, TouchableWithoutFeedback } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, COMICISSUE_SCREEN } from '@/constants/Navigation';
@@ -255,7 +255,6 @@ export function ComicIssueScreen() {
 
   return (
     <Screen style={styles.container}>
-      <StatusBar hidden={true} />
       <ComicHeader 
         headerPosition={headerTranslateY} 
         comicseries={comicseries} 
