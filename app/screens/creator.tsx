@@ -10,10 +10,10 @@ import { CreatorDetails, CreatorPageType } from '@/app/components/creator/Creato
 import { CreatorComics } from '@/app/components/creator/CreatorComics';
 import { HeaderBackButton, HeaderShareButton, Screen, ScreenHeader } from '@/app/components/ui';
 
-import { creatorQueryReducer, getCreatorScreen } from '@/shared/dispatch/creator';
+import { creatorQueryReducer, getCreatorScreen, creatorInitialState } from '@/shared/dispatch/creator';
 import { ComicSeries, Creator } from '@/shared/graphql/types';
 
-type ListItem =
+type CreatorListItem =
   | { type: 'screen-header'; key: string; data: { name: string } }
   | { type: 'details'; key: string; data: Creator }
   | { type: 'comics'; key: string; data: { comicseries: ComicSeries[] | null | undefined } };
@@ -25,11 +25,7 @@ export type CreatorScreenParams = {
 export function CreatorScreen() {
   const route = useRoute<NativeStackScreenProps<RootStackParamList, typeof CREATOR_SCREEN>['route']>();
   const { uuid } = route.params;
-  const [creatorQuery, creatorQueryDispatch] = useReducer(creatorQueryReducer, {
-    isLoading: true,
-    creator: null,
-    comicseries: null,
-  });
+  const [creatorQuery, creatorQueryDispatch] = useReducer(creatorQueryReducer, creatorInitialState);
 
   const { isLoading, creator, comicseries } = creatorQuery;
 
@@ -41,7 +37,7 @@ export function CreatorScreen() {
     getCreatorScreen({ publicClient, uuid }, creatorQueryDispatch);
   };
 
-  const listData = useMemo((): ListItem[] => {
+  const listData = useMemo((): CreatorListItem[] => {
     if (!creator) return [];
     return [
       { type: 'screen-header', key: 'screen-header', data: { name: creator.name || '' } },
@@ -50,7 +46,7 @@ export function CreatorScreen() {
     ];
   }, [creator, comicseries]);
 
-  const renderItem = useCallback(({ item }: { item: ListItem }) => {
+  const renderItem = useCallback(({ item }: { item: CreatorListItem }) => {
     switch (item.type) {
       case 'screen-header':
         return (

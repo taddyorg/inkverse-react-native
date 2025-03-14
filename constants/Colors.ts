@@ -25,7 +25,7 @@ export const Colors = {
     [ColorCategory.Tint]: '#ED5959',       // brand-pink
     [ColorCategory.Icon]: '#567CD6',       // taddy-blue
     [ColorCategory.NavBackground]: '#F7F7F7', // soft-white
-    [ColorCategory.Action]: '#55BC31', // action-green
+    [ColorCategory.Action]: '#ED5959', // action-green
     [ColorCategory.ActionText]: '#F7F7F7', // action-text
   },
   dark: {

@@ -7,6 +7,7 @@ import { FlashList } from '@shopify/flash-list';
 
 import { Screen, ThemedText, ThemedTextFont } from '@/app/components/ui';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
+import { ListDetails, ListPageType } from '@/app/components/list/ListDetails';
 import { Header } from '@/app/components/home/Header';
 
 import { publicClient } from '@/lib/apollo';
@@ -157,15 +158,11 @@ const MostRecommendedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSerie
 
 const CuratedLists = memo(({ lists }: { lists: List[] | null | undefined }) => {
   const renderItem: ListRenderItem<List> = useCallback(({ item, index }) => (
-    <TouchableOpacity style={styles.curatedListItem}>
-      <Image
-        source={{ uri: item.bannerImageUrl ?? '' }}
-        style={styles.curatedListImage}
-        contentFit="cover"
-        recyclingKey={item.id}
-        priority={index === 0 ? 'normal' : 'low'}
-      />
-    </TouchableOpacity>
+    <ListDetails 
+      list={item} 
+      pageType={ListPageType.FEATURED_LIST}
+      imagePriority={index === 0 ? 'normal' : 'low'}
+    />
   ), []);
 
   const keyExtractor = (item: List) => item.id;
@@ -270,17 +267,6 @@ const styles = StyleSheet.create({
   },
   horizontalComicItem: {
     marginRight: 12,
-  },
-  curatedListItem: {
-    width: 340,
-    aspectRatio: 16 / 9,
-    marginRight: 16,
-    borderRadius: 8,
-    overflow: 'hidden',
-  },
-  curatedListImage: {
-    width: '100%',
-    height: '100%',
   },
   footer: {
     marginTop: 24,

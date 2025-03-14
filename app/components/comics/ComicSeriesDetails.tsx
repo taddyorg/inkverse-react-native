@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ThemedText, ThemedTextFont, ThemedTextSize } from '../ui/ThemedText';
 import { ThemedView } from '../ui/ThemedView';
 import { CreatorDetails, CreatorPageType } from '../creator/CreatorDetails';
+import { PressableOpacity } from '../ui/PressableOpacity';
 
 import { COMICSERIES_SCREEN } from '@/constants/Navigation';
 import { ComicSeries, Genre } from '@/shared/graphql/types';
@@ -20,20 +21,19 @@ export enum ComicSeriesPageType {
   MOST_POPULAR = 'MOST_POPULAR',
   COVER = 'COVER',
   SEARCH = 'SEARCH',
-  LIST = 'LIST',
+  LIST_ITEM = 'LIST_ITEM',
 }
 
 interface ComicSeriesDetailsProps {
   comicseries: ComicSeries | null | undefined;
   pageType: ComicSeriesPageType;
   firstIssue?: any;
-  index?: number;
   isHeaderVisible?: boolean;
   onHeaderVisibilityChange?: (isVisible: boolean) => void;
   imagePriority?: 'high' | 'normal' | 'low';
 }
 
-export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, isHeaderVisible, onHeaderVisibilityChange, imagePriority }: ComicSeriesDetailsProps) {
+export function ComicSeriesDetails({ comicseries, pageType, firstIssue, isHeaderVisible, onHeaderVisibilityChange, imagePriority }: ComicSeriesDetailsProps) {
   const navigation = useNavigation();
 
   if (!comicseries) return null;
@@ -95,6 +95,32 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, index, i
             recyclingKey={comicseries.uuid}
           />
         </TouchableOpacity>
+      );
+
+    case ComicSeriesPageType.LIST_ITEM:
+      return (
+        <PressableOpacity style={styles.comicSeriesItem} onPress={handlePressForNavigation}>
+            <View style={{ flexDirection: 'row' }}>
+              <Image
+                source={getCoverImageUrl({ coverImageAsString: comicseries.coverImageAsString })}
+                style={styles.listItemImage}
+                contentFit="contain"
+                recyclingKey={comicseries.uuid}
+                priority={imagePriority}
+              />
+              <View style={styles.comicSeriesContent}>
+                <ThemedText size={ThemedTextSize.subtitle} font={ThemedTextFont.bold} style={styles.comicSeriesTitle}>{comicseries.name}</ThemedText>
+                <ThemedText style={styles.genreTextAlt2}>
+                  {formatGenres(comicseries)}
+                </ThemedText>
+                {comicseries.description && (
+                  <ThemedText style={styles.comicSeriesDescription} numberOfLines={4}>
+                    {comicseries.description}
+                  </ThemedText>
+                )}
+              </View>
+            </View>
+        </PressableOpacity>
       );
 
     case ComicSeriesPageType.COMICSERIES_SCREEN:
@@ -176,6 +202,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 8,
   },
+  genreTextAlt2: {
+    fontSize: 16,
+    marginBottom: 4,
+  },
   title: {
     marginTop: 12,
     marginBottom: 2,
@@ -255,5 +285,37 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: ThemedTextFont.bold,
     marginBottom: 8,
+  },
+  // Styles for LIST_ITEM page type
+  listItemContainer: {
+    flexDirection: 'row',
+  },
+  listItemImage: {
+    height: 200,
+    aspectRatio: 4/6,
+    borderRadius: 4,
+  },
+  comicSeriesItem: {
+    marginBottom: 20,
+  },
+  comicSeriesIndex: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  indexText: {
+    fontWeight: 'bold',
+  },
+  comicSeriesContent: {
+    flex: 1,
+    paddingHorizontal: 12,
+  },
+  comicSeriesTitle: {
+    marginBottom: 2,
+  },
+  comicSeriesDescription: {
+    fontSize: 14,
   },
 }); 
