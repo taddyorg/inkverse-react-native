@@ -6,7 +6,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { useState, useCallback, useEffect, useReducer } from 'react';
 
 import { Screen, ThemedText, ThemedTextSize, PressableOpacity, ScreenHeader } from '@/app/components/ui';
-import { Genre } from '@/shared/graphql/types';
+import { Genre, ComicSeries } from '@/shared/graphql/types';
 import { getPrettyGenre } from '@/public/genres';
 import { Colors } from '@/constants/Colors';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
@@ -57,39 +57,115 @@ type ListItem =
   | { type: 'search_bar' }
   | { type: 'tags_section' }
   | { type: 'genres_section' }
-  | { type: 'search_results', data: any[] };
+  | { type: 'search_results', data: ComicSeries[] }
+  | { type: 'load_more' };
 
-// Search bar component
-interface SearchBarProps {
-  onSearch: (text: string) => void;
-  searchText: string;
-  setSearchText: (text: string) => void;
+const LIMIT_PER_PAGE = 1;
+const SEARCH_DEBOUNCE_DELAY = 300; // ms
+
+// Custom hook for debouncing values
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
 }
 
-export function SearchScreen() {
-  const navigation = useNavigation();
+// Custom hook for search functionality
+function useSearch() {
   const [searchText, setSearchText] = useState('');
   const [showResults, setShowResults] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   
   // Set up the reducer for search state
   const [state, dispatch] = useReducer(searchQueryReducer, searchInitialState);
-  const { isSearchLoading, searchResults } = state;
+  const { isSearchLoading, isLoadingMore, searchResults } = state;
 
-  // Handle search when text changes
-  const handleSearch = useCallback((text: string) => {
-    if (text.trim().length > 0) {
+  // Debounce search text to avoid excessive API calls
+  const debouncedSearchText = useDebounce(searchText, SEARCH_DEBOUNCE_DELAY);
+
+  // Reset pagination when search text changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchText]);
+
+  // Effect to trigger search when debounced text changes
+  useEffect(() => {
+    if (debouncedSearchText.trim().length > 0) {
+      // Reset the current page when search text changes
       searchComics({
         publicClient,
-        term: text,
-        page: 1,
-        limitPerPage: 20,
-        filterForTypes: ["COMICSERIES"]
+        term: debouncedSearchText,
+        page: 1, // Always start with page 1 for new searches
+        limitPerPage: LIMIT_PER_PAGE,
+        filterForTypes: ["COMICSERIES"],
       }, dispatch);
       setShowResults(true);
     } else {
       setShowResults(false);
     }
+  }, [debouncedSearchText]);
+
+  // Handle search text change
+  const handleSearchTextChange = useCallback((text: string) => {
+    setSearchText(text);
   }, []);
+
+  // Handle loading more results
+  const handleLoadMore = useCallback(() => {
+    if (isSearchLoading || isLoadingMore) return;
+    
+    const nextPage = currentPage + 1;
+    
+    // Add a small delay before loading more results
+      searchComics({
+        publicClient,
+        term: searchText,
+        page: nextPage,
+        limitPerPage: LIMIT_PER_PAGE,
+        filterForTypes: ["COMICSERIES"],
+        isLoadingMore: true,
+      }, dispatch);
+      
+      setCurrentPage(nextPage);
+  }, [currentPage, searchText, isSearchLoading, isLoadingMore]);
+
+  return {
+    searchText,
+    setSearchText,
+    showResults,
+    currentPage,
+    state,
+    isSearchLoading,
+    isLoadingMore,
+    searchResults,
+    handleSearchTextChange,
+    handleLoadMore
+  };
+}
+
+export function SearchScreen() {
+  const navigation = useNavigation();
+  const { 
+    searchText, 
+    setSearchText, 
+    showResults, 
+    currentPage, 
+    isSearchLoading, 
+    isLoadingMore, 
+    searchResults, 
+    handleSearchTextChange, 
+    handleLoadMore 
+  } = useSearch();
 
   // Handle tag selection
   const handleTagSelect = useCallback((tag: string) => {
@@ -107,11 +183,18 @@ export function SearchScreen() {
   // Data for FlashList
   const getListData = useCallback((): ListItem[] => {
     if (showResults) {
-      return [
+      const items: ListItem[] = [
         { type: 'header' },
         { type: 'search_bar' },
         { type: 'search_results', data: searchResults }
       ];
+      
+      // Add "Load More" button if needed
+      if ( searchResults.length === LIMIT_PER_PAGE * currentPage) {
+        items.push({ type: 'load_more' });
+      }
+      
+      return items;
     }
     
     return [
@@ -120,7 +203,7 @@ export function SearchScreen() {
       { type: 'tags_section' },
       { type: 'genres_section' }
     ];
-  }, [showResults, searchResults]);
+  }, [showResults, searchResults, isSearchLoading, currentPage]);
 
   // Render item for FlashList
   const renderItem = useCallback(({ item }: { item: ListItem }) => {
@@ -131,7 +214,7 @@ export function SearchScreen() {
       case 'search_bar':
         return (
           <SearchBar 
-            onSearch={handleSearch} 
+            onSearch={handleSearchTextChange} 
             searchText={searchText} 
             setSearchText={setSearchText}
           />
@@ -170,42 +253,36 @@ export function SearchScreen() {
         );
       
       case 'search_results':
-        if (isSearchLoading) {
-          return (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={Colors.light.tint} />
-            </View>
-          );
-        }
-        
-        if (state.searchResults.length === 0) {
-          return (
-            <View style={styles.emptyContainer}>
-              <ThemedText style={styles.emptyText}>
-                No results found for "{searchText}".
-              </ThemedText>
-            </View>
-          );
-        }
-        
         return (
-          <Section title="Search Results">
-            <View style={styles.resultsContainer}>
-              {item.data.map((comicseries) => (
-                <ComicSeriesDetails 
-                  key={comicseries.uuid}
-                  comicseries={comicseries}
-                  pageType={ComicSeriesPageType.LIST_ITEM}
-                />
-              ))}
-            </View>
-          </Section>
+          <SearchResults 
+            isLoading={isSearchLoading && currentPage === 1}
+            results={searchResults}
+            searchText={searchText}
+          />
+        );
+      
+      case 'load_more':
+        return (
+          <LoadMoreButton 
+            isLoading={isLoadingMore && currentPage > 1}
+            onPress={handleLoadMore}
+          />
         );
       
       default:
         return null;
     }
-  }, [handleSearch, handleTagSelect, handleCategorySelect, isSearchLoading, searchText, searchResults]);
+  }, [
+    handleSearchTextChange, 
+    handleTagSelect, 
+    handleCategorySelect, 
+    isSearchLoading, 
+    searchText, 
+    searchResults, 
+    currentPage, 
+    handleLoadMore, 
+    isLoadingMore
+  ]);
 
   return (
     <Screen>
@@ -220,6 +297,13 @@ export function SearchScreen() {
       </View>
     </Screen>
   );
+}
+
+// Search bar component
+interface SearchBarProps {
+  onSearch: (text: string) => void;
+  searchText: string;
+  setSearchText: (text: string) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch, searchText, setSearchText }) => {
@@ -252,6 +336,70 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, searchText, setSearchTe
     </View>
   );
 };
+
+// Search Results component
+interface SearchResultsProps {
+  isLoading: boolean;
+  results: ComicSeries[];
+  searchText: string;
+}
+
+const SearchResults: React.FC<SearchResultsProps> = ({ isLoading, results, searchText }) => {
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={Colors.light.tint} />
+      </View>
+    );
+  }
+  
+  if (results.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <ThemedText style={styles.emptyText}>
+          No comics found for "{searchText}".
+        </ThemedText>
+      </View>
+    );
+  }
+  
+  return (
+    <Section title="Search Results">
+      <View style={styles.resultsContainer}>
+        {results.map((comicseries) => (
+          <ComicSeriesDetails 
+            key={comicseries.uuid}
+            comicseries={comicseries}
+            pageType={ComicSeriesPageType.LIST_ITEM}
+          />
+        ))}
+      </View>
+    </Section>
+  );
+};
+
+// Load More Button component
+interface LoadMoreButtonProps {
+  isLoading: boolean;
+  onPress: () => void;
+}
+
+const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({ isLoading, onPress }) => (
+  <View style={styles.loadMoreContainer}>
+    <PressableOpacity 
+      onPress={onPress}
+      style={styles.loadMoreButton}
+      disabled={isLoading}
+    >
+      {isLoading 
+        ? <ActivityIndicator size="small" color={Colors.light.tint} /> 
+        : <ThemedText style={styles.loadMoreText}>
+            Load More
+          </ThemedText>
+      }
+    </PressableOpacity>
+  </View>
+);
 
 interface SelectableItemProps {
   label: string;
@@ -391,5 +539,22 @@ const styles = StyleSheet.create({
   },
   resultsContainer: {
     marginTop: 8,
-  }
+  },
+  loadMoreContainer: {
+    padding: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadMoreButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    backgroundColor: Colors.light.tint + '20',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: Colors.light.tint + '40',
+  },
+  loadMoreText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
