@@ -60,7 +60,7 @@ type ListItem =
   | { type: 'search_results', data: ComicSeries[] }
   | { type: 'load_more' };
 
-const LIMIT_PER_PAGE = 1;
+const LIMIT_PER_PAGE = 15;
 const SEARCH_DEBOUNCE_DELAY = 300; // ms
 
 // Custom hook for search functionality
@@ -118,7 +118,7 @@ function useSearch() {
     }, dispatch);
     
     setCurrentPage(nextPage);
-  }, [currentPage, searchText, isSearchLoading, isLoadingMore]);
+  }, [currentPage, searchText, isSearchLoading, isLoadingMore, dispatch]);
 
   return {
     searchText,
@@ -171,7 +171,7 @@ export function SearchScreen() {
       ];
       
       // Add "Load More" button if needed
-      if ( searchResults.length === LIMIT_PER_PAGE * currentPage) {
+      if (isLoadingMore || (!isSearchLoading && searchResults.length > 0 && searchResults.length === LIMIT_PER_PAGE * currentPage)) {
         items.push({ type: 'load_more' });
       }
       
@@ -184,7 +184,7 @@ export function SearchScreen() {
       { type: 'tags_section' },
       { type: 'genres_section' }
     ];
-  }, [showResults, searchResults, isSearchLoading, currentPage]);
+  }, [showResults, searchResults, isSearchLoading, isLoadingMore, currentPage]);
 
   // Render item for FlashList
   const renderItem = useCallback(({ item }: { item: ListItem }) => {
@@ -245,7 +245,7 @@ export function SearchScreen() {
       case 'load_more':
         return (
           <LoadMoreButton 
-            isLoading={isLoadingMore && currentPage > 1}
+            isLoading={isLoadingMore}
             onPress={handleLoadMore}
           />
         );
@@ -256,13 +256,13 @@ export function SearchScreen() {
   }, [
     handleSearchTextChange, 
     handleTagSelect, 
-    handleCategorySelect, 
+    handleCategorySelect,
+    handleLoadMore, 
     isSearchLoading, 
+    isLoadingMore,
     searchText, 
     searchResults, 
-    currentPage, 
-    handleLoadMore, 
-    isLoadingMore
+    currentPage,
   ]);
 
   return (
