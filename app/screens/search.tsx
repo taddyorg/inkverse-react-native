@@ -11,7 +11,7 @@ import { getPrettyGenre } from '@/public/genres';
 import { Colors } from '@/constants/Colors';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
 import { publicClient } from '@/lib/apollo';
-import { searchQueryReducer, searchInitialState, searchComics } from '@/shared/dispatch/search';
+import { searchQueryReducer, searchInitialState, searchComics, debouncedSearchComics } from '@/shared/dispatch/search';
 
 // Popular webtoon tags
 const POPULAR_TAGS = [
@@ -63,23 +63,6 @@ type ListItem =
 const LIMIT_PER_PAGE = 1;
 const SEARCH_DEBOUNCE_DELAY = 300; // ms
 
-// Custom hook for debouncing values
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
-
 // Custom hook for search functionality
 function useSearch() {
   const [searchText, setSearchText] = useState('');
@@ -90,30 +73,27 @@ function useSearch() {
   const [state, dispatch] = useReducer(searchQueryReducer, searchInitialState);
   const { isSearchLoading, isLoadingMore, searchResults } = state;
 
-  // Debounce search text to avoid excessive API calls
-  const debouncedSearchText = useDebounce(searchText, SEARCH_DEBOUNCE_DELAY);
-
   // Reset pagination when search text changes
   useEffect(() => {
     setCurrentPage(1);
   }, [searchText]);
 
-  // Effect to trigger search when debounced text changes
+  // Effect to trigger search when search text changes
   useEffect(() => {
-    if (debouncedSearchText.trim().length > 0) {
-      // Reset the current page when search text changes
-      searchComics({
+    if (searchText.trim().length > 0) {
+      // Use the debounced search function that shows loading state immediately
+      debouncedSearchComics({
         publicClient,
-        term: debouncedSearchText,
+        term: searchText,
         page: 1, // Always start with page 1 for new searches
         limitPerPage: LIMIT_PER_PAGE,
         filterForTypes: ["COMICSERIES"],
-      }, dispatch);
+      }, dispatch, SEARCH_DEBOUNCE_DELAY);
       setShowResults(true);
     } else {
       setShowResults(false);
     }
-  }, [debouncedSearchText]);
+  }, [searchText]);
 
   // Handle search text change
   const handleSearchTextChange = useCallback((text: string) => {
@@ -126,17 +106,18 @@ function useSearch() {
     
     const nextPage = currentPage + 1;
     
-    // Add a small delay before loading more results
-      searchComics({
-        publicClient,
-        term: searchText,
-        page: nextPage,
-        limitPerPage: LIMIT_PER_PAGE,
-        filterForTypes: ["COMICSERIES"],
-        isLoadingMore: true,
-      }, dispatch);
-      
-      setCurrentPage(nextPage);
+    // For loading more, we can use the regular searchComics function
+    // since we want the API call to happen immediately
+    searchComics({
+      publicClient,
+      term: searchText,
+      page: nextPage,
+      limitPerPage: LIMIT_PER_PAGE,
+      filterForTypes: ["COMICSERIES"],
+      isLoadingMore: true,
+    }, dispatch);
+    
+    setCurrentPage(nextPage);
   }, [currentPage, searchText, isSearchLoading, isLoadingMore]);
 
   return {
