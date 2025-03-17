@@ -1,7 +1,6 @@
 import { useReducer, useState, useCallback, useEffect, memo, useRef } from 'react';
 import { StyleSheet, TouchableOpacity, View, RefreshControl, ActivityIndicator, FlatList, ListRenderItem } from 'react-native';
-import { useScrollToTop } from '@react-navigation/native';
-import { Image } from 'expo-image';
+import { useNavigation, useScrollToTop } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { FlashList } from '@shopify/flash-list';
 
@@ -9,6 +8,7 @@ import { Screen, ThemedText, ThemedTextFont } from '@/app/components/ui';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
 import { ListDetails, ListPageType } from '@/app/components/list/ListDetails';
 import { Header } from '@/app/components/home/Header';
+import { BLOG_SCREEN } from '@/constants/Navigation';
 
 import { publicClient } from '@/lib/apollo';
 import { ComicSeries, List } from '@/shared/graphql/types';
@@ -21,7 +21,19 @@ type SectionType =
   | { type: 'mostRecommended'; data: ComicSeries[] | null | undefined }
   | { type: 'curatedLists'; data: List[] | null | undefined }
   | { type: 'recentlyUpdated'; data: ComicSeries[] | null | undefined }
-  | { type: 'recentlyAdded'; data: ComicSeries[] | null | undefined };
+  | { type: 'recentlyAdded'; data: ComicSeries[] | null | undefined }
+  | { type: 'inkverseNews'; data: NewsItem[] | null | undefined }
+
+// Define the NewsItem type
+interface NewsItem {
+  title: string;
+  url: string;
+}
+
+// Define inkverseNewsItems with example data
+const inkverseNewsItems: NewsItem[] = [
+  { title: 'We just launched the new Inkverse apps! 🎉', url: 'http://inkverse.co/blog/best-girls-love-webtoons-to-read' },
+];
 
 export function HomeScreen() {
   const [homeScreenState, dispatch] = useReducer(homefeedQueryReducerDefault, homeScreenInitialState);
@@ -53,6 +65,7 @@ export function HomeScreen() {
       { type: 'featured', data: featuredComicSeries },
       { type: 'mostRecommended', data: mostPopularComicSeries },
       { type: 'curatedLists', data: curatedLists },
+      { type: 'inkverseNews', data: inkverseNewsItems },
       { type: 'recentlyUpdated', data: recentlyUpdatedComicSeries },
       { type: 'recentlyAdded', data: recentlyAddedComicSeries },
     ];
@@ -62,7 +75,8 @@ export function HomeScreen() {
     mostPopularComicSeries, 
     curatedLists, 
     recentlyUpdatedComicSeries, 
-    recentlyAddedComicSeries
+    recentlyAddedComicSeries,
+    inkverseNewsItems
   ]);
 
   // Render each section type
@@ -80,6 +94,8 @@ export function HomeScreen() {
         return <RecentlyUpdatedWebtoons comicSeries={item.data} />;
       case 'recentlyAdded':
         return <RecentlyAddedWebtoons comicSeries={item.data} />;
+      case 'inkverseNews':
+        return <InkverseNews newsItems={item.data} />;
       default:
         return null;
     }
@@ -238,6 +254,36 @@ const RecentlyAddedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[
   );
 });
 
+const InkverseNews = memo(({ newsItems }: { newsItems: NewsItem[] | null | undefined }) => {
+  const navigation = useNavigation();
+
+  const renderItem: ListRenderItem<NewsItem> = useCallback(({ item }) => (
+    <TouchableOpacity 
+      style={styles.newsItemContainer}
+      onPress={() => navigation.navigate(BLOG_SCREEN, { url: item.url })}
+    >
+      <ThemedText style={styles.newsTitle}>{item.title}</ThemedText>
+    </TouchableOpacity>
+  ), [navigation]);
+
+  const keyExtractor = useCallback((item: NewsItem) => item.url, []);
+
+  return (
+    <View style={styles.section}>
+      <ThemedText style={styles.sectionTitle}>Inkverse News</ThemedText>
+      <FlatList
+        data={newsItems}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.horizontalScroll}
+        contentContainerStyle={styles.newsListContent}
+      />
+    </View>
+  );
+});
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -255,7 +301,7 @@ const styles = StyleSheet.create({
     lineHeight: 24,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 22,
@@ -300,5 +346,27 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  newsTitle: {
+    fontSize: 16,
+    fontFamily: ThemedTextFont.bold,
+    lineHeight: 22,
+  },
+  newsItemContainer: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginRight: 12,
+    width: 280,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#EEEEEE',
+  },
+  newsListContent: {
+    paddingRight: 16,
   },
 }); 

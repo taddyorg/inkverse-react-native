@@ -22,6 +22,7 @@ export enum ComicSeriesPageType {
   COVER = 'COVER',
   SEARCH = 'SEARCH',
   LIST_ITEM = 'LIST_ITEM',
+  GRID_ITEM = 'GRID_ITEM',
 }
 
 interface ComicSeriesDetailsProps {
@@ -121,6 +122,19 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, isHeader
               </View>
             </View>
         </PressableOpacity>
+      );
+
+    case ComicSeriesPageType.GRID_ITEM:
+      return (
+        <View style={styles.gridItemContainer}>
+          <Image
+            source={getCoverImageUrl({ coverImageAsString: comicseries.coverImageAsString })}
+            style={styles.gridItemImage}
+            contentFit="cover"
+            recyclingKey={comicseries.uuid}
+            priority={imagePriority || 'normal'}
+          />
+        </View>
       );
 
     case ComicSeriesPageType.COMICSERIES_SCREEN:
@@ -275,7 +289,7 @@ const styles = StyleSheet.create({
   popularImage: {
     height: 128,
     aspectRatio: 1,
-    borderRadius: 4,
+    borderRadius: 8,
   },
   popularContent: {
     flex: 1,
@@ -317,5 +331,20 @@ const styles = StyleSheet.create({
   },
   comicSeriesDescription: {
     fontSize: 14,
+  },
+  gridItemContainer: {
+    flex: 1,
+  },
+  gridItemImage: {
+    width: '100%',
+    aspectRatio: 2/3,
+    borderRadius: 8,
+  },
+  gridItemContent: {
+    padding: 4,
+    paddingTop: 6,
+  },
+  gridItemTitle: {
+    textAlign: 'center',
   },
 }); 

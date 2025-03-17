@@ -12,6 +12,8 @@ import { Colors } from '@/constants/Colors';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
 import { publicClient } from '@/lib/apollo';
 import { searchQueryReducer, searchInitialState, searchComics, debouncedSearchComics } from '@/shared/dispatch/search';
+import { COMICS_LIST_SCREEN } from '@/constants/Navigation';
+import { ComicsListPageType } from '@/app/screens/comicslist';
 
 // Popular webtoon tags
 const POPULAR_TAGS = [
@@ -150,16 +152,19 @@ export function SearchScreen() {
 
   // Handle tag selection
   const handleTagSelect = useCallback((tag: string) => {
-    // navigation.navigate('Search', {
-    //   term: tag,
-    //   filterForTags: [tag]
-    // });
-  }, []);
+    navigation.navigate(COMICS_LIST_SCREEN, {
+      pageType: ComicsListPageType.TAG,
+      value: tag,
+    });
+  }, [navigation]);
 
   // Handle category selection
   const handleCategorySelect = useCallback((category: string) => {
-    // navigation.navigate
-  }, []);
+    navigation.navigate(COMICS_LIST_SCREEN, {
+      pageType: ComicsListPageType.GENRE,
+      value: category,
+    });
+  }, [navigation]);
 
   // Data for FlashList
   const getListData = useCallback((): ListItem[] => {

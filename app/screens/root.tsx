@@ -17,9 +17,11 @@ import { ComicIssueScreen } from './comicissue';
 import { CreatorScreen } from './creator';
 import { SettingsScreen } from './settings';
 import { ListScreen } from './list';
+import { ComicsListScreen } from './comicslist';
+import { BlogScreen } from './blog';
 import { AppLoaderProvider } from '../components/providers/AppLoaderProvider';
 
-import { HOME_TAB, SEARCH_TAB, PROFILE_TAB, HOME_SCREEN, SEARCH_SCREEN, PROFILE_SCREEN, COMICSERIES_SCREEN, COMICISSUE_SCREEN, CREATOR_SCREEN, SETTINGS_SCREEN, LIST_SCREEN } from '../../constants/Navigation';
+import { HOME_TAB, SEARCH_TAB, PROFILE_TAB, HOME_SCREEN, SEARCH_SCREEN, PROFILE_SCREEN, COMICSERIES_SCREEN, COMICISSUE_SCREEN, CREATOR_SCREEN, SETTINGS_SCREEN, LIST_SCREEN, COMICS_LIST_SCREEN, BLOG_SCREEN } from '../../constants/Navigation';
 import { Colors } from '../../constants/Colors';
 
 Sentry.init({
@@ -74,6 +76,15 @@ const listScreenConfig = {
   }
 };
 
+const comicsListScreenConfig = {
+  name: COMICS_LIST_SCREEN,
+  component: ComicsListScreen,
+  options: {
+    title: '',
+    headerShown: false,
+  }
+};
+
 const stackScreenOptions = {
   ...Platform.select({
     android: {
@@ -98,6 +109,7 @@ function HomeStack() {
       <Stack.Screen {...comicIssueScreenConfig} />
       <Stack.Screen {...creatorScreenConfig} />
       <Stack.Screen {...listScreenConfig} />
+      <Stack.Screen {...comicsListScreenConfig} />
     </Stack.Navigator>
   );
 }
@@ -116,6 +128,7 @@ function SearchStack() {
       <Stack.Screen {...comicSeriesScreenConfig} />
       <Stack.Screen {...comicIssueScreenConfig} />
       <Stack.Screen {...creatorScreenConfig} />
+      <Stack.Screen {...comicsListScreenConfig} />
     </Stack.Navigator>
   );
 }
@@ -135,6 +148,7 @@ function ProfileStack() {
       <Stack.Screen {...comicIssueScreenConfig} />
       <Stack.Screen {...creatorScreenConfig} />
       <Stack.Screen {...settingsScreenConfig} />
+      <Stack.Screen {...comicsListScreenConfig} />
     </Stack.Navigator>
   );
 }
@@ -251,7 +265,21 @@ function App() {
             // },
           }}
         >
-          <RootStack />
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Main" component={RootStack} />
+            <Stack.Screen 
+              name={BLOG_SCREEN} 
+              component={BlogScreen}
+              options={{
+                presentation: 'modal' as const,
+                animation: 'slide_from_bottom' as const,
+                gestureEnabled: true,
+                gestureDirection: 'vertical' as const,
+                fullScreenGestureEnabled: true,
+                contentStyle: { backgroundColor: 'white' },
+              }}
+            />
+          </Stack.Navigator>
         </PostHogProvider>
       </NavigationContainer>
     </AppLoaderProvider>

@@ -1,0 +1,128 @@
+import React, { useState, useCallback, useRef } from 'react';
+import { StyleSheet, View, ActivityIndicator, BackHandler, SafeAreaView, StatusBar, Platform } from 'react-native';
+import { WebView } from 'react-native-webview';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useRoute, useFocusEffect, useNavigation } from '@react-navigation/native';
+
+import { RootStackParamList, BLOG_SCREEN } from '@/constants/Navigation';
+import { HeaderBackButton } from '@/app/components/ui';
+
+export type BlogScreenParams = {
+  url: string;
+  title?: string;
+};
+
+export function BlogScreen() {
+  const route = useRoute<NativeStackScreenProps<RootStackParamList, typeof BLOG_SCREEN>['route']>();
+  const navigation = useNavigation();
+  const { url } = route.params;
+  const [canGoBack, setCanGoBack] = useState(false);
+  const webViewRef = useRef<WebView>(null);
+
+  // Handle hardware back button
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (canGoBack && webViewRef.current) {
+          webViewRef.current.goBack();
+          return true;
+        }
+        return false;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [canGoBack])
+  );
+
+  const handleBackPress = useCallback(() => {
+    if (canGoBack && webViewRef.current) {
+      webViewRef.current.goBack();
+    } else {
+      navigation.goBack();
+    }
+  }, [canGoBack, navigation]);
+
+  return (
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <View style={styles.header}>
+        <HeaderBackButton onPress={handleBackPress} />
+      </View>
+      <WebView
+        ref={webViewRef}
+        source={{ uri: url }}
+        style={styles.webView}
+        onNavigationStateChange={(navState) => setCanGoBack(navState.canGoBack)}
+        javaScriptEnabled={true}
+        domStorageEnabled={true}
+        startInLoadingState={true}
+        renderLoading={() => (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        )}
+        originWhitelist={['*']}
+        decelerationRate="normal"
+        allowsBackForwardNavigationGestures={true}
+        bounces={true}
+        scrollEnabled={true}
+        showsVerticalScrollIndicator={true}
+        cacheEnabled={true}
+        overScrollMode="always"
+        automaticallyAdjustContentInsets={true}
+        scalesPageToFit={true}
+        mixedContentMode="compatibility"
+        injectedJavaScript={`
+          (function() {
+            function waitForPageLoad() {
+              if (document.readyState === 'complete') {
+                // Ensure content is scrollable
+                document.body.style.overflow = 'auto';
+                document.documentElement.style.overflow = 'auto';
+                
+                // Fix for potential fixed positioning issues
+                const fixedElements = document.querySelectorAll('*[style*="position: fixed"], *[style*="position:fixed"]');
+                fixedElements.forEach(el => {
+                  if (el.tagName !== 'HEADER' && el.tagName !== 'NAV') {
+                    el.style.position = 'absolute';
+                  }
+                });
+              } else {
+                setTimeout(waitForPageLoad, 100);
+              }
+            }
+            waitForPageLoad();
+          })();
+        `}
+        nestedScrollEnabled={true}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  webView: {
+    flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+}); 
