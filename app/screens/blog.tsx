@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { StyleSheet, View, ActivityIndicator, BackHandler, SafeAreaView, StatusBar, Platform } from 'react-native';
+import { StyleSheet, View, ActivityIndicator, BackHandler, StatusBar } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useRoute, useFocusEffect, useNavigation } from '@react-navigation/native';
@@ -54,24 +54,13 @@ export function BlogScreen() {
         source={{ uri: url }}
         style={styles.webView}
         onNavigationStateChange={(navState) => setCanGoBack(navState.canGoBack)}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        startInLoadingState={true}
         renderLoading={() => (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color="#0000ff" />
           </View>
         )}
-        originWhitelist={['*']}
-        decelerationRate="normal"
+        originWhitelist={['https://']}
         allowsBackForwardNavigationGestures={true}
-        bounces={true}
-        scrollEnabled={true}
-        showsVerticalScrollIndicator={true}
-        cacheEnabled={true}
-        overScrollMode="always"
-        automaticallyAdjustContentInsets={true}
-        scalesPageToFit={true}
         mixedContentMode="compatibility"
         injectedJavaScript={`
           (function() {

@@ -13,6 +13,7 @@ import { BLOG_SCREEN } from '@/constants/Navigation';
 import { publicClient } from '@/lib/apollo';
 import { ComicSeries, List } from '@/shared/graphql/types';
 import { loadHomeScreen, homefeedQueryReducerDefault, homeScreenInitialState } from '@/shared/dispatch/homefeed';
+import { NewsItem, inkverseNewsItems } from '@/public/news-items';
 
 // Section types for FlashList
 type SectionType = 
@@ -23,17 +24,6 @@ type SectionType =
   | { type: 'recentlyUpdated'; data: ComicSeries[] | null | undefined }
   | { type: 'recentlyAdded'; data: ComicSeries[] | null | undefined }
   | { type: 'inkverseNews'; data: NewsItem[] | null | undefined }
-
-// Define the NewsItem type
-interface NewsItem {
-  title: string;
-  url: string;
-}
-
-// Define inkverseNewsItems with example data
-const inkverseNewsItems: NewsItem[] = [
-  { title: 'We just launched the new Inkverse apps! 🎉', url: 'http://inkverse.co/blog/best-girls-love-webtoons-to-read' },
-];
 
 export function HomeScreen() {
   const [homeScreenState, dispatch] = useReducer(homefeedQueryReducerDefault, homeScreenInitialState);
