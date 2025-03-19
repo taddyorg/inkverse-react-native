@@ -4,7 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import { useState, useCallback, useEffect, useReducer } from 'react';
 
-import { Screen, ThemedText, ThemedTextSize, PressableOpacity, ScreenHeader, HeaderBackButton, ThemedActivityIndicator } from '@/app/components/ui';
+import { Screen, ThemedText, PressableOpacity, ScreenHeader, HeaderBackButton, ThemedActivityIndicator } from '@/app/components/ui';
 import { ComicSeries, Genre } from '@/shared/graphql/types';
 import { Colors } from '@/constants/Colors';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
@@ -100,7 +100,7 @@ export function ComicsListScreen() {
     <View style={styles.headerContainer}>
       <ScreenHeader />
       <HeaderBackButton />
-      <ThemedText size={ThemedTextSize.title} style={styles.title}>
+      <ThemedText size='title' style={styles.title}>
         {title}
       </ThemedText>
     </View>

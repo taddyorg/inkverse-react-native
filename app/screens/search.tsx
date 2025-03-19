@@ -5,7 +5,7 @@ import { FlashList } from '@shopify/flash-list';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useState, useCallback, useEffect, useReducer } from 'react';
 
-import { Screen, ThemedText, ThemedTextSize, PressableOpacity, ScreenHeader, ThemedActivityIndicator, ThemedActivityIndicatorSize } from '@/app/components/ui';
+import { Screen, ThemedText, PressableOpacity, ScreenHeader, ThemedActivityIndicator } from '@/app/components/ui';
 import { Genre, ComicSeries } from '@/shared/graphql/types';
 import { getPrettyGenre } from '@/public/genres';
 import { Colors } from '@/constants/Colors';
@@ -378,7 +378,7 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({ isLoading, onPress }) =
       disabled={isLoading}
     >
       {isLoading 
-        ? <ThemedActivityIndicator size={ThemedActivityIndicatorSize.small} /> 
+        ? <ThemedActivityIndicator size='small' /> 
         : <ThemedText style={styles.loadMoreText}>
             Load More
           </ThemedText>
@@ -419,7 +419,7 @@ interface SectionProps {
 
 const Section: React.FC<SectionProps> = ({ title, children }) => (
   <View style={styles.section}>
-    <ThemedText size={ThemedTextSize.subtitle} style={styles.sectionTitle}>
+    <ThemedText size='subtitle' style={styles.sectionTitle}>
       {title}
     </ThemedText>
     {children}

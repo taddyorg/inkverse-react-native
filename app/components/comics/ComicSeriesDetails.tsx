@@ -9,7 +9,6 @@ import { CreatorDetails, CreatorPageType } from '../creator/CreatorDetails';
 import { COMICSERIES_SCREEN } from '@/constants/Navigation';
 import { ComicSeries, ContentRating, Genre } from '@/shared/graphql/types';
 import { getBannerImageUrl, getCoverImageUrl, getThumbnailImageUrl } from '@/public/comicseries';
-import { ComicSeriesImageVariant } from '@/public/comicseries';
 import { getPrettyGenre } from '@/public/genres';
 import { getPrettyRating } from '@/public/ratings';
 import { Colors } from '@/constants/Colors';
@@ -76,7 +75,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, isHeader
       return (
         <TouchableOpacity onPress={handlePressForNavigation} style={styles.featuredContainer}>
           <Image
-            source={getBannerImageUrl({ bannerImageAsString: comicseries.bannerImageAsString, variant: ComicSeriesImageVariant.LARGE })}
+            source={getBannerImageUrl({ bannerImageAsString: comicseries.bannerImageAsString, variant: "large" })}
             style={styles.featuredImage}
             contentFit="cover"
             recyclingKey={comicseries.uuid}

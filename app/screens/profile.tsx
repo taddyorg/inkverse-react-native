@@ -3,7 +3,7 @@ import { StyleSheet, Image } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useNavigation } from '@react-navigation/native';
 
-import { Screen, ThemedView, ThemedText, ThemedTextSize, ThemeButton } from '@/app/components/ui';
+import { Screen, ThemedView, ThemedText, ThemedButton } from '@/app/components/ui';
 import { HeaderSettingsButton } from '@/app/components/profile/HeaderSettingsButton'
 import { SETTINGS_SCREEN } from '@/constants/Navigation';
 
@@ -39,13 +39,13 @@ export function ProfileScreen() {
         <ThemedView style={styles.emptyStateContainer}>
           <Image source={require('@/assets/images/unlock-profile.png')} style={styles.emptyStateImage}/>
           <ThemedView style={styles.emptyStateContent}>
-            <ThemedText size={ThemedTextSize.title} style={styles.heading}>
+            <ThemedText size='title' style={styles.heading}>
               Unlock Your Profile!
             </ThemedText>
             <ThemedText style={styles.subheading}>
               Create your profile to start saving your favorite webtoons and tracking your reading history!
             </ThemedText>
-            <ThemeButton 
+            <ThemedButton 
               buttonText="Get Started"
               style={styles.ctaButton}
               onPress={() => console.log('CTA pressed')}
