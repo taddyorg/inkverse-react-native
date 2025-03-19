@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
 
-import { ThemedText, ThemedTextSize, PressableOpacity, ThemedTextFont } from '@/app/components/ui';
+import { ThemedText, ThemedTextFontFamilyMap, PressableOpacity } from '@/app/components/ui';
 import { ComicIssue, ComicSeries } from '@/shared/graphql/types';
 import { prettyFormattedDate, prettyFormattedFreeInDays } from '@/shared/utils/date';
 import { ColorCategory, Colors, useThemeColor } from '@/constants/Colors';
@@ -70,7 +70,7 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCu
           </View>
           <View style={styles.episodeItemContent}>
             <ThemedText 
-              size={ThemedTextSize.title}
+              size="title"
               style={[
                 styles.episodeName,
                 isCurrentIssue && { color: actionTextColor }
@@ -114,7 +114,7 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCu
           </View>
           <ThemedText style={[
             styles.episodeNumber,
-            isCurrentIssue && { color: actionTextColor, fontFamily: ThemedTextFont.bold }
+            isCurrentIssue && { color: actionTextColor, fontFamily: ThemedTextFontFamilyMap.bold }
           ]}>#{position + 1}</ThemedText>
         </View>
       </View>

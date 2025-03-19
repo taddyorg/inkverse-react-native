@@ -2,11 +2,7 @@ import React, { ReactNode } from 'react';
 import { View, ViewStyle } from 'react-native';
 import { useThemeColor, ColorCategory } from '@/constants/Colors';
 
-export enum ThemedIconSize {
-  small = 'small',
-  medium = 'medium',
-  large = 'large',
-}
+type ThemedIconSize = 'small' | 'medium' | 'large';
 
 export type ThemedIconProps = {
   children: ReactNode;
@@ -25,7 +21,7 @@ export function ThemedIcon({
   children,
   passedInLightColor,
   passedInDarkColor,
-  size = ThemedIconSize.medium,
+  size = 'medium',
   style,
 }: ThemedIconProps) {
   const color = useThemeColor(
@@ -49,21 +45,21 @@ export function ThemedIcon({
 }
 
 const styles: Record<ThemedIconSize, IconSizeStyle> = {
-  [ThemedIconSize.small]: {
+  small: {
     container: {
       alignItems: 'center',
       justifyContent: 'center',
     },
     size: 16,
   },
-  [ThemedIconSize.medium]: {
+  medium: {
     container: {
       alignItems: 'center',
       justifyContent: 'center',
     },
     size: 24,
   },
-  [ThemedIconSize.large]: {
+  large: {
     container: {
       alignItems: 'center',
       justifyContent: 'center',

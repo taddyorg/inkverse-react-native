@@ -3,7 +3,7 @@ import { Animated, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { ThemedText, ThemedTextFont, PressableOpacity } from '../ui';
+import { ThemedText, ThemedTextFontFamilyMap, PressableOpacity } from '../ui';
 import { showShareSheet } from '@/lib/share-sheet';
 
 const HEADER_HEIGHT = 128;
@@ -31,7 +31,7 @@ export function ComicHeader({ headerPosition, comicseries, comicissue }: ComicHe
               style={styles.comicTitle} 
               ellipsizeMode="tail" 
               numberOfLines={1}
-              font={ThemedTextFont.semiBold}
+              font="semiBold"
             >
               {comicseries.name}
             </ThemedText>
@@ -41,7 +41,7 @@ export function ComicHeader({ headerPosition, comicseries, comicissue }: ComicHe
               style={styles.episodeTitle} 
               ellipsizeMode='tail' 
               numberOfLines={1}
-              font={ThemedTextFont.semiBold}
+              font="semiBold"
             >
               {comicissue.name}
             </ThemedText>

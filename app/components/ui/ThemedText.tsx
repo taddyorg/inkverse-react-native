@@ -2,16 +2,13 @@ import { Text, type TextProps, StyleSheet } from 'react-native';
 
 import { ColorCategory, useThemeColor } from '@/constants/Colors';
 
-export enum ThemedTextSize {
-  default = 'default',
-  title = 'title',
-  subtitle = 'subtitle',
-}
+type ThemedTextSize = 'default' | 'title' | 'subtitle';
+type ThemedTextFont = 'regular' | 'semiBold' | 'bold';
 
-export enum ThemedTextFont {
-  regular = 'SourceSans3-Regular',
-  semiBold = 'SourceSans3-SemiBold',
-  bold = 'SourceSans3-Bold',
+export const ThemedTextFontFamilyMap = {
+  regular: 'SourceSans3-Regular',
+  semiBold: 'SourceSans3-SemiBold',
+  bold: 'SourceSans3-Bold',
 }
 
 export type ThemedTextProps = TextProps & {
@@ -25,8 +22,8 @@ export function ThemedText({
   style,
   passedInLightColor,
   passedInDarkColor,
-  size = ThemedTextSize.default,
-  font = ThemedTextFont.regular,
+  size = 'default',
+  font = 'regular',
   ...rest
 }: ThemedTextProps) {
   const color = useThemeColor({ light: passedInLightColor, dark: passedInDarkColor }, ColorCategory.Text);
@@ -35,7 +32,7 @@ export function ThemedText({
     <Text
       style={[
         { color },
-        { fontFamily: font },
+        { fontFamily: ThemedTextFontFamilyMap[font] },
         styles[size],
         style,
       ]}
@@ -47,15 +44,15 @@ export function ThemedText({
 const styles = StyleSheet.create({
   default: {
     fontSize: 16,
-    fontFamily: ThemedTextFont.regular,
+    fontFamily: ThemedTextFontFamilyMap.regular,
   },
   title: {
     fontSize: 28,
-    fontFamily: ThemedTextFont.bold,
+    fontFamily: ThemedTextFontFamilyMap.bold,
   },
   subtitle: {
     fontSize: 20,
     fontWeight: '500',
-    fontFamily: ThemedTextFont.semiBold,
+    fontFamily: ThemedTextFontFamilyMap.semiBold,
   },
 });

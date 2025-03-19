@@ -7,7 +7,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { Image } from 'expo-image';
 
-import { PressableOpacity, Screen, ScreenHeader, ThemedView, ThemedText, ThemedIcon, ThemedIconSize, HeaderBackButton } from '../components/ui';
+import { PressableOpacity, Screen, ScreenHeader, ThemedView, ThemedText, ThemedIcon, HeaderBackButton } from '../components/ui';
 import { Colors } from '@/constants/Colors';
 import { openURL, openEmail } from '@/lib/utils';
 
@@ -210,7 +210,7 @@ export function SettingsScreen() {
             <ThemedText style={styles.settingText} numberOfLines={1}>
               {item.name}
             </ThemedText>
-            <ThemedIcon size={ThemedIconSize.small} style={styles.chevronIcon}>
+            <ThemedIcon size="small" style={styles.chevronIcon}>
               <FontAwesome5 name="chevron-right" />
             </ThemedIcon>
           </ThemedView>
@@ -246,7 +246,7 @@ export function SettingsScreen() {
                   <ThemedText style={styles.supportCardText}>
                     {item.name}
                   </ThemedText>
-                  <ThemedIcon size={ThemedIconSize.small} style={styles.supportCardArrow}>
+                  <ThemedIcon size="small" style={styles.supportCardArrow}>
                     <FontAwesome5 name="arrow-right" />
                   </ThemedIcon>
                 </ThemedView>

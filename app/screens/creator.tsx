@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useMemo, useCallback, memo } from 'react';
-import { RefreshControl, ActivityIndicator, StyleSheet, View } from 'react-native';
+import { RefreshControl, StyleSheet, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlashList } from '@shopify/flash-list';
 import { useRoute } from '@react-navigation/native';
@@ -8,7 +8,7 @@ import { publicClient } from '@/lib/apollo';
 
 import { CreatorDetails, CreatorPageType } from '@/app/components/creator/CreatorDetails';
 import { CreatorComics } from '@/app/components/creator/CreatorComics';
-import { HeaderBackButton, HeaderShareButton, Screen, ScreenHeader } from '@/app/components/ui';
+import { HeaderBackButton, HeaderShareButton, Screen, ScreenHeader, ThemedActivityIndicator } from '@/app/components/ui';
 
 import { creatorQueryReducer, getCreatorScreen, creatorInitialState } from '@/shared/dispatch/creator';
 import { ComicSeries, Creator } from '@/shared/graphql/types';
@@ -73,7 +73,9 @@ export function CreatorScreen() {
   if (isLoading || !creator) {
     return (
       <CreatorScreenWrapper creator={creator}>
-        <ActivityIndicator size="large" />
+        <View style={styles.loadingContainer}>
+          <ThemedActivityIndicator />
+        </View>
       </CreatorScreenWrapper>
     );
   }

@@ -4,8 +4,8 @@ import { FlashList } from '@shopify/flash-list';
 import { Image } from 'expo-image';
 
 import { Colors } from '@/constants/Colors';
-import { ThemedText, ThemedTextSize } from '../ui';
-import { ComicIssue, ComicSeries, Creator } from '@/shared/graphql/types';
+import { ThemedText } from '../ui';
+import { ComicIssue, ComicSeries } from '@/shared/graphql/types';
 import { ComicIssueDetails } from './ComicIssueDetails';
 
 export interface ComicIssuesListProps {
@@ -44,7 +44,7 @@ export const ComicIssuesList = (props: ComicIssuesListProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.sectionHeader}>
-        <ThemedText size={ThemedTextSize.subtitle}>{'Episodes'}</ThemedText>
+        <ThemedText size="subtitle">{'Episodes'}</ThemedText>
       </View>
       <View style={styles.flashListContainer}>
         <FlashList

@@ -1,28 +1,28 @@
 import { Logo } from "./Logo"
 import { Screen } from "./Screen"
 import { ScreenHeader } from "./ScreenHeader"
-import { ThemedText, ThemedTextSize, ThemedTextFont } from "./ThemedText"
+import { ThemedText, ThemedTextFontFamilyMap } from "./ThemedText"
 import { ThemedView } from "./ThemedView"
-import { ThemeButton } from "./ThemeButton"
+import { ThemedButton } from "./ThemedButton"
 import { PressableOpacity } from "./PressableOpacity"
 import { HeaderBackButton } from "./HeaderBackButton"
 import { HeaderShareButton } from "./HeaderShareButton"
-import { ThemedIcon, ThemedIconSize } from "./ThemedIcon"
+import { ThemedIcon } from "./ThemedIcon"
 import { ScrollIndicator } from "./ScrollIndicator"
+import { ThemedActivityIndicator } from "./ThemedActivityIndicator"
 
 export { 
     Logo,
     Screen, 
     ScreenHeader,
     ThemedText, 
-    ThemedTextSize,
-    ThemedTextFont,
+    ThemedTextFontFamilyMap,
     ThemedView,
-    ThemeButton,
+    ThemedButton,
     PressableOpacity,
     HeaderBackButton,
     HeaderShareButton,
     ThemedIcon,
-    ThemedIconSize,
     ScrollIndicator,
+    ThemedActivityIndicator,
 }

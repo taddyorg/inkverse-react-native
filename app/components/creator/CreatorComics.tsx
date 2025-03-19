@@ -4,10 +4,11 @@ import { useNavigation } from '@react-navigation/native';
 import { Image } from 'expo-image';
 import { FlashList } from '@shopify/flash-list';
 
+import { ThemedText, ThemedView } from '../ui';
+
 import { COMICSERIES_SCREEN } from '@/constants/Navigation';
 import { getCoverImageUrl } from '@/public/comicseries';
 import { type ComicSeries } from '@/shared/graphql/operations';
-import { ThemedText, ThemedTextSize, ThemedView } from '../ui';
 
 interface CreatorComicsProps {
   comicseries: ComicSeries[] | null | undefined;
@@ -42,7 +43,7 @@ export function CreatorComics({ comicseries }: CreatorComicsProps) {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText size={ThemedTextSize.subtitle} style={styles.sectionTitle}>Comics</ThemedText>
+      <ThemedText size="subtitle" style={styles.sectionTitle}>Comics</ThemedText>
       <FlashList
         data={comicseries}
         keyExtractor={(item) => item.uuid}

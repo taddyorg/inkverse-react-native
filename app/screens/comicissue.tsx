@@ -1,5 +1,5 @@
 import React, { useCallback, useReducer, useEffect, useMemo, useRef, useState } from 'react';
-import { RefreshControl, ActivityIndicator, StyleSheet, useWindowDimensions, Animated, View, NativeSyntheticEvent, NativeScrollEvent, TouchableWithoutFeedback } from 'react-native';
+import { RefreshControl, StyleSheet, useWindowDimensions, Animated, View, NativeSyntheticEvent, NativeScrollEvent, TouchableWithoutFeedback } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, COMICISSUE_SCREEN } from '@/constants/Navigation';
@@ -10,7 +10,7 @@ import { StoryImage } from '../components/comics/StoryImage';
 import { GridOfComicIssues } from '../components/comics/GridOfComicIssues';
 import { ComicHeader, HEADER_HEIGHT } from '../components/comics/ComicHeader';
 import { ComicFooter, FOOTER_HEIGHT } from '../components/comics/ComicFooter';
-import { Screen, ScrollIndicator } from '../components/ui';
+import { Screen, ThemedActivityIndicator } from '@/app/components/ui';
 
 import { publicClient } from '@/lib/apollo';
 import { comicIssueQueryReducer, comicIssueInitialState, loadComicIssue } from '@/shared/dispatch/comicissue';
@@ -242,7 +242,7 @@ export function ComicIssueScreen() {
   if (isComicIssueLoading) {
     return (
       <Screen style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
+        <ThemedActivityIndicator />
       </Screen>
     );
   }

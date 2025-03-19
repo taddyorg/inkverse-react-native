@@ -1,10 +1,9 @@
 import { useReducer, useState, useCallback, useEffect, memo } from 'react';
-import { StyleSheet, View, RefreshControl, ActivityIndicator } from 'react-native';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { StyleSheet, View, RefreshControl } from 'react-native';
+import { useRoute } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
-import { StatusBar } from 'expo-status-bar';
 
-import { Screen, HeaderBackButton, HeaderShareButton } from '@/app/components/ui';
+import { Screen, HeaderBackButton, HeaderShareButton, ThemedActivityIndicator } from '@/app/components/ui';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
 import { ComicIssuesList, ComicIssuesListProps } from '@/app/components/comics/ComicIssuesList';
 
@@ -13,6 +12,7 @@ import { ComicSeries } from '@/shared/graphql/types';
 import { loadComicSeries, comicSeriesQueryReducerDefault, comicSeriesInitialState } from '@/shared/dispatch/comicseries';
 import { RootStackParamList, COMICSERIES_SCREEN } from '@/constants/Navigation';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useThemeColor, ColorCategory } from '@/constants/Colors';
 
 export interface ComicSeriesScreenParams {
   uuid: string;
@@ -31,6 +31,7 @@ export function ComicSeriesScreen() {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
 
   const { isComicSeriesLoading, comicseries, issues } = comicSeriesState;
+  const refreshTintColor = useThemeColor({}, ColorCategory.Tint);
 
   useEffect(() => {
     loadComicSeries({ publicClient, uuid }, dispatch);
@@ -38,7 +39,7 @@ export function ComicSeriesScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadComicSeries({ publicClient, uuid }, dispatch);
+    await loadComicSeries({ publicClient, uuid, forceRefresh: true }, dispatch);
     setRefreshing(false);
   }, [uuid]);
 
@@ -85,7 +86,7 @@ export function ComicSeriesScreen() {
     return (
       <ComicSeriesScreenWrapper isHeaderVisible={isHeaderVisible} comicseries={comicseries}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large"/>
+          <ThemedActivityIndicator />
         </View>
       </ComicSeriesScreenWrapper>
     );
@@ -106,7 +107,12 @@ export function ComicSeriesScreen() {
           }
         }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={onRefresh}
+            tintColor={refreshTintColor}
+            colors={[refreshTintColor]}
+          />
         }
       />
     </ComicSeriesScreenWrapper>

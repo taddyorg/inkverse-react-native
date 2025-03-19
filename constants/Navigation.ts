@@ -11,6 +11,7 @@ export const SETTINGS_SCREEN = "SettingsScreen";
 export const LIST_SCREEN = "ListScreen";
 export const COMICS_LIST_SCREEN = "ComicsListScreen";
 export const BLOG_SCREEN = "BlogScreen";
+export const MAIN_SCREEN = "MainScreen";
 
 import { ComicSeriesScreenParams } from "@/app/screens/comicseries";
 import { ComicIssueScreenParams } from "@/app/screens/comicissue";
@@ -34,6 +35,7 @@ export type RootStackParamList = {
   [LIST_SCREEN]: ListScreenParams;
   [COMICS_LIST_SCREEN]: ComicsListScreenParams;
   [BLOG_SCREEN]: BlogScreenParams;
+  [MAIN_SCREEN]: undefined;
 };
 
 declare global {

@@ -3,10 +3,8 @@ import { StyleSheet, TouchableOpacity, View, Dimensions, Pressable } from 'react
 import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
 
-import { ThemedText, ThemedTextFont, ThemedTextSize } from '../ui/ThemedText';
-import { ThemedView } from '../ui/ThemedView';
+import { ThemedText, ThemedTextFontFamilyMap, ThemedView, PressableOpacity } from '../ui';
 import { CreatorDetails, CreatorPageType } from '../creator/CreatorDetails';
-import { PressableOpacity } from '../ui/PressableOpacity';
 
 import { COMICSERIES_SCREEN } from '@/constants/Navigation';
 import { ComicSeries, ContentRating, Genre } from '@/shared/graphql/types';
@@ -111,7 +109,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, isHeader
                 priority={imagePriority}
               />
               <View style={styles.comicSeriesContent}>
-                <ThemedText size={ThemedTextSize.subtitle} font={ThemedTextFont.bold} style={styles.comicSeriesTitle}>{comicseries.name}</ThemedText>
+                <ThemedText size="subtitle" font="bold" style={styles.comicSeriesTitle}>{comicseries.name}</ThemedText>
                 <ThemedText style={styles.genreTextAlt2}>
                   {formatGenres(comicseries)}
                 </ThemedText>
@@ -151,7 +149,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, isHeader
             />
           </Pressable>
           <View style={styles.infoContainer}>
-            <ThemedText size={ThemedTextSize.title} style={styles.title}>{comicseries.name} </ThemedText>
+            <ThemedText size="title" style={styles.title}>{comicseries.name} </ThemedText>
             <ThemedText style={styles.genreText}>
               {formatGenres(comicseries)}
             </ThemedText>
@@ -210,7 +208,7 @@ const styles = StyleSheet.create({
   },
   genreText: {
     fontSize: 16,
-    fontFamily: ThemedTextFont.bold,
+    fontFamily: ThemedTextFontFamilyMap.bold,
     marginBottom: 8,
   },
   genreTextAlt: {
@@ -298,7 +296,7 @@ const styles = StyleSheet.create({
   },
   popularTitle: {
     fontSize: 18,
-    fontFamily: ThemedTextFont.bold,
+    fontFamily: ThemedTextFontFamilyMap.bold,
     marginBottom: 8,
   },
   // Styles for LIST_ITEM page type

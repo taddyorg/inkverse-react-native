@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 
-import { ThemedTextSize, ThemedText, ThemedView } from '../ui';
+import { ThemedText } from '../ui';
 import { getAvatarImageUrl } from '@/public/creator';
 import { type Creator } from '@/shared/graphql/operations';
 import { CREATOR_SCREEN } from '@/constants/Navigation';
@@ -44,7 +44,7 @@ export function CreatorDetails({ creator, pageType }: CreatorDetailsProps) {
               contentFit="cover"
               recyclingKey={creator.uuid}
             />
-            <ThemedText size={ThemedTextSize.subtitle} style={styles.creatorText}>
+            <ThemedText size="subtitle" style={styles.creatorText}>
               {creator?.name}
             </ThemedText>
           </View>
@@ -62,7 +62,7 @@ export function CreatorDetails({ creator, pageType }: CreatorDetailsProps) {
           recyclingKey={creator.uuid}
         />
         <View style={styles.infoContainer}>
-          <ThemedText size={ThemedTextSize.title} style={styles.name}>{creator.name}</ThemedText>
+          <ThemedText size="title" style={styles.name}>{creator.name}</ThemedText>
           {creator.bio && (
             <ThemedText style={styles.bio} numberOfLines={3}>
               {creator.bio}

@@ -1,10 +1,10 @@
 import { useReducer, useState, useCallback, useEffect, memo, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, View, RefreshControl, ActivityIndicator, FlatList, ListRenderItem } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, RefreshControl, FlatList, ListRenderItem } from 'react-native';
 import { useNavigation, useScrollToTop } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { FlashList } from '@shopify/flash-list';
 
-import { Screen, ThemedText, ThemedTextFont } from '@/app/components/ui';
+import { Screen, ThemedText, ThemedActivityIndicator, ThemedTextFontFamilyMap } from '@/app/components/ui';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
 import { ListDetails, ListPageType } from '@/app/components/list/ListDetails';
 import { Header } from '@/app/components/home/Header';
@@ -97,7 +97,7 @@ export function HomeScreen() {
     return (
       <Screen style={styles.container}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large"/>
+          <ThemedActivityIndicator />
         </View>
       </Screen>
     );
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 22,
-    fontFamily: ThemedTextFont.bold,
+    fontFamily: ThemedTextFontFamilyMap.bold,
     marginBottom: 8,
   },
   horizontalScroll: {
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   },
   newsTitle: {
     fontSize: 16,
-    fontFamily: ThemedTextFont.bold,
+    fontFamily: ThemedTextFontFamilyMap.bold,
     lineHeight: 22,
   },
   newsItemContainer: {

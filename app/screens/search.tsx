@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { View, StyleSheet, TextInput, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useState, useCallback, useEffect, useReducer } from 'react';
 
-import { Screen, ThemedText, ThemedTextSize, PressableOpacity, ScreenHeader } from '@/app/components/ui';
+import { Screen, ThemedText, ThemedTextSize, PressableOpacity, ScreenHeader, ThemedActivityIndicator, ThemedActivityIndicatorSize } from '@/app/components/ui';
 import { Genre, ComicSeries } from '@/shared/graphql/types';
 import { getPrettyGenre } from '@/public/genres';
 import { Colors } from '@/constants/Colors';
@@ -334,7 +334,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ isLoading, results, searc
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={Colors.light.tint} />
+        <ThemedActivityIndicator />
       </View>
     );
   }
@@ -378,7 +378,7 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({ isLoading, onPress }) =
       disabled={isLoading}
     >
       {isLoading 
-        ? <ActivityIndicator size="small" color={Colors.light.tint} /> 
+        ? <ThemedActivityIndicator size={ThemedActivityIndicatorSize.small} /> 
         : <ThemedText style={styles.loadMoreText}>
             Load More
           </ThemedText>

@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 import { useState, useCallback, useEffect, useReducer } from 'react';
 
-import { Screen, ThemedText, ThemedTextSize, PressableOpacity, ScreenHeader, HeaderBackButton } from '@/app/components/ui';
+import { Screen, ThemedText, ThemedTextSize, PressableOpacity, ScreenHeader, HeaderBackButton, ThemedActivityIndicator } from '@/app/components/ui';
 import { ComicSeries, Genre } from '@/shared/graphql/types';
 import { Colors } from '@/constants/Colors';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
@@ -111,7 +111,7 @@ export function ComicsListScreen() {
     if (isLoadingMore) {
       return (
         <View style={styles.footerContainer}>
-          <ActivityIndicator size="large" color={Colors.light.tint} />
+          <ThemedActivityIndicator />
         </View>
       );
     }
@@ -139,7 +139,7 @@ export function ComicsListScreen() {
     return (
       <Screen>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.light.tint} />
+          <ThemedActivityIndicator />
         </View>
       </Screen>
     );

@@ -1,11 +1,11 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { StyleSheet, View, ActivityIndicator, BackHandler, StatusBar } from 'react-native';
+import { StyleSheet, View, BackHandler, StatusBar } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useRoute, useFocusEffect, useNavigation } from '@react-navigation/native';
 
 import { RootStackParamList, BLOG_SCREEN } from '@/constants/Navigation';
-import { HeaderBackButton } from '@/app/components/ui';
+import { HeaderBackButton, ThemedActivityIndicator } from '@/app/components/ui';
 
 export type BlogScreenParams = {
   url: string;
@@ -56,7 +56,7 @@ export function BlogScreen() {
         onNavigationStateChange={(navState) => setCanGoBack(navState.canGoBack)}
         renderLoading={() => (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#0000ff" />
+            <ThemedActivityIndicator />
           </View>
         )}
         originWhitelist={['https://']}

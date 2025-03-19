@@ -2,14 +2,14 @@ import * as React from 'react';
 import { useColorScheme } from 'react-native';
 import { TouchableOpacity, StyleSheet, TouchableOpacityProps } from 'react-native';
 
-import { ThemedText, ThemedTextFont } from './ThemedText';
+import { ThemedText, ThemedTextFontFamilyMap } from './ThemedText';
 import { Colors } from '@/constants/Colors';
 
-type ThemeButtonProps = TouchableOpacityProps & {
+type ThemedButtonProps = TouchableOpacityProps & {
   buttonText: string;
 }
 
-export function ThemeButton({ buttonText, onPress, style, ...props }: ThemeButtonProps) {
+export function ThemedButton({ buttonText, onPress, style, ...props }: ThemedButtonProps) {
   const colorScheme = useColorScheme() ?? 'light';
 
   const backgroundColor = colorScheme === 'light' ? Colors.light.tint : Colors.dark.tint;
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: 18,
-    fontFamily: ThemedTextFont.semiBold,
+    fontFamily: ThemedTextFontFamilyMap.semiBold,
   },
   icon: {
     marginRight: 4
