@@ -72,14 +72,14 @@ export function CreatorScreen() {
 
   if (isLoading || !creator) {
     return (
-      <CreatorScreenWrapper>
+      <CreatorScreenWrapper creator={creator}>
         <ActivityIndicator size="large" />
       </CreatorScreenWrapper>
     );
   }
 
   return (
-    <CreatorScreenWrapper>
+    <CreatorScreenWrapper creator={creator}>
       <FlashList
         data={listData}
         renderItem={renderItem}
@@ -96,12 +96,17 @@ export function CreatorScreen() {
   );
 }
 
-const CreatorScreenWrapper = memo(({ children }: { children: React.ReactNode }) => {
+type CreatorScreenWrapperProps = {
+  children: React.ReactNode;
+  creator: Creator | null;
+}
+
+const CreatorScreenWrapper = memo(({ children, creator }: CreatorScreenWrapperProps) => {
   return (
     <Screen>
       <View>
         <HeaderBackButton />
-        <HeaderShareButton />
+        <HeaderShareButton type="creator" item={creator} />
       </View>
       {children}
     </Screen>

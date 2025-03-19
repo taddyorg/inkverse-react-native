@@ -1,16 +1,20 @@
 import { StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { PressableOpacity } from './PressableOpacity';
+import { showShareSheet } from '@/lib/share-sheet';
+import { InkverseUrlType } from '@/public/utils';
 
 interface HeaderShareButtonProps {
-  onPress?: () => void;
+  type: InkverseUrlType;
+  item: any;
+  parentItem?: any;
 }
 
-export function HeaderShareButton({ onPress }: HeaderShareButtonProps) {
+export function HeaderShareButton({ type, item, parentItem }: HeaderShareButtonProps) {
   return (
     <PressableOpacity 
       style={styles.shareButton} 
-      onPress={onPress}>
+      onPress={() => showShareSheet({ type, item, parentItem })}>
       <Ionicons name="share-outline" size={24} color="black" />
     </PressableOpacity>
   );
@@ -26,4 +30,4 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 20,
   },
-}); 
+});

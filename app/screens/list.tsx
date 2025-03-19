@@ -10,6 +10,7 @@ import { ListDetails, ListPageType } from '@/app/components/list/ListDetails';
 
 import { publicClient } from '@/lib/apollo';
 import { loadList, listQueryReducer, listInitialState } from '@/shared/dispatch/list';
+import { List } from '@/shared/graphql/types';
 
 type ListItem =
   | { type: 'screen-header'; key: string; data?: { name?: string } }
@@ -65,7 +66,7 @@ export function ListScreen() {
 
   if (isListLoading && !list) {
     return (
-      <ListScreenWrapper>
+      <ListScreenWrapper list={list}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" />
         </View>
@@ -75,7 +76,7 @@ export function ListScreen() {
 
   if (!list) {
     return (
-      <ListScreenWrapper>
+      <ListScreenWrapper list={list}>
         <View style={styles.container}>
           <ThemedText style={styles.errorText}>List not found or an error occurred.</ThemedText>
         </View>
@@ -84,7 +85,7 @@ export function ListScreen() {
   }
 
   return (
-    <ListScreenWrapper>
+    <ListScreenWrapper list={list}>
       <FlashList
         data={listData}
         renderItem={renderItem}
@@ -101,12 +102,17 @@ export function ListScreen() {
   );
 }
 
-const ListScreenWrapper = memo(({ children }: { children: React.ReactNode }) => {
+type ListScreenWrapperProps = {
+  children: React.ReactNode;
+  list: List | null;
+}
+
+const ListScreenWrapper = memo(({ children, list }: ListScreenWrapperProps) => {
   return (
     <Screen style={styles.container}>
         <View>
           <HeaderBackButton />
-          <HeaderShareButton />
+          <HeaderShareButton type="list" item={list} />
         </View>
       {children}
     </Screen>

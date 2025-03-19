@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 import { ThemedText, ThemedTextFont, PressableOpacity } from '../ui';
+import { showShareSheet } from '@/lib/share-sheet';
 
 const HEADER_HEIGHT = 128;
 
@@ -47,7 +48,8 @@ export function ComicHeader({ headerPosition, comicseries, comicissue }: ComicHe
           }
         </View>
         <PressableOpacity
-          style={styles.shareButton}> 
+          style={styles.shareButton}
+          onPress={() => { showShareSheet({ type: 'comicissue', item: comicissue, parentItem: comicseries }); }}> 
           <Ionicons name="share-outline" size={24} color="white" />
         </PressableOpacity>
       </View>

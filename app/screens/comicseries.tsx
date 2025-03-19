@@ -83,7 +83,7 @@ export function ComicSeriesScreen() {
 
   if (isComicSeriesLoading) {
     return (
-      <ComicSeriesScreenWrapper isHeaderVisible={isHeaderVisible}>
+      <ComicSeriesScreenWrapper isHeaderVisible={isHeaderVisible} comicseries={comicseries}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large"/>
         </View>
@@ -92,7 +92,7 @@ export function ComicSeriesScreen() {
   }
 
   return (
-    <ComicSeriesScreenWrapper isHeaderVisible={isHeaderVisible}>
+    <ComicSeriesScreenWrapper isHeaderVisible={isHeaderVisible} comicseries={comicseries}>
       <FlashList
         data={getListData()}
         renderItem={renderItem}
@@ -116,15 +116,16 @@ export function ComicSeriesScreen() {
 interface ComicSeriesScreenWrapperProps {
   children: React.ReactNode;
   isHeaderVisible: boolean;
+  comicseries: ComicSeries | null;
 }
 
-const ComicSeriesScreenWrapper = memo(({ children, isHeaderVisible }: ComicSeriesScreenWrapperProps) => {
+const ComicSeriesScreenWrapper = memo(({ children, isHeaderVisible, comicseries }: ComicSeriesScreenWrapperProps) => {
   return (
     <Screen style={styles.container}>
       {isHeaderVisible && (
         <View>
           <HeaderBackButton />
-          <HeaderShareButton />
+          <HeaderShareButton type="comicseries" item={comicseries} />
         </View>
       )}
       {children}

@@ -2,10 +2,15 @@
   "name": "inkverse",
   "main": "index.tsx",
   "version": "1.0.0",
+  "workspaces": [
+    ".",
+    "public",
+    "shared"
+  ],
   "scripts": {
     "start": "expo start",
     "dev": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
+    "build": "tsc --noEmit",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",

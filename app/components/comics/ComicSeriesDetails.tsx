@@ -9,10 +9,11 @@ import { CreatorDetails, CreatorPageType } from '../creator/CreatorDetails';
 import { PressableOpacity } from '../ui/PressableOpacity';
 
 import { COMICSERIES_SCREEN } from '@/constants/Navigation';
-import { ComicSeries, Genre } from '@/shared/graphql/types';
+import { ComicSeries, ContentRating, Genre } from '@/shared/graphql/types';
 import { getBannerImageUrl, getCoverImageUrl, getThumbnailImageUrl } from '@/public/comicseries';
 import { ComicSeriesImageVariant } from '@/public/comicseries';
 import { getPrettyGenre } from '@/public/genres';
+import { getPrettyRating } from '@/public/ratings';
 import { Colors } from '@/constants/Colors';
 
 export enum ComicSeriesPageType {
