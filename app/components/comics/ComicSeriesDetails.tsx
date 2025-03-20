@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   listItemImage: {
     height: 200,
     aspectRatio: 4/6,
-    borderRadius: 4,
+    borderRadius: 8,
   },
   comicSeriesItem: {
     marginBottom: 20,
@@ -316,9 +316,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
-  },
-  indexText: {
-    fontWeight: 'bold',
   },
   comicSeriesContent: {
     flex: 1,

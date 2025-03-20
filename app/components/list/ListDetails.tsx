@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Image } from 'expo-image';
 import { FlashList } from '@shopify/flash-list';
 
-import { ThemedText, ThemedView, PressableOpacity } from '../ui/index';
+import { ThemedText, ThemedView, PressableOpacity, ThemedTextFontFamilyMap } from '../ui/index';
 import { COMICSERIES_SCREEN, LIST_SCREEN } from '@/constants/Navigation';
 import type { List } from '@/shared/graphql/types';
 import { ComicSeriesDetails, ComicSeriesPageType } from '../comics/ComicSeriesDetails';
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontFamily: ThemedTextFontFamilyMap['bold'],
     marginBottom: 8,
   },
   description: {

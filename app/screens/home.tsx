@@ -1,10 +1,10 @@
 import { useReducer, useState, useCallback, useEffect, memo, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, View, RefreshControl, FlatList, ListRenderItem } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, FlatList, ListRenderItem } from 'react-native';
 import { useNavigation, useScrollToTop } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { FlashList } from '@shopify/flash-list';
 
-import { Screen, ThemedText, ThemedActivityIndicator, ThemedTextFontFamilyMap } from '@/app/components/ui';
+import { Screen, ThemedText, ThemedActivityIndicator, ThemedTextFontFamilyMap, HeaderShareButton, PressableOpacity, ThemedRefreshControl } from '@/app/components/ui';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
 import { ListDetails, ListPageType } from '@/app/components/list/ListDetails';
 import { Header } from '@/app/components/home/Header';
@@ -115,7 +115,7 @@ export function HomeScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <ThemedRefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
     </Screen>
@@ -280,15 +280,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  description: {
-    fontSize: 16,
-    lineHeight: 24,
   },
   section: {
     marginBottom: 20,

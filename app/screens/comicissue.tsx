@@ -10,7 +10,7 @@ import { StoryImage } from '../components/comics/StoryImage';
 import { GridOfComicIssues } from '../components/comics/GridOfComicIssues';
 import { ComicHeader, HEADER_HEIGHT } from '../components/comics/ComicHeader';
 import { ComicFooter, FOOTER_HEIGHT } from '../components/comics/ComicFooter';
-import { Screen, ThemedActivityIndicator } from '@/app/components/ui';
+import { Screen, ThemedActivityIndicator, ThemedRefreshControl } from '@/app/components/ui';
 
 import { publicClient } from '@/lib/apollo';
 import { comicIssueQueryReducer, comicIssueInitialState, loadComicIssue } from '@/shared/dispatch/comicissue';
@@ -30,7 +30,8 @@ export type ComicIssueScreenParams = {
   seriesUuid: string;
 };
 
-const PRELOAD_BATCH_SIZE = 3;
+const PRELOAD_BATCH_SIZE = 5;
+const ESTIMATED_ITEM_SIZE = 300;
 
 // Define header and footer position constants
 const HEADER_OPEN_POSITION = 0;
@@ -39,9 +40,20 @@ const FOOTER_OPEN_POSITION = 0;
 const FOOTER_CLOSED_POSITION = FOOTER_HEIGHT;
 
 const preloadImagesInBatch = async (imageUrls: string[]) => {
-  for (let i = 0; i < imageUrls.length; i += PRELOAD_BATCH_SIZE) {
-    const batch = imageUrls.slice(i, i + PRELOAD_BATCH_SIZE);
-    await Promise.all(batch.map(url => Image.prefetch(url)));
+  if (imageUrls.length === 0) return;
+
+  try {
+    // Load first batch (first 5 images) - critical for immediate viewing
+    const firstBatch = imageUrls.slice(0, PRELOAD_BATCH_SIZE);
+    await Promise.allSettled(firstBatch.map(url => Image.prefetch(url)));
+    
+    // Load remaining images in background if any exist
+    if (imageUrls.length > PRELOAD_BATCH_SIZE) {
+      const remainingImages = imageUrls.slice(PRELOAD_BATCH_SIZE);
+      await Promise.allSettled(remainingImages.map(url => Image.prefetch(url)));
+    }
+  } catch (error) {
+    console.warn('Error in image preloading:', error);
   }
 };
 
@@ -57,6 +69,7 @@ export function ComicIssueScreen() {
   const footerTranslateY = useRef(new Animated.Value(FOOTER_OPEN_POSITION)).current;
   const isHeaderOpen = useRef(true);
   const isFooterOpen = useRef(true);
+  const [refreshing, setRefreshing] = useState(false);
   
   // Scroll indicator state
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -91,7 +104,7 @@ export function ComicIssueScreen() {
 
   const [state, dispatch] = useReducer(comicIssueQueryReducer, comicIssueInitialState);
   const { isComicIssueLoading, comicissue, comicseries, allIssues } = state;
-
+  
   const loadData = useCallback(async (forceRefresh = false) => {
     await loadComicIssue({
       publicClient,
@@ -106,7 +119,9 @@ export function ComicIssueScreen() {
   }, [loadData]);
 
   const handleRefresh = useCallback(() => {
+    setRefreshing(true);
     loadData(true);
+    setRefreshing(false);
   }, [loadData]);
 
   const preloadImages = useCallback(async (stories: NonNullable<ComicIssue['stories']>) => {
@@ -125,10 +140,8 @@ export function ComicIssueScreen() {
   useEffect(() => {
     const stories = comicissue?.stories;
     if (stories && stories.length > 0) {
-      setContentHeight(stories.length * 300);
-      preloadImages(stories).catch(error => {
-        console.warn('Failed to preload some images:', error);
-      });
+      setContentHeight(stories.length * ESTIMATED_ITEM_SIZE);
+      preloadImages(stories)
     }
   }, [issueUuid, comicissue?.uuid]);
 
@@ -249,7 +262,9 @@ export function ComicIssueScreen() {
 
   if (!comicissue || !comicseries) {
     return (
-      <Screen style={styles.loadingContainer}/>
+      <Screen style={styles.loadingContainer}>
+        <ThemedActivityIndicator />
+      </Screen>
     );
   }
 
@@ -266,16 +281,19 @@ export function ComicIssueScreen() {
         renderItem={TappableItem}
         keyExtractor={(item) => item.key}
         showsVerticalScrollIndicator={false}
-        estimatedItemSize={300}
+        estimatedItemSize={ESTIMATED_ITEM_SIZE}
         onScroll={handleScroll}
         scrollEventThrottle={16}
-        refreshControl={
-          <RefreshControl refreshing={isComicIssueLoading} onRefresh={handleRefresh} />
-        }
         estimatedListSize={{
           height: screenDetails.height,
           width: screenDetails.width
         }}
+        refreshControl={
+          <ThemedRefreshControl 
+            refreshing={refreshing} 
+            onRefresh={handleRefresh}
+          />
+        }
         contentContainerStyle={{ paddingBottom: FOOTER_HEIGHT }}
       />
       <ComicFooter

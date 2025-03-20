@@ -1,9 +1,9 @@
 import { useReducer, useState, useCallback, useEffect, memo } from 'react';
-import { StyleSheet, View, RefreshControl } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 
-import { Screen, HeaderBackButton, HeaderShareButton, ThemedActivityIndicator } from '@/app/components/ui';
+import { Screen, HeaderBackButton, HeaderShareButton, ThemedActivityIndicator, ThemedRefreshControl } from '@/app/components/ui';
 import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
 import { ComicIssuesList, ComicIssuesListProps } from '@/app/components/comics/ComicIssuesList';
 
@@ -12,7 +12,6 @@ import { ComicSeries } from '@/shared/graphql/types';
 import { loadComicSeries, comicSeriesQueryReducerDefault, comicSeriesInitialState } from '@/shared/dispatch/comicseries';
 import { RootStackParamList, COMICSERIES_SCREEN } from '@/constants/Navigation';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useThemeColor, ColorCategory } from '@/constants/Colors';
 
 export interface ComicSeriesScreenParams {
   uuid: string;
@@ -31,7 +30,6 @@ export function ComicSeriesScreen() {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
 
   const { isComicSeriesLoading, comicseries, issues } = comicSeriesState;
-  const refreshTintColor = useThemeColor({}, ColorCategory.Tint);
 
   useEffect(() => {
     loadComicSeries({ publicClient, uuid }, dispatch);
@@ -107,11 +105,9 @@ export function ComicSeriesScreen() {
           }
         }}
         refreshControl={
-          <RefreshControl 
+          <ThemedRefreshControl 
             refreshing={refreshing} 
             onRefresh={onRefresh}
-            tintColor={refreshTintColor}
-            colors={[refreshTintColor]}
           />
         }
       />

@@ -10,6 +10,7 @@ import { HeaderShareButton } from "./HeaderShareButton"
 import { ThemedIcon } from "./ThemedIcon"
 import { ScrollIndicator } from "./ScrollIndicator"
 import { ThemedActivityIndicator } from "./ThemedActivityIndicator"
+import { ThemedRefreshControl } from "./ThemedRefreshControl"
 
 export { 
     Logo,
@@ -25,4 +26,5 @@ export {
     ThemedIcon,
     ScrollIndicator,
     ThemedActivityIndicator,
+    ThemedRefreshControl,
 }

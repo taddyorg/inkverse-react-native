@@ -1,11 +1,11 @@
 import React, { memo, useCallback, useEffect, useReducer, useMemo } from 'react';
-import { StyleSheet, View, RefreshControl } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useRoute } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 
 import { RootStackParamList, LIST_SCREEN } from '@/constants/Navigation';
-import { Screen, ThemedText, HeaderShareButton, HeaderBackButton, ScreenHeader, ThemedActivityIndicator } from '@/app/components/ui';
+import { Screen, ThemedText, HeaderShareButton, HeaderBackButton, ScreenHeader, ThemedActivityIndicator, ThemedRefreshControl } from '@/app/components/ui';
 import { ListDetails, ListPageType } from '@/app/components/list/ListDetails';
 
 import { publicClient } from '@/lib/apollo';
@@ -92,7 +92,7 @@ export function ListScreen() {
         estimatedItemSize={200}
         contentContainerStyle={styles.contentContainer}
         refreshControl={
-          <RefreshControl
+          <ThemedRefreshControl
             refreshing={isListLoading}
             onRefresh={handleRefresh}
           />

@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useMemo, useCallback, memo } from 'react';
-import { RefreshControl, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlashList } from '@shopify/flash-list';
 import { useRoute } from '@react-navigation/native';
@@ -8,7 +8,7 @@ import { publicClient } from '@/lib/apollo';
 
 import { CreatorDetails, CreatorPageType } from '@/app/components/creator/CreatorDetails';
 import { CreatorComics } from '@/app/components/creator/CreatorComics';
-import { HeaderBackButton, HeaderShareButton, Screen, ScreenHeader, ThemedActivityIndicator } from '@/app/components/ui';
+import { Screen, HeaderBackButton, HeaderShareButton, ThemedActivityIndicator, ThemedRefreshControl, ScreenHeader } from '@/app/components/ui';
 
 import { creatorQueryReducer, getCreatorScreen, creatorInitialState } from '@/shared/dispatch/creator';
 import { ComicSeries, Creator } from '@/shared/graphql/types';
@@ -88,7 +88,7 @@ export function CreatorScreen() {
         estimatedItemSize={300}
         contentContainerStyle={styles.contentContainer}
         refreshControl={
-          <RefreshControl
+          <ThemedRefreshControl
             refreshing={isLoading}
             onRefresh={handleRefresh}
           />
