@@ -4,7 +4,7 @@ import { useRoute } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 
 import { Screen, HeaderBackButton, HeaderShareButton, ThemedActivityIndicator, ThemedRefreshControl } from '@/app/components/ui';
-import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
+import { ComicSeriesDetails } from '@/app/components/comics/ComicSeriesDetails';
 import { ComicIssuesList, ComicIssuesListProps } from '@/app/components/comics/ComicIssuesList';
 
 import { publicClient } from '@/lib/apollo';
@@ -48,7 +48,7 @@ export function ComicSeriesScreen() {
           <ComicSeriesDetails
             comicseries={item.data}
             firstIssue={issues[0]}
-            pageType={ComicSeriesPageType.COMICSERIES_SCREEN}
+            pageType='comicseries-screen'
             isHeaderVisible={isHeaderVisible}
             onHeaderVisibilityChange={setIsHeaderVisible}
           />

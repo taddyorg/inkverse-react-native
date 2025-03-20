@@ -4,7 +4,7 @@ import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
 
 import { ThemedText, ThemedTextFontFamilyMap, ThemedView, PressableOpacity } from '../ui';
-import { CreatorDetails, CreatorPageType } from '../creator/CreatorDetails';
+import { CreatorDetails } from '../creator/CreatorDetails';
 
 import { COMICSERIES_SCREEN } from '@/constants/Navigation';
 import { ComicSeries, ContentRating, Genre } from '@/shared/graphql/types';
@@ -13,15 +13,14 @@ import { getPrettyGenre } from '@/public/genres';
 import { getPrettyRating } from '@/public/ratings';
 import { Colors } from '@/constants/Colors';
 
-export enum ComicSeriesPageType {
-  COMICSERIES_SCREEN = 'COMICSERIES_SCREEN',
-  FEATURED_BANNER = 'FEATURED_BANNER',
-  MOST_POPULAR = 'MOST_POPULAR',
-  COVER = 'COVER',
-  SEARCH = 'SEARCH',
-  LIST_ITEM = 'LIST_ITEM',
-  GRID_ITEM = 'GRID_ITEM',
-}
+type ComicSeriesPageType = 
+  | 'comicseries-screen'
+  | 'featured-banner'
+  | 'most-popular'
+  | 'cover'
+  | 'search'
+  | 'list-item'
+  | 'grid-item';
 
 interface ComicSeriesDetailsProps {
   comicseries: ComicSeries | null | undefined;
@@ -54,7 +53,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, isHeader
   };
 
   switch (pageType) {
-    case ComicSeriesPageType.MOST_POPULAR:
+    case 'most-popular':
       return (
         <TouchableOpacity onPress={handlePressForNavigation} style={styles.popularContainer}>
           <Image
@@ -71,7 +70,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, isHeader
         </TouchableOpacity>
       );
 
-    case ComicSeriesPageType.FEATURED_BANNER:
+    case 'featured-banner':
       return (
         <TouchableOpacity onPress={handlePressForNavigation} style={styles.featuredContainer}>
           <Image
@@ -84,7 +83,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, isHeader
         </TouchableOpacity>
       );
 
-    case ComicSeriesPageType.COVER:
+    case 'cover':
       return (
         <TouchableOpacity onPress={handlePressForNavigation}>
           <Image
@@ -96,7 +95,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, isHeader
         </TouchableOpacity>
       );
 
-    case ComicSeriesPageType.LIST_ITEM:
+    case 'list-item':
       return (
         <PressableOpacity style={styles.comicSeriesItem} onPress={handlePressForNavigation}>
             <View style={{ flexDirection: 'row' }}>
@@ -122,7 +121,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, isHeader
         </PressableOpacity>
       );
 
-    case ComicSeriesPageType.GRID_ITEM:
+    case 'grid-item':
       return (
         <View style={styles.gridItemContainer}>
           <Image
@@ -135,7 +134,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, isHeader
         </View>
       );
 
-    case ComicSeriesPageType.COMICSERIES_SCREEN:
+    case 'comicseries-screen':
       return (
         <ThemedView style={styles.container}>
           <Pressable onPress={handlePressForShowAndHideHeader}>
@@ -158,7 +157,7 @@ export function ComicSeriesDetails({ comicseries, pageType, firstIssue, isHeader
                   <CreatorDetails 
                     key={creator?.uuid} 
                     creator={creator} 
-                    pageType={CreatorPageType.MINI_CREATOR} 
+                    pageType='mini-creator' 
                   />
                 ))}
               </View>

@@ -7,7 +7,7 @@ import { useState, useCallback, useEffect, useReducer } from 'react';
 import { Screen, ThemedText, PressableOpacity, ScreenHeader, HeaderBackButton, ThemedActivityIndicator } from '@/app/components/ui';
 import { ComicSeries, Genre } from '@/shared/graphql/types';
 import { Colors } from '@/constants/Colors';
-import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
+import { ComicSeriesDetails } from '@/app/components/comics/ComicSeriesDetails';
 import { publicClient } from '@/lib/apollo';
 import { comicsListReducer, comicsListInitialState, fetchComics } from '@/shared/dispatch/comicslist';
 import { COMICSERIES_SCREEN } from '@/constants/Navigation';
@@ -89,7 +89,7 @@ export function ComicsListScreen() {
       >
         <ComicSeriesDetails 
           comicseries={item}
-          pageType={ComicSeriesPageType.GRID_ITEM}
+          pageType='grid-item'
         />
       </PressableOpacity>
     </View>

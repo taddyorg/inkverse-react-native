@@ -7,12 +7,11 @@ import { FlashList } from '@shopify/flash-list';
 import { ThemedText, ThemedView, PressableOpacity, ThemedTextFontFamilyMap } from '../ui/index';
 import { COMICSERIES_SCREEN, LIST_SCREEN } from '@/constants/Navigation';
 import type { List } from '@/shared/graphql/types';
-import { ComicSeriesDetails, ComicSeriesPageType } from '../comics/ComicSeriesDetails';
+import { ComicSeriesDetails } from '../comics/ComicSeriesDetails';
 
-export enum ListPageType {
-  LIST_SCREEN = 'LIST_SCREEN',
-  FEATURED_LIST = 'FEATURED_LIST',
-}
+type ListPageType = 
+  | 'list-screen'
+  | 'featured-list';
 
 interface ListDetailsProps {
   list: List;
@@ -23,7 +22,7 @@ interface ListDetailsProps {
 export function ListDetails({ list, pageType, imagePriority }: ListDetailsProps) {
   const navigation = useNavigation();
 
-  if (pageType === ListPageType.FEATURED_LIST) {
+  if (pageType === 'featured-list') {
     return (
       <TouchableOpacity style={styles.curatedListItem} onPress={() => {
         navigation.navigate(LIST_SCREEN, { id: list.id });
@@ -39,7 +38,7 @@ export function ListDetails({ list, pageType, imagePriority }: ListDetailsProps)
     );
   }
 
-  if (pageType === ListPageType.LIST_SCREEN) {
+  if (pageType === 'list-screen') {
     return (
       <ThemedView style={styles.listContainer}>
         <View style={styles.bannerContainer}>
@@ -63,7 +62,7 @@ export function ListDetails({ list, pageType, imagePriority }: ListDetailsProps)
               <ComicSeriesDetails 
                 key={series.uuid} 
                 comicseries={series} 
-                pageType={ComicSeriesPageType.LIST_ITEM}
+                pageType='list-item'
               />
             )}
             keyExtractor={series => series.uuid}

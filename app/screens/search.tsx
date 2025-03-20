@@ -9,7 +9,7 @@ import { Screen, ThemedText, PressableOpacity, ScreenHeader, ThemedActivityIndic
 import { Genre, ComicSeries } from '@/shared/graphql/types';
 import { getPrettyGenre } from '@/public/genres';
 import { Colors } from '@/constants/Colors';
-import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
+import { ComicSeriesDetails } from '@/app/components/comics/ComicSeriesDetails';
 import { publicClient } from '@/lib/apollo';
 import { searchQueryReducer, searchInitialState, searchComics, debouncedSearchComics } from '@/shared/dispatch/search';
 import { COMICS_LIST_SCREEN } from '@/constants/Navigation';
@@ -356,7 +356,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ isLoading, results, searc
           <ComicSeriesDetails 
             key={comicseries.uuid}
             comicseries={comicseries}
-            pageType={ComicSeriesPageType.LIST_ITEM}
+            pageType='list-item'
           />
         ))}
       </View>

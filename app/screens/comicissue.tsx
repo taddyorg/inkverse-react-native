@@ -10,6 +10,7 @@ import { StoryImage } from '../components/comics/StoryImage';
 import { GridOfComicIssues } from '../components/comics/GridOfComicIssues';
 import { ComicHeader, HEADER_HEIGHT } from '../components/comics/ComicHeader';
 import { ComicFooter, FOOTER_HEIGHT } from '../components/comics/ComicFooter';
+import { CreatorDetails } from '../components/creator/CreatorDetails';
 import { Screen, ThemedActivityIndicator, ThemedRefreshControl } from '@/app/components/ui';
 
 import { publicClient } from '@/lib/apollo';
@@ -17,7 +18,7 @@ import { comicIssueQueryReducer, comicIssueInitialState, loadComicIssue } from '
 import { ComicIssue } from '@/shared/graphql/types';
 import { getStoryImageUrl } from '@/public/comicstory';
 
-type ListItemType = 'story' | 'grid';
+type ListItemType = 'story' | 'grid' | 'creator';
 
 interface ListItem {
   type: ListItemType;
@@ -174,6 +175,13 @@ export function ComicIssueScreen() {
           <StoryImage
             story={item.data}
             screenDetails={screenDetails}
+          />
+        );
+      case 'creator':
+        return (
+          <CreatorDetails
+            creator={item.data}
+            pageType='mini-creator'
           />
         );
       case 'grid':

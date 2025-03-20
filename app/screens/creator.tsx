@@ -6,7 +6,7 @@ import { useRoute } from '@react-navigation/native';
 import { RootStackParamList, CREATOR_SCREEN } from '@/constants/Navigation';
 import { publicClient } from '@/lib/apollo';
 
-import { CreatorDetails, CreatorPageType } from '@/app/components/creator/CreatorDetails';
+import { CreatorDetails } from '@/app/components/creator/CreatorDetails';
 import { CreatorComics } from '@/app/components/creator/CreatorComics';
 import { Screen, HeaderBackButton, HeaderShareButton, ThemedActivityIndicator, ThemedRefreshControl, ScreenHeader } from '@/app/components/ui';
 
@@ -56,7 +56,7 @@ export function CreatorScreen() {
         return (
           <CreatorDetails 
             creator={item.data}
-            pageType={CreatorPageType.CREATOR_SCREEN}
+            pageType='creator-screen'
           />
         );
       case 'comics':

@@ -6,7 +6,7 @@ import { FlashList } from '@shopify/flash-list';
 
 import { RootStackParamList, LIST_SCREEN } from '@/constants/Navigation';
 import { Screen, ThemedText, HeaderShareButton, HeaderBackButton, ScreenHeader, ThemedActivityIndicator, ThemedRefreshControl } from '@/app/components/ui';
-import { ListDetails, ListPageType } from '@/app/components/list/ListDetails';
+import { ListDetails } from '@/app/components/list/ListDetails';
 
 import { publicClient } from '@/lib/apollo';
 import { loadList, listQueryReducer, listInitialState } from '@/shared/dispatch/list';
@@ -55,7 +55,7 @@ export function ListScreen() {
         return (
           <ListDetails 
             list={item.data} 
-            pageType={ListPageType.LIST_SCREEN}
+            pageType='list-screen'
             imagePriority="high"
           />
         );

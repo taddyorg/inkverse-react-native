@@ -5,8 +5,8 @@ import { StatusBar } from 'expo-status-bar';
 import { FlashList } from '@shopify/flash-list';
 
 import { Screen, ThemedText, ThemedActivityIndicator, ThemedTextFontFamilyMap, HeaderShareButton, PressableOpacity, ThemedRefreshControl } from '@/app/components/ui';
-import { ComicSeriesDetails, ComicSeriesPageType } from '@/app/components/comics/ComicSeriesDetails';
-import { ListDetails, ListPageType } from '@/app/components/list/ListDetails';
+import { ComicSeriesDetails } from '@/app/components/comics/ComicSeriesDetails';
+import { ListDetails } from '@/app/components/list/ListDetails';
 import { Header } from '@/app/components/home/Header';
 import { BLOG_SCREEN } from '@/constants/Navigation';
 
@@ -129,7 +129,7 @@ const FeaturedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[] | n
       {firstComicSeries && (
         <ComicSeriesDetails
           comicseries={firstComicSeries}
-          pageType={ComicSeriesPageType.FEATURED_BANNER}
+          pageType='featured-banner'
           imagePriority="high"
         />
       )}
@@ -141,7 +141,7 @@ const MostRecommendedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSerie
   const renderItem: ListRenderItem<ComicSeries> = useCallback(({ item, index }) => (
     <ComicSeriesDetails
       comicseries={item}
-      pageType={ComicSeriesPageType.MOST_POPULAR}
+      pageType='most-popular'
       imagePriority={index === 0 ? 'normal' : 'low'}
     />
   ), []);
@@ -166,7 +166,7 @@ const CuratedLists = memo(({ lists }: { lists: List[] | null | undefined }) => {
   const renderItem: ListRenderItem<List> = useCallback(({ item, index }) => (
     <ListDetails 
       list={item} 
-      pageType={ListPageType.FEATURED_LIST}
+      pageType='featured-list'
       imagePriority={index === 0 ? 'normal' : 'low'}
     />
   ), []);
@@ -193,7 +193,7 @@ const RecentlyUpdatedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSerie
     <View style={styles.horizontalComicItem}>
       <ComicSeriesDetails
         comicseries={item}
-        pageType={ComicSeriesPageType.COVER}
+        pageType='cover'
         imagePriority={index === 0 ? 'normal' : 'low'}
       />
     </View>
@@ -221,7 +221,7 @@ const RecentlyAddedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[
     <View style={styles.horizontalComicItem}>
       <ComicSeriesDetails
         comicseries={item}
-        pageType={ComicSeriesPageType.COVER}
+        pageType='cover'
         imagePriority={index === 0 ? 'normal' : 'low'}
       />
     </View>

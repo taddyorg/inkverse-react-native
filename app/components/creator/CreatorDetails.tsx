@@ -9,10 +9,9 @@ import { CREATOR_SCREEN } from '@/constants/Navigation';
 import { useNavigation } from '@react-navigation/native';
 import { CreatorLinks } from './CreatorLinks';
 
-export enum CreatorPageType {
-  CREATOR_SCREEN = 'CREATOR_SCREEN',
-  MINI_CREATOR = 'MINI_CREATOR',
-}
+type CreatorPageType = 
+  | 'creator-screen'
+  | 'mini-creator';
 
 export interface CreatorDetailsProps {
   creator: Creator | null | undefined;
@@ -26,7 +25,7 @@ export function CreatorDetails({ creator, pageType }: CreatorDetailsProps) {
 
   const avatarUrl = getAvatarImageUrl({ avatarImageAsString: creator.avatarImageAsString });
 
-  if (pageType === CreatorPageType.MINI_CREATOR) {
+  if (pageType === 'mini-creator') {
     const navigation = useNavigation();
 
     return (
