@@ -1,5 +1,5 @@
 import React, { useCallback, useReducer, useEffect, useMemo, useRef, useState } from 'react';
-import { RefreshControl, StyleSheet, useWindowDimensions, Animated, View, NativeSyntheticEvent, NativeScrollEvent, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, useWindowDimensions, Animated, View, NativeSyntheticEvent, NativeScrollEvent, TouchableWithoutFeedback, Pressable } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList, COMICISSUE_SCREEN } from '@/constants/Navigation';
@@ -11,14 +11,15 @@ import { GridOfComicIssues } from '../components/comics/GridOfComicIssues';
 import { ComicHeader, HEADER_HEIGHT } from '../components/comics/ComicHeader';
 import { ComicFooter, FOOTER_HEIGHT } from '../components/comics/ComicFooter';
 import { CreatorForIssue } from '../components/creator/CreatorForIssue';
-import { Screen, ThemedActivityIndicator, ThemedRefreshControl, ThemedText } from '@/app/components/ui';
+import { ComicIssueNextEpisode } from '../components/comics/ComicIssueNextEpisode';
+import { Screen, ThemedActivityIndicator, ThemedRefreshControl } from '@/app/components/ui';
 
 import { publicClient } from '@/lib/apollo';
 import { comicIssueQueryReducer, comicIssueInitialState, loadComicIssue } from '@/shared/dispatch/comicissue';
 import { ComicIssue, Creator } from '@/shared/graphql/types';
 import { getStoryImageUrl } from '@/public/comicstory';
 
-type ListItemType = 'story' | 'grid' | 'creator';
+type ListItemType = 'story' | 'grid' | 'creator' | 'next-episode';
 
 interface ListItem {
   type: ListItemType;
@@ -102,7 +103,7 @@ export function ComicIssueScreen() {
       useNativeDriver: true,
     }).start();
   }, []);
-
+  
   const [state, dispatch] = useReducer(comicIssueQueryReducer, comicIssueInitialState);
   const { isComicIssueLoading, comicissue, comicseries, allIssues } = state;
   
@@ -146,6 +147,50 @@ export function ComicIssueScreen() {
     }
   }, [issueUuid, comicissue?.uuid]);
 
+  // Handle navigation to a different issue
+  const handleNavigateToIssue = useCallback((newIssueUuid: string, newSeriesUuid: string) => {
+    navigation.navigate(COMICISSUE_SCREEN, {
+      issueUuid: newIssueUuid,
+      seriesUuid: newSeriesUuid,
+    });
+  }, [navigation]);
+
+  const renderItem = useCallback(({ item }: { item: ListItem }) => {
+    switch (item.type) {
+      case 'story':
+        return (
+          <StoryImage
+            story={item.data}
+            screenDetails={screenDetails}
+          />
+        );
+      case 'creator':
+        return (
+          <CreatorForIssue
+            creators={item.data.creators}
+            comicissue={item.data.comicissue}
+          />
+        );
+      case 'grid':
+        return (
+          <GridOfComicIssues
+            comicseries={item.data.comicseries}
+            comicissue={item.data.comicissue}
+            allIssues={item.data.allIssues}
+          />
+        );
+      case 'next-episode':
+        return (
+          <ComicIssueNextEpisode
+            comicissue={item.data.comicissue}
+            handleNavigateToIssue={handleNavigateToIssue}
+          />
+        );
+      default:
+        return null;
+    }
+  }, [screenDetails, handleNavigateToIssue]);
+
   const listData = useMemo(() => {
     if (!comicissue || !comicseries) return [];
 
@@ -174,45 +219,23 @@ export function ComicIssueScreen() {
       },
     };
 
-    return [...storyItems, creatorItem, gridItem];
+    const nextEpisodeItem: ListItem = {
+      type: 'next-episode' as const,
+      key: 'next-episode-button',
+      data: {
+        comicissue,
+      },
+    };
+
+    const items = [
+      ...storyItems,
+      creatorItem,
+      // gridItem,
+      nextEpisodeItem
+    ];
+
+    return items;
   }, [comicissue, comicseries, allIssues]);
-
-  const renderItem = useCallback(({ item }: { item: ListItem }) => {
-    switch (item.type) {
-      case 'story':
-        return (
-          <StoryImage
-            story={item.data}
-            screenDetails={screenDetails}
-          />
-        );
-      case 'creator':
-        return (
-          <CreatorForIssue
-            creators={item.data.creators}
-            comicissue={item.data.comicissue}
-          />
-        );
-      case 'grid':
-        return (
-          <GridOfComicIssues
-            comicseries={item.data.comicseries}
-            comicissue={item.data.comicissue}
-            allIssues={item.data.allIssues}
-          />
-        );
-      default:
-        return null;
-    }
-  }, [screenDetails]);
-
-  // Handle navigation to a different issue
-  const handleNavigateToIssue = useCallback((newIssueUuid: string, newSeriesUuid: string) => {
-    navigation.navigate(COMICISSUE_SCREEN, {
-      issueUuid: newIssueUuid,
-      seriesUuid: newSeriesUuid,
-    });
-  }, [navigation]);
 
   // Handle tap on content to toggle header and footer
   const handleTap = useCallback(() => {
