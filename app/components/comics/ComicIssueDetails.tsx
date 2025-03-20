@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import { ThemedText, ThemedTextFontFamilyMap, PressableOpacity } from '@/app/components/ui';
 import { ComicIssue, ComicSeries } from '@/shared/graphql/types';
 import { prettyFormattedDate, prettyFormattedFreeInDays } from '@/shared/utils/date';
-import { ColorCategory, Colors, useThemeColor } from '@/constants/Colors';
+import { Colors, useThemeColor } from '@/constants/Colors';
 import { getThumbnailImageUrl } from '@/public/comicseries';
 
 import { COMICISSUE_SCREEN } from '@/constants/Navigation';
@@ -37,8 +37,8 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCu
     });
   };
 
-  const actionColor = useThemeColor({}, ColorCategory.Action);
-  const actionTextColor = useThemeColor({}, ColorCategory.ActionText);
+  const actionColor = useThemeColor({}, 'action');
+  const actionTextColor = useThemeColor({}, 'actionText');
 
   return (
     <PressableOpacity onPress={handlePress}>

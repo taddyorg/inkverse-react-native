@@ -3,7 +3,7 @@ import { Animated, StyleSheet, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { ThemedText, ThemedTextFontFamilyMap, PressableOpacity } from '../ui';
+import { ThemedText, PressableOpacity } from '../ui';
 import { showShareSheet } from '@/lib/share-sheet';
 
 const HEADER_HEIGHT = 128;

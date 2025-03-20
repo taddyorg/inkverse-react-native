@@ -1,7 +1,6 @@
 import { View, StyleSheet } from 'react-native'
 import React, { useReducer, useMemo } from 'react'
 import { FlashList } from '@shopify/flash-list';
-import { Image } from 'expo-image';
 
 import { Colors } from '@/constants/Colors';
 import { ThemedText } from '../ui';

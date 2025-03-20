@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, View, ViewStyle } from 'react-native';
-import { useThemeColor, ColorCategory } from '@/constants/Colors';
+import { useThemeColor } from '@/constants/Colors';
 
 type ThemedActivityIndicatorSize = 'small' | 'large';
 
@@ -23,7 +23,7 @@ export function ThemedActivityIndicator({
 }: ThemedActivityIndicatorProps) {
   const color = useThemeColor(
     { light: passedInLightColor, dark: passedInDarkColor },
-    ColorCategory.Tint
+    'tint'
   );
 
   return (

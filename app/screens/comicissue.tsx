@@ -10,12 +10,12 @@ import { StoryImage } from '../components/comics/StoryImage';
 import { GridOfComicIssues } from '../components/comics/GridOfComicIssues';
 import { ComicHeader, HEADER_HEIGHT } from '../components/comics/ComicHeader';
 import { ComicFooter, FOOTER_HEIGHT } from '../components/comics/ComicFooter';
-import { CreatorDetails } from '../components/creator/CreatorDetails';
-import { Screen, ThemedActivityIndicator, ThemedRefreshControl } from '@/app/components/ui';
+import { CreatorForIssue } from '../components/creator/CreatorForIssue';
+import { Screen, ThemedActivityIndicator, ThemedRefreshControl, ThemedText } from '@/app/components/ui';
 
 import { publicClient } from '@/lib/apollo';
 import { comicIssueQueryReducer, comicIssueInitialState, loadComicIssue } from '@/shared/dispatch/comicissue';
-import { ComicIssue } from '@/shared/graphql/types';
+import { ComicIssue, Creator } from '@/shared/graphql/types';
 import { getStoryImageUrl } from '@/public/comicstory';
 
 type ListItemType = 'story' | 'grid' | 'creator';
@@ -155,6 +155,15 @@ export function ComicIssueScreen() {
       data: story,
     })) ?? [];
 
+    const creatorItem: ListItem = {
+      type: 'creator' as const,
+      key: `creator-details`,
+      data: {
+        creators: comicseries?.creators?.filter((creator) => creator !== null) ?? [],
+        comicissue,
+      },
+    };
+
     const gridItem: ListItem = {
       type: 'grid' as const,
       key: 'grid-of-issues',
@@ -165,7 +174,7 @@ export function ComicIssueScreen() {
       },
     };
 
-    return [...storyItems, gridItem];
+    return [...storyItems, creatorItem, gridItem];
   }, [comicissue, comicseries, allIssues]);
 
   const renderItem = useCallback(({ item }: { item: ListItem }) => {
@@ -179,9 +188,9 @@ export function ComicIssueScreen() {
         );
       case 'creator':
         return (
-          <CreatorDetails
-            creator={item.data}
-            pageType='mini-creator'
+          <CreatorForIssue
+            creators={item.data.creators}
+            comicissue={item.data.comicissue}
           />
         );
       case 'grid':

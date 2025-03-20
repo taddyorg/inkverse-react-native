@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, RefreshControl, RefreshControlProps } from 'react-native';
-import { useThemeColor, ColorCategory } from '@/constants/Colors';
+import { useThemeColor } from '@/constants/Colors';
 
 export type ThemedRefreshControlProps = Omit<RefreshControlProps, 'tintColor' | 'colors'> & {
   passedInLightColor?: string;
@@ -15,7 +15,7 @@ export function ThemedRefreshControl({
 }: ThemedRefreshControlProps) {
   const tintColor = useThemeColor(
     { light: passedInLightColor, dark: passedInDarkColor },
-    ColorCategory.Tint
+    'tint'
   );
 
   return (

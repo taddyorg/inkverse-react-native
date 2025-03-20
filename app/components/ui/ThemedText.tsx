@@ -1,6 +1,6 @@
 import { Text, type TextProps, StyleSheet } from 'react-native';
 
-import { ColorCategory, useThemeColor } from '@/constants/Colors';
+import { useThemeColor } from '@/constants/Colors';
 
 type ThemedTextSize = 'default' | 'title' | 'subtitle';
 type ThemedTextFont = 'regular' | 'semiBold' | 'bold';
@@ -26,7 +26,7 @@ export function ThemedText({
   font = 'regular',
   ...rest
 }: ThemedTextProps) {
-  const color = useThemeColor({ light: passedInLightColor, dark: passedInDarkColor }, ColorCategory.Text);
+  const color = useThemeColor({ light: passedInLightColor, dark: passedInDarkColor }, 'text');
 
   return (
     <Text

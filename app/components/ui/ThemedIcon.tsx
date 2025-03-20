@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { View, ViewStyle } from 'react-native';
-import { useThemeColor, ColorCategory } from '@/constants/Colors';
+import { useThemeColor } from '@/constants/Colors';
 
 type ThemedIconSize = 'small' | 'medium' | 'large';
 
@@ -26,7 +26,7 @@ export function ThemedIcon({
 }: ThemedIconProps) {
   const color = useThemeColor(
     { light: passedInLightColor, dark: passedInDarkColor },
-    ColorCategory.Text
+    'text'
   );
 
   // Clone the child element and pass the color prop

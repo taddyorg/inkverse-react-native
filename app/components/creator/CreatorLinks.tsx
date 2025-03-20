@@ -5,7 +5,7 @@ import { SvgUri } from 'react-native-svg';
 import { openEmail, openURL } from '@/lib/utils';
 import { linkIconNames } from '@/shared/utils/link-icons';
 import { type LinkDetails, type Maybe, LinkType } from '@/shared/graphql/operations';
-import { ColorCategory, useThemeColor } from '@/constants/Colors';
+import { useThemeColor } from '@/constants/Colors';
 
 interface CreatorLinksProps {
   links?: Maybe<Maybe<LinkDetails>[]> | undefined;
@@ -30,7 +30,7 @@ export function CreatorLinks({ links, passedInLightColor, passedInDarkColor }: C
   );
 
   if (safeLinks.length === 0) return null;
-  const color = useThemeColor({ light: passedInLightColor, dark: passedInDarkColor }, ColorCategory.Text);
+  const color = useThemeColor({ light: passedInLightColor, dark: passedInDarkColor }, 'text');
 
   return (
     <ScrollView 
