@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Pressable, Animated, PressableProps } from "react-native";
 
 type PressableOpacityProps = PressableProps & {
@@ -6,7 +6,7 @@ type PressableOpacityProps = PressableProps & {
 };
 
 export const PressableOpacity = ({ children, fadeLevel = 0.5,  ...props }: PressableOpacityProps) => {
-  const animated = new Animated.Value(1);
+  const animated = useRef(new Animated.Value(1)).current;
   const fadeIn = () => {
     Animated.timing(animated, {
       toValue: fadeLevel,

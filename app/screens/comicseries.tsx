@@ -1,6 +1,6 @@
 import { useReducer, useState, useCallback, useEffect, memo } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 
 import { Screen, HeaderBackButton, HeaderShareButton, ThemedActivityIndicator, ThemedRefreshControl } from '@/app/components/ui';
@@ -8,10 +8,11 @@ import { ComicSeriesDetails } from '@/app/components/comics/ComicSeriesDetails';
 import { ComicIssuesList, ComicIssuesListProps } from '@/app/components/comics/ComicIssuesList';
 
 import { publicClient } from '@/lib/apollo';
-import { ComicSeries } from '@/shared/graphql/types';
+import { ComicIssue, ComicSeries } from '@/shared/graphql/types';
 import { loadComicSeries, comicSeriesQueryReducerDefault, comicSeriesInitialState } from '@/shared/dispatch/comicseries';
-import { RootStackParamList, COMICSERIES_SCREEN } from '@/constants/Navigation';
+import { RootStackParamList, COMICSERIES_SCREEN, COMICISSUE_SCREEN } from '@/constants/Navigation';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ReadNextEpisode } from '../components/comics/ReadNextEpisode';
 
 export interface ComicSeriesScreenParams {
   uuid: string;
@@ -19,11 +20,13 @@ export interface ComicSeriesScreenParams {
 
 type ListItem = 
   | { type: 'header'; data: ComicSeries }
-  | { type: 'issues'; data: ComicIssuesListProps };
+  | { type: 'issues'; data: ComicIssuesListProps }
+  | { type: 'next-episode'; data: ComicIssue | null };
 
 export function ComicSeriesScreen() {
   const route = useRoute<NativeStackScreenProps<RootStackParamList, typeof COMICSERIES_SCREEN>['route']>();
   const { uuid } = route.params;
+  const navigation = useNavigation();
   
   const [comicSeriesState, dispatch] = useReducer(comicSeriesQueryReducerDefault, comicSeriesInitialState);
   const [refreshing, setRefreshing] = useState(false);
@@ -41,13 +44,16 @@ export function ComicSeriesScreen() {
     setRefreshing(false);
   }, [uuid]);
 
+  const handleNavigateToIssue = useCallback((issueUuid: string, seriesUuid: string) => {
+    navigation.navigate(COMICISSUE_SCREEN, { issueUuid, seriesUuid });
+  }, [navigation]);
+
   const renderItem = useCallback(({ item }: { item: ListItem }) => {
     switch (item.type) {
       case 'header':
         return (
           <ComicSeriesDetails
             comicseries={item.data}
-            firstIssue={issues[0]}
             pageType='comicseries-screen'
             isHeaderVisible={isHeaderVisible}
             onHeaderVisibilityChange={setIsHeaderVisible}
@@ -61,22 +67,37 @@ export function ComicSeriesScreen() {
             currentIssueUuid={item.data.comicissues?.[0]?.uuid}
           />
         );
+      case 'next-episode':
+        if (!item.data) { return null; }
+        return (
+          <ReadNextEpisode
+            comicissue={item.data}
+            showEmptyState={false}
+            firstTextCTA='READ THE FIRST'
+            secondTextCTA='EPISODE'
+            handleNavigateToIssue={handleNavigateToIssue}
+          />
+        );
       default:
         return null;
     }
   }, [comicseries, issues, isHeaderVisible, setIsHeaderVisible]);
 
   const keyExtractor = useCallback((item: ListItem) => {
-    return item.type === 'header' 
-      ? `header-${item.data.uuid}` 
-      : `issues-${item.data.comicseries.uuid}`;
-  }, []);
+    switch (item.type) {
+      case 'header':
+      case 'issues':
+      case 'next-episode':
+        return item.type;
+    }
+  }, [comicseries, issues]);
 
   const getListData = useCallback((): ListItem[] => {
     if (!comicseries) return [];
     return [
       { type: 'header', data: comicseries },
       { type: 'issues', data: { comicissues: issues, comicseries, currentIssueUuid: issues[0]?.uuid } },
+      { type: 'next-episode', data: issues[0] }
     ];
   }, [comicseries, issues]);
 

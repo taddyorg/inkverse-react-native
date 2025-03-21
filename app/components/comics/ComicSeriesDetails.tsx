@@ -25,13 +25,12 @@ type ComicSeriesPageType =
 interface ComicSeriesDetailsProps {
   comicseries: ComicSeries | null | undefined;
   pageType: ComicSeriesPageType;
-  firstIssue?: any;
   isHeaderVisible?: boolean;
   onHeaderVisibilityChange?: (isVisible: boolean) => void;
   imagePriority?: 'high' | 'normal' | 'low';
 }
 
-export function ComicSeriesDetails({ comicseries, pageType, firstIssue, isHeaderVisible, onHeaderVisibilityChange, imagePriority }: ComicSeriesDetailsProps) {
+export function ComicSeriesDetails({ comicseries, pageType, isHeaderVisible, onHeaderVisibilityChange, imagePriority }: ComicSeriesDetailsProps) {
   const navigation = useNavigation();
 
   if (!comicseries) return null;

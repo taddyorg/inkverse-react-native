@@ -7,13 +7,17 @@ import { ThemedText, ThemedTextFontFamilyMap, PressableOpacity } from '../ui';
 import { ComicIssue } from '@/shared/graphql/types';
 import { getThumbnailImageUrl } from '@/public/comicissue';
 
-interface ComicIssueNextEpisodeProps {
+interface ReadNextEpisodeProps {
   comicissue: ComicIssue;
+  showEmptyState?: boolean;
+  firstTextCTA?: string;
+  secondTextCTA?: string;
   handleNavigateToIssue: (issueUuid: string, seriesUuid: string) => void;
 }
 
-export function ComicIssueNextEpisode({ comicissue, handleNavigateToIssue }: ComicIssueNextEpisodeProps) {
-  if (!comicissue?.nextIssue) {
+export function ReadNextEpisode({ comicissue, showEmptyState = true, firstTextCTA = 'NEXT', secondTextCTA = 'EPISODE', handleNavigateToIssue }: ReadNextEpisodeProps) {
+  if (!comicissue) {
+    if (!showEmptyState) { return null; }
     return (
       <View style={styles.container}>
         <View style={styles.endButtonContainer}>
@@ -30,8 +34,8 @@ export function ComicIssueNextEpisode({ comicissue, handleNavigateToIssue }: Com
       <PressableOpacity
         style={styles.button} 
         onPress={() => {
-          if (handleNavigateToIssue && comicissue?.nextIssue?.uuid && comicissue?.nextIssue?.seriesUuid) {
-            handleNavigateToIssue(comicissue.nextIssue.uuid, comicissue.nextIssue.seriesUuid);
+          if (handleNavigateToIssue && comicissue.uuid && comicissue.seriesUuid) {
+            handleNavigateToIssue(comicissue.uuid, comicissue.seriesUuid);
           }
         }}
       >
@@ -46,8 +50,8 @@ export function ComicIssueNextEpisode({ comicissue, handleNavigateToIssue }: Com
             </View>
           )}
           <View style={styles.titleContainer}>
-            <ThemedText style={styles.title}>NEXT</ThemedText>
-            <ThemedText style={styles.title}>EPISODE</ThemedText>
+            <ThemedText style={styles.title}>{firstTextCTA.toUpperCase()}</ThemedText>
+            <ThemedText style={styles.title}>{secondTextCTA.toUpperCase()}</ThemedText>
           </View>
         </View>
       </PressableOpacity>

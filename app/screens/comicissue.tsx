@@ -11,7 +11,7 @@ import { GridOfComicIssues } from '../components/comics/GridOfComicIssues';
 import { ComicHeader, HEADER_HEIGHT } from '../components/comics/ComicHeader';
 import { ComicFooter, FOOTER_HEIGHT } from '../components/comics/ComicFooter';
 import { CreatorForIssue } from '../components/creator/CreatorForIssue';
-import { ComicIssueNextEpisode } from '../components/comics/ComicIssueNextEpisode';
+import { ReadNextEpisode } from '../components/comics/ReadNextEpisode';
 import { Screen, ScrollIndicator, ThemedActivityIndicator, ThemedRefreshControl } from '@/app/components/ui';
 
 import { publicClient } from '@/lib/apollo';
@@ -193,7 +193,7 @@ export function ComicIssueScreen() {
         );
       case 'next-episode':
         return (
-          <ComicIssueNextEpisode
+          <ReadNextEpisode
             comicissue={item.data.comicissue}
             handleNavigateToIssue={handleNavigateToIssue}
           />
@@ -235,7 +235,7 @@ export function ComicIssueScreen() {
       type: 'next-episode' as const,
       key: 'next-episode-button',
       data: {
-        comicissue,
+        comicissue: comicissue.nextIssue,
       },
     };
 

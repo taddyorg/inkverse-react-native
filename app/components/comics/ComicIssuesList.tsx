@@ -1,11 +1,13 @@
 import { View, StyleSheet } from 'react-native'
-import React, { useReducer, useMemo } from 'react'
+import React, { useReducer, useMemo, useState } from 'react'
 import { FlashList } from '@shopify/flash-list';
+import { Octicons } from '@expo/vector-icons';
 
 import { Colors } from '@/constants/Colors';
 import { ThemedText } from '../ui';
 import { ComicIssue, ComicSeries } from '@/shared/graphql/types';
 import { ComicIssueDetails } from './ComicIssueDetails';
+import { PressableOpacity } from '../ui/PressableOpacity';
 
 export interface ComicIssuesListProps {
   comicissues: ComicIssue[];
@@ -15,6 +17,7 @@ export interface ComicIssuesListProps {
 
 export const ComicIssuesList = (props: ComicIssuesListProps) => {
   const { comicissues, comicseries, currentIssueUuid } = props;
+  const [isNewestFirst, setIsNewestFirst] = useState(false);
 
   const [tokenQuery, tokenDispatch] = useReducer((state: any, action: any) => state, {});
   const { isSavingTokens } = tokenQuery;
@@ -22,13 +25,32 @@ export const ComicIssuesList = (props: ComicIssuesListProps) => {
   const items = new Set<string>(); // TODO: Replace with actual implementation
   const userHasUnlockedEpisodes = items && items.size > 0;
 
-  const listData = useMemo(() => comicissues.map((comicissue, index) => ({
-    key: comicissue.uuid,
-    type: "issue",
-    comicissue,
-    comicseries,
-    position: index,
-  })), [comicissues, comicseries]);
+  const listData = useMemo(() => {
+    // Use immutable sort rather than mutable reverse
+    return [...comicissues]
+      .sort((a, b) => {
+        // Get position values with defaults if null/undefined
+        const posA = a.position ?? 0;
+        const posB = b.position ?? 0;
+        
+        // For newest first (default): descending order
+        // For oldest first: ascending order
+        return isNewestFirst 
+          ? posB - posA // Newest first
+          : posA - posB; // Oldest first
+      })
+      .map((comicissue, index) => ({
+        key: comicissue.uuid,
+        type: "issue",
+        comicissue,
+        comicseries,
+        position: index,
+      }));
+  }, [comicissues, comicseries, isNewestFirst]);
+
+  const toggleSortOrder = () => {
+    setIsNewestFirst(!isNewestFirst);
+  };
 
   const renderItem = ({ item, index }: { item: any, index: number }) => (
     <ComicIssueDetails
@@ -44,6 +66,13 @@ export const ComicIssuesList = (props: ComicIssuesListProps) => {
     <View style={styles.container}>
       <View style={styles.sectionHeader}>
         <ThemedText size="subtitle">{'Episodes'}</ThemedText>
+        <PressableOpacity onPress={toggleSortOrder} style={styles.sortButton}>
+          <Octicons 
+            name={isNewestFirst ? "sort-asc" : "sort-desc"} 
+            size={20} 
+            color={Colors.light.text} 
+          />
+        </PressableOpacity>
       </View>
       <View style={styles.flashListContainer}>
         <FlashList
@@ -64,6 +93,18 @@ const styles = StyleSheet.create({
   sectionHeader: {
     paddingHorizontal: 12,
     marginBottom: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  sortButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 4,
+    paddingHorizontal: 4,
+  },
+  sortText: {
+    marginLeft: 4,
   },
   flashListContainer: {
     flex: 1,
