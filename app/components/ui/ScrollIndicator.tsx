@@ -23,7 +23,8 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
   const animatedOpacity = useRef(new Animated.Value(isVisible ? 1 : 0)).current;
   
   const totalScrollable = Math.max(0, contentHeight - screenHeight);
-  const containerHeight = screenHeight - headerHeight - footerHeight; // Account for top/bottom margins
+  // Adjust container height to account for footer height and add a buffer to prevent overlap
+  const containerHeight = screenHeight - headerHeight - footerHeight - 20; // Add buffer to prevent overlap
   
   // Update animated position when scrollPosition changes (when not controlled by pan)
   useEffect(() => {
@@ -43,7 +44,7 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
     
     Animated.timing(animatedOpacity, {
       toValue: shouldBeVisible ? 1 : 0,
-      duration: 0,
+      duration: 50,
       useNativeDriver: true
     }).start();
   }, [isVisible, isInteracting, animatedOpacity]);
@@ -118,7 +119,7 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
       styles.scrollIndicatorContainer, 
       { 
         top: headerHeight,
-        bottom: footerHeight,
+        // Set a fixed height instead of using bottom property to avoid footer overlap
         height: containerHeight,
         opacity: animatedOpacity
       }

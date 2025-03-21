@@ -156,7 +156,15 @@ export function ComicIssueScreen() {
       issueUuid: newIssueUuid,
       seriesUuid: newSeriesUuid,
     });
+
+    // Reset all UI state properly
     setScrollPosition(0);
+    setContentHeight(0); // Reset content height to prevent incorrect scroll indicator
+    isHeaderOpen.current = false;
+    isFooterOpen.current = false;
+    setIsHeaderVisible(false);
+    headerTranslateY.setValue(HEADER_CLOSED_POSITION);
+    footerTranslateY.setValue(FOOTER_CLOSED_POSITION);    
   }, [navigation]);
 
   const renderItem = useCallback(({ item }: { item: ListItem }) => {
@@ -259,7 +267,8 @@ export function ComicIssueScreen() {
     
     // Update scroll position for scroll indicator
     setScrollPosition(y);
-    setContentHeight(contentSize.height);
+    // Adjust content height to account for footer padding
+    setContentHeight(contentSize.height + FOOTER_HEIGHT);
     
     // Show header and footer when at top
     if (y <= 0 && (!isHeaderOpen.current || !isFooterOpen.current)) {
