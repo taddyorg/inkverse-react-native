@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { StyleSheet, View, PanResponder, GestureResponderEvent, PanResponderGestureState, Animated } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
@@ -10,12 +10,17 @@ interface ScrollIndicatorProps {
   headerHeight: number;
   footerHeight: number;
   onScrollTo: (position: number) => void;
+  isVisible: boolean;
 }
 
-export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, headerHeight, footerHeight, onScrollTo }: ScrollIndicatorProps) {
+export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, headerHeight, footerHeight, onScrollTo, isVisible }: ScrollIndicatorProps) {
+  // Track if user is currently interacting with the scroll indicator
+  const [isInteracting, setIsInteracting] = useState(false);
+  
   // Use Animated values for smoother transitions
   const animatedScale = useRef(new Animated.Value(1)).current;
   const animatedPosition = useRef(new Animated.Value(0)).current;
+  const animatedOpacity = useRef(new Animated.Value(isVisible ? 1 : 0)).current;
   
   const totalScrollable = Math.max(0, contentHeight - screenHeight);
   const containerHeight = screenHeight - headerHeight - footerHeight; // Account for top/bottom margins
@@ -30,11 +35,26 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
     animatedPosition.setValue(newPosition);
     
   }, [scrollPosition, totalScrollable, containerHeight, animatedPosition]);
+
+  // Update opacity when visibility changes, but stay visible during interaction
+  useEffect(() => {
+    // Only hide if not currently interacting
+    const shouldBeVisible = isVisible || isInteracting;
+    
+    Animated.timing(animatedOpacity, {
+      toValue: shouldBeVisible ? 1 : 0,
+      duration: 0,
+      useNativeDriver: true
+    }).start();
+  }, [isVisible, isInteracting, animatedOpacity]);
   
   const panResponder = React.useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: () => true,
     onPanResponderGrant: () => {
+      // Set interaction state to true when user starts dragging
+      setIsInteracting(true);
+      
       // Scale up when touch starts - use timing for more direct control
       Animated.timing(animatedScale, {
         toValue: 1.2,
@@ -46,8 +66,8 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
       // Get the touch position relative to the container
       const touchY = evt.nativeEvent.pageY;
       
-      // Calculate container bounds
-      const containerTop = 50; // Same as in styles
+      // Calculate container bounds with exact header position
+      const containerTop = headerHeight;
       
       // Calculate the percentage of the touch within the container
       let touchPercentage = Math.max(0, Math.min(1, 
@@ -58,14 +78,15 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
       const newScrollPos = touchPercentage * totalScrollable;
       
       // Update animated position directly for immediate visual feedback
-      // This provides the smoothest possible movement during dragging
       animatedPosition.setValue(touchPercentage * containerHeight);
       
       // Update scroll position in parent
-      // Remove requestAnimationFrame for more immediate updates
       onScrollTo(newScrollPos);
     },
     onPanResponderRelease: () => {
+      // Set interaction state to false when user stops dragging
+      setIsInteracting(false);
+      
       // Scale down when touch ends
       Animated.timing(animatedScale, {
         toValue: 1,
@@ -74,6 +95,9 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
       }).start();
     },
     onPanResponderTerminate: () => {
+      // Set interaction state to false when touch is terminated
+      setIsInteracting(false);
+      
       // Scale down when touch is terminated
       Animated.timing(animatedScale, {
         toValue: 1,
@@ -81,15 +105,24 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
         useNativeDriver: true
       }).start();
     },
-  }), [containerHeight, totalScrollable, onScrollTo, animatedPosition, animatedScale]);
+  }), [containerHeight, totalScrollable, onScrollTo, animatedPosition, animatedScale, headerHeight]);
   
   // Don't show scroll tip if content fits in screen
   if (contentHeight <= screenHeight) {
     return null;
   }
   
+  // Position exactly at header edge with no gap
   return (
-    <View style={[styles.scrollIndicatorContainer]}>
+    <Animated.View style={[
+      styles.scrollIndicatorContainer, 
+      { 
+        top: headerHeight,
+        bottom: footerHeight,
+        height: containerHeight,
+        opacity: animatedOpacity
+      }
+    ]}>
       <View style={styles.touchArea} {...panResponder.panHandlers}>
         <Animated.View 
           style={[
@@ -116,7 +149,7 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
           />
         </Animated.View>
       </View>
-    </View>
+    </Animated.View>
   );
 }
 
@@ -124,10 +157,9 @@ const styles = StyleSheet.create({
   scrollIndicatorContainer: {
     position: 'absolute',
     right: 8,
-    top: 50,
-    bottom: 50,
     width: 24,
-    zIndex: 1000,
+    zIndex: 10,
+    marginTop: -10
   },
   touchArea: {
     position: 'absolute',

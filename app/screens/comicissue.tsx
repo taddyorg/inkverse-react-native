@@ -12,11 +12,11 @@ import { ComicHeader, HEADER_HEIGHT } from '../components/comics/ComicHeader';
 import { ComicFooter, FOOTER_HEIGHT } from '../components/comics/ComicFooter';
 import { CreatorForIssue } from '../components/creator/CreatorForIssue';
 import { ComicIssueNextEpisode } from '../components/comics/ComicIssueNextEpisode';
-import { Screen, ThemedActivityIndicator, ThemedRefreshControl } from '@/app/components/ui';
+import { Screen, ScrollIndicator, ThemedActivityIndicator, ThemedRefreshControl } from '@/app/components/ui';
 
 import { publicClient } from '@/lib/apollo';
 import { comicIssueQueryReducer, comicIssueInitialState, loadComicIssue } from '@/shared/dispatch/comicissue';
-import { ComicIssue, Creator } from '@/shared/graphql/types';
+import { ComicIssue } from '@/shared/graphql/types';
 import { getStoryImageUrl } from '@/public/comicstory';
 
 type ListItemType = 'story' | 'grid' | 'creator' | 'next-episode';
@@ -71,6 +71,7 @@ export function ComicIssueScreen() {
   const footerTranslateY = useRef(new Animated.Value(FOOTER_OPEN_POSITION)).current;
   const isHeaderOpen = useRef(true);
   const isFooterOpen = useRef(true);
+  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   
   // Scroll indicator state
@@ -81,8 +82,10 @@ export function ComicIssueScreen() {
   const animateHeaderPosition = useCallback((toValue: number) => {
     if (toValue === HEADER_OPEN_POSITION) {
       isHeaderOpen.current = true;
+      setIsHeaderVisible(true);
     } else {
       isHeaderOpen.current = false;
+      setIsHeaderVisible(false);
     }
     
     Animated.spring(headerTranslateY, {
@@ -153,6 +156,7 @@ export function ComicIssueScreen() {
       issueUuid: newIssueUuid,
       seriesUuid: newSeriesUuid,
     });
+    setScrollPosition(0);
   }, [navigation]);
 
   const renderItem = useCallback(({ item }: { item: ListItem }) => {
@@ -342,14 +346,15 @@ export function ComicIssueScreen() {
         allIssues={allIssues || []}
         onNavigateToIssue={handleNavigateToIssue}
       />
-      {/* <ScrollIndicator 
+      <ScrollIndicator 
         scrollPosition={scrollPosition}
         contentHeight={contentHeight}
         screenHeight={screenDetails.height}
         headerHeight={HEADER_HEIGHT}
         footerHeight={FOOTER_HEIGHT}
         onScrollTo={handleScrollTo}
-      /> */}
+        isVisible={isHeaderVisible}
+      />
     </Screen>
   );
 }
