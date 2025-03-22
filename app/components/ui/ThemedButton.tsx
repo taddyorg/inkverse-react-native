@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { useColorScheme } from 'react-native';
-import { TouchableOpacity, StyleSheet, TouchableOpacityProps } from 'react-native';
+import { StyleProp, useColorScheme, TouchableOpacity, StyleSheet, TouchableOpacityProps } from 'react-native';
 
 import { ThemedText, ThemedTextFontFamilyMap } from './ThemedText';
 import { Colors } from '@/constants/Colors';
 
 type ThemedButtonProps = TouchableOpacityProps & {
   buttonText: string;
+  props?: StyleProp<TouchableOpacityProps>;
 }
 
 export function ThemedButton({ buttonText, onPress, style, ...props }: ThemedButtonProps) {
@@ -18,7 +18,9 @@ export function ThemedButton({ buttonText, onPress, style, ...props }: ThemedBut
   return (
       <TouchableOpacity 
         onPress={onPress}
-        style={[styles.button, { backgroundColor }, style]}>
+        style={[styles.button, { backgroundColor }, style]}
+        {...props}
+        >
         <ThemedText style={[styles.buttonText, { color: buttonTextColor }]}>
             {buttonText}
         </ThemedText>

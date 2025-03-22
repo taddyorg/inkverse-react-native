@@ -11,6 +11,7 @@ export const SETTINGS_SCREEN = "SettingsScreen";
 export const LIST_SCREEN = "ListScreen";
 export const COMICS_LIST_SCREEN = "ComicsListScreen";
 export const BLOG_SCREEN = "BlogScreen";
+export const REPORTS_SCREEN = "ReportsScreen";
 export const MAIN_SCREEN = "MainScreen";
 
 import { ComicSeriesScreenParams } from "@/app/screens/comicseries";
@@ -20,6 +21,7 @@ import { SettingsScreenParams } from "@/app/screens/settings";
 import { ListScreenParams } from "@/app/screens/list";
 import { ComicsListScreenParams } from "@/app/screens/comicslist";
 import { BlogScreenParams } from "@/app/screens/blog";
+import { ReportsScreenParams } from "@/app/screens/reports";
 
 export type RootStackParamList = {
   [HOME_TAB]: undefined;
@@ -35,6 +37,7 @@ export type RootStackParamList = {
   [LIST_SCREEN]: ListScreenParams;
   [COMICS_LIST_SCREEN]: ComicsListScreenParams;
   [BLOG_SCREEN]: BlogScreenParams;
+  [REPORTS_SCREEN]: ReportsScreenParams;
   [MAIN_SCREEN]: undefined;
 };
 

@@ -6,6 +6,7 @@ import { FlashList } from '@shopify/flash-list';
 import { Screen, HeaderBackButton, HeaderShareButton, ThemedActivityIndicator, ThemedRefreshControl } from '@/app/components/ui';
 import { ComicSeriesDetails } from '@/app/components/comics/ComicSeriesDetails';
 import { ComicIssuesList, ComicIssuesListProps } from '@/app/components/comics/ComicIssuesList';
+import { ComicSeriesInfo } from '@/app/components/comics/ComicSeriesInfo';
 
 import { publicClient } from '@/lib/apollo';
 import { ComicIssue, ComicSeries } from '@/shared/graphql/types';
@@ -20,6 +21,7 @@ export interface ComicSeriesScreenParams {
 
 type ListItem = 
   | { type: 'header'; data: ComicSeries }
+  | { type: 'info'; data: ComicSeries }
   | { type: 'issues'; data: ComicIssuesListProps }
   | { type: 'next-episode'; data: ComicIssue | null };
 
@@ -59,6 +61,8 @@ export function ComicSeriesScreen() {
             onHeaderVisibilityChange={setIsHeaderVisible}
           />
         );
+      case 'info':
+        return <ComicSeriesInfo comicseries={item.data} />;
       case 'issues':
         return (
           <ComicIssuesList 
@@ -86,6 +90,7 @@ export function ComicSeriesScreen() {
   const keyExtractor = useCallback((item: ListItem) => {
     switch (item.type) {
       case 'header':
+      case 'info':
       case 'issues':
       case 'next-episode':
         return item.type;
@@ -97,6 +102,7 @@ export function ComicSeriesScreen() {
     return [
       { type: 'header', data: comicseries },
       { type: 'issues', data: { comicissues: issues, comicseries, currentIssueUuid: issues[0]?.uuid } },
+      { type: 'info', data: comicseries },
       { type: 'next-episode', data: issues[0] }
     ];
   }, [comicseries, issues]);
