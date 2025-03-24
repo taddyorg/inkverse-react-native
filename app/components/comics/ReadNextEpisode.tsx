@@ -6,6 +6,7 @@ import { ThemedText, ThemedTextFontFamilyMap, PressableOpacity } from '../ui';
 
 import { ComicIssue } from '@/shared/graphql/types';
 import { getThumbnailImageUrl } from '@/public/comicissue';
+import { useThemeColor } from '@/constants/Colors';
 
 interface ReadNextEpisodeProps {
   comicissue: ComicIssue;
@@ -16,6 +17,8 @@ interface ReadNextEpisodeProps {
 }
 
 export function ReadNextEpisode({ comicissue, showEmptyState = true, firstTextCTA = 'NEXT', secondTextCTA = 'EPISODE', handleNavigateToIssue }: ReadNextEpisodeProps) {
+  const color = useThemeColor({}, 'action');
+
   if (!comicissue) {
     if (!showEmptyState) { return null; }
     return (
@@ -39,7 +42,7 @@ export function ReadNextEpisode({ comicissue, showEmptyState = true, firstTextCT
           }
         }}
       >
-        <View style={styles.nextIssueButtonContainer}>
+        <View style={[styles.nextIssueButtonContainer, { borderColor: color }]}>
           {comicissue.thumbnailImageAsString && (
             <View>
               <Image
@@ -50,8 +53,8 @@ export function ReadNextEpisode({ comicissue, showEmptyState = true, firstTextCT
             </View>
           )}
           <View style={styles.titleContainer}>
-            <ThemedText style={styles.title}>{firstTextCTA.toUpperCase()}</ThemedText>
-            <ThemedText style={styles.title}>{secondTextCTA.toUpperCase()}</ThemedText>
+            <ThemedText style={[styles.title, { color }]}>{firstTextCTA.toUpperCase()}</ThemedText>
+            <ThemedText style={[styles.title, { color }]}>{secondTextCTA.toUpperCase()}</ThemedText>
           </View>
         </View>
       </PressableOpacity>
@@ -77,7 +80,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff', // PAPER_PINK equivalent
     borderRadius: 20,
     borderWidth: 3,
-    borderColor: '#E05151', // BRAND_PINK equivalent
   },
   thumbnail: {
     width: 104,
@@ -88,7 +90,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 24,
     fontFamily: ThemedTextFontFamilyMap.bold,
-    color: '#E05151', // BRAND_PINK equivalent
   },
   titleContainer: {
     flex: 1,

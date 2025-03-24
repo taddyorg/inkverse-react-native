@@ -14,6 +14,7 @@ import { publicClient } from '@/lib/apollo';
 import { ComicSeries, List } from '@/shared/graphql/types';
 import { loadHomeScreen, homefeedQueryReducerDefault, homeScreenInitialState } from '@/shared/dispatch/homefeed';
 import { NewsItem, inkverseNewsItems } from '@/public/news-items';
+import { useThemeColor } from '@/constants/Colors';
 
 // Section types for FlashList
 type SectionType = 
@@ -331,6 +332,7 @@ const styles = StyleSheet.create({
   newsTitle: {
     fontSize: 16,
     fontFamily: ThemedTextFontFamilyMap.bold,
+    color: '#403B51',
     lineHeight: 22,
   },
   newsItemContainer: {

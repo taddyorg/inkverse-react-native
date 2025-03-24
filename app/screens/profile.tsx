@@ -6,7 +6,6 @@ import { useNavigation } from '@react-navigation/native';
 import { Screen, ThemedView, ThemedText, ThemedButton } from '@/app/components/ui';
 import { HeaderSettingsButton } from '@/app/components/profile/HeaderSettingsButton'
 import { SETTINGS_SCREEN } from '@/constants/Navigation';
-import { Colors } from '@/constants/Colors';
 
 type ListItem = 
   | { type: 'screen-header'; key: string; data: undefined }

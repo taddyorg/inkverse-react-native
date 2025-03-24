@@ -24,7 +24,7 @@ export interface ComicsListScreenParams {
   value: string;
 }
 
-const LIMIT_PER_PAGE = 15; // Items per page for grid view
+const LIMIT_PER_PAGE = 12; // Items per page for grid view
 
 export function ComicsListScreen() {
   const navigation = useNavigation();

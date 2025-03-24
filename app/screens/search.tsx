@@ -8,7 +8,7 @@ import { useState, useCallback, useEffect, useReducer } from 'react';
 import { Screen, ThemedText, PressableOpacity, ScreenHeader, ThemedActivityIndicator } from '@/app/components/ui';
 import { Genre, ComicSeries } from '@/shared/graphql/types';
 import { getPrettyGenre } from '@/public/genres';
-import { Colors } from '@/constants/Colors';
+import { Colors, useThemeColor } from '@/constants/Colors';
 import { ComicSeriesDetails } from '@/app/components/comics/ComicSeriesDetails';
 import { publicClient } from '@/lib/apollo';
 import { searchQueryReducer, searchInitialState, searchComics, debouncedSearchComics } from '@/shared/dispatch/search';
@@ -394,12 +394,16 @@ interface SelectableItemProps {
 }
 
 // Component for selectable genre/tag item
-const SelectableItem: React.FC<SelectableItemProps> = ({ label, onPress, variant = 'tag' }) => (
+const SelectableItem: React.FC<SelectableItemProps> = ({ label, onPress, variant = 'tag' }) => {
+  const tagColor = useThemeColor({}, 'tag');
+  const categoryColor = useThemeColor({}, 'category');
+
+  return (
   <PressableOpacity 
     onPress={onPress}
     style={[
       styles.selectableItem,
-      variant === 'category' ? styles.categoryItem : styles.tagItem
+      variant === 'category' ? [styles.categoryItem, { backgroundColor: categoryColor + '20', borderColor: categoryColor + '40' }] : [styles.tagItem, { backgroundColor: tagColor + '20', borderColor: tagColor + '40' }]
     ]}
   >
     <ThemedText style={[
@@ -408,8 +412,9 @@ const SelectableItem: React.FC<SelectableItemProps> = ({ label, onPress, variant
     ]}>
       {label}
     </ThemedText>
-  </PressableOpacity>
-);
+    </PressableOpacity>
+  );
+};
 
 // Section component for FlashList
 interface SectionProps {
@@ -452,16 +457,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   tagItem: {
-    backgroundColor: Colors.light.tint + '20', // Using light tint with opacity
-    borderColor: Colors.light.tint + '40',
     borderRadius: 20,
     paddingHorizontal: 16,
   },
   categoryItem: {
-    backgroundColor: Colors.light.icon + '20', // Using taddy-blue with opacity
-    borderColor: Colors.light.icon + '40',
     borderRadius: 8, // More square shape for categories
-    paddingHorizontal: 20, // Wider padding
+    paddingHorizontal: 16, // Wider padding
     paddingVertical: 12, // Taller
     marginRight: 14, // Slightly more spacing between items
     marginTop: 8,
@@ -472,6 +473,8 @@ const styles = StyleSheet.create({
   },
   tagItemText: {
     // Default text style for tags
+    fontSize: 15,
+
   },
   categoryItemText: {
     fontSize: 16, // Larger text

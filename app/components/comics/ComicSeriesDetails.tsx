@@ -6,12 +6,12 @@ import { useNavigation } from '@react-navigation/native';
 import { ThemedText, ThemedTextFontFamilyMap, ThemedView, PressableOpacity } from '../ui';
 import { CreatorDetails } from '../creator/CreatorDetails';
 
-import { COMICSERIES_SCREEN } from '@/constants/Navigation';
+import { COMICS_LIST_SCREEN, COMICSERIES_SCREEN } from '@/constants/Navigation';
 import { ComicSeries, ContentRating, Genre } from '@/shared/graphql/types';
 import { getBannerImageUrl, getCoverImageUrl, getThumbnailImageUrl } from '@/public/comicseries';
 import { getPrettyGenre } from '@/public/genres';
-import { getPrettyRating } from '@/public/ratings';
-import { Colors } from '@/constants/Colors';
+import { Colors, useThemeColor } from '@/constants/Colors';
+import { ComicsListPageType } from '@/app/screens/comicslist';
 
 type ComicSeriesPageType = 
   | 'comicseries-screen'
@@ -134,6 +134,8 @@ export function ComicSeriesDetails({ comicseries, pageType, isHeaderVisible, onH
       );
 
     case 'comicseries-screen':
+      const tagColor = useThemeColor({}, 'tag');
+
       return (
         <ThemedView style={styles.container}>
           <Pressable onPress={handlePressForShowAndHideHeader}>
@@ -166,11 +168,14 @@ export function ComicSeriesDetails({ comicseries, pageType, isHeaderVisible, onH
             </ThemedText>
             <View style={styles.tagsContainer}>
               {comicseries.tags?.map((tag, index) => (
-                <View key={tag?.toLowerCase()} style={styles.tag}>
+                <PressableOpacity key={tag?.toLowerCase()} style={[styles.tag, { backgroundColor: tagColor + '20', borderColor: tagColor + '40' }]} onPress={() => tag && navigation.navigate(COMICS_LIST_SCREEN, {
+                  pageType: ComicsListPageType.TAG,
+                  value: tag,
+                })}>
                   <ThemedText style={styles.tagText}>
                     {tag?.toLowerCase()}
                   </ThemedText>
-                </View>
+                </PressableOpacity>
               ))}
             </View>
           </View>
@@ -256,16 +261,17 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   tag: {
-    backgroundColor: Colors.dark.text,
     borderRadius: 100,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 8,
     marginRight: 8,
     marginBottom: 8,
   },
   tagText: {
-    fontSize: 16,
-    color: Colors.dark.background,
+    fontSize: 15,
+    // color: Colors.dark.background,
+    // backgroundColor: Colors.light.tint + '20', // Using light tint with opacity
+    // borderColor: Colors.light.tint + '40',
   },
   featuredContainer: {
     width: '100%',

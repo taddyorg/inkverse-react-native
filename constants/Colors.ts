@@ -1,13 +1,3 @@
-type ColorCategory = 
-  | 'text'
-  | 'background'
-  | 'navBackground'
-  | 'tint'
-  | 'link'
-  | 'icon'
-  | 'action'
-  | 'actionText'
-
 // #FFE9E4 : paper-pink
 // #ED5959 : brand-pink
 // #A372F2 : brand-purple
@@ -26,7 +16,9 @@ export const Colors = {
     tint: '#ED5959',       // brand-pink
     link: '#ED5959',       // brand-pink
     icon: '#567CD6',       // taddy-blue
-    action: '#ED5959', // action-green
+    action: '#ED5959', // brand-pink
+    tag: '#ED5959', // brand-pink
+    category: '#567CD6', // taddy-blue
     actionText: '#F7F7F7', // action-text
   },
   dark: {
@@ -37,6 +29,8 @@ export const Colors = {
     link: '#A372F2',      // soft-white
     icon: '#3E5FBC',      // taddy-blue-dark
     action: '#A372F2', // brand-purple
+    tag: '#567CD6', // brand-purple
+    category: '#ED5959', // taddy-blue-dark
     actionText: '#F7F7F7', // action-text
   },
 } as const;
