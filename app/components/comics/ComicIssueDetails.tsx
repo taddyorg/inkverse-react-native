@@ -40,84 +40,93 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCu
   const actionColor = useThemeColor({}, 'action');
   const actionTextColor = useThemeColor({}, 'actionText');
 
-  return (
-    <PressableOpacity onPress={handlePress}>
-      <View style={[
-        styles.episodeItemContainer, 
-        isCurrentIssue && styles.currentIssueContainer,
-        isCurrentIssue && { backgroundColor: actionColor }
-      ]}>
-        <View style={styles.episodeItemLeft}>
-          <View style={[
-            styles.thumbnailContainer, 
-            isPatreonExclusive && styles.patreonExclusiveContainer,
-          ]}>
-            <Image
-              style={[
-                styles.thumbnailImage, 
-                isPatreonExclusive && styles.thumbnailImageLocked,
-              ]}
-              source={{ uri: thumbnailImageUrl }}
-              recyclingKey={comicissue.uuid}
-              contentFit="cover"
-              priority={imagePriority}
-            />
-            {isPatreonExclusive && (
-              <View style={styles.lockIcon}>
-                <Ionicons name="lock-closed" size={24} color={Colors.light.text} />
+  const ComicIssueContent = () => (
+    <View style={[
+      styles.episodeItemContainer, 
+      isCurrentIssue && styles.currentIssueContainer,
+      isCurrentIssue && { backgroundColor: actionColor }
+    ]}>
+      <View style={styles.episodeItemLeft}>
+        <View style={[
+          styles.thumbnailContainer, 
+          isPatreonExclusive && styles.patreonExclusiveContainer,
+        ]}>
+          <Image
+            style={[
+              styles.thumbnailImage, 
+              isPatreonExclusive && styles.thumbnailImageLocked,
+            ]}
+            source={{ uri: thumbnailImageUrl }}
+            recyclingKey={comicissue.uuid}
+            contentFit="cover"
+            priority={imagePriority}
+          />
+          {isPatreonExclusive && (
+            <View style={styles.lockIcon}>
+              <Ionicons name="lock-closed" size={24} color={Colors.light.text} />
+            </View>
+          )}
+        </View>
+        <View style={styles.episodeItemContent}>
+          <ThemedText 
+            size="title"
+            style={[
+              styles.episodeName,
+              isCurrentIssue && { color: actionTextColor }
+            ]}
+            numberOfLines={1}
+          >
+            {comicissue.name}
+          </ThemedText>
+          <View style={styles.episodeMetadata}>
+              {comicissue.datePublished && (
+              <ThemedText style={[
+                styles.dateText,
+                isCurrentIssue && { color: actionTextColor }
+              ]}>
+                {prettyFormattedDate(new Date(comicissue.datePublished * 1000))}
+              </ThemedText>
+            )}
+            {freeInDays && freeInDays > 0 && (
+              <View style={styles.freeInDaysContainer}>
+                <ThemedText style={[
+                  styles.bulletPoint,
+                  isCurrentIssue && { color: actionTextColor }
+                ]}>·</ThemedText>
+                <ThemedText style={[
+                  styles.freeInDaysText,
+                  isCurrentIssue && { color: actionTextColor }
+                ]}>
+                  Free in {freeInDays} day{freeInDays > 1 ? 's' : ''}
+                </ThemedText>
               </View>
             )}
-          </View>
-          <View style={styles.episodeItemContent}>
-            <ThemedText 
-              size="title"
-              style={[
-                styles.episodeName,
+            {isPatreonExclusive && (
+              <ThemedText style={[
+                styles.patreonExclusiveText,
                 isCurrentIssue && { color: actionTextColor }
-              ]}
-              numberOfLines={1}
-            >
-              {comicissue.name}
-            </ThemedText>
-            <View style={styles.episodeMetadata}>
-                {comicissue.datePublished && (
-                <ThemedText style={[
-                  styles.dateText,
-                  isCurrentIssue && { color: actionTextColor }
-                ]}>
-                  {prettyFormattedDate(new Date(comicissue.datePublished * 1000))}
-                </ThemedText>
-              )}
-              {freeInDays && freeInDays > 0 && (
-                <View style={styles.freeInDaysContainer}>
-                  <ThemedText style={[
-                    styles.bulletPoint,
-                    isCurrentIssue && { color: actionTextColor }
-                  ]}>·</ThemedText>
-                  <ThemedText style={[
-                    styles.freeInDaysText,
-                    isCurrentIssue && { color: actionTextColor }
-                  ]}>
-                    Free in {freeInDays} day{freeInDays > 1 ? 's' : ''}
-                  </ThemedText>
-                </View>
-              )}
-              {isPatreonExclusive && (
-                <ThemedText style={[
-                  styles.patreonExclusiveText,
-                  isCurrentIssue && { color: actionTextColor }
-                ]}>
-                  PATREON EXCLUSIVE
-                </ThemedText>
-              )}
-            </View>
+              ]}>
+                PATREON EXCLUSIVE
+              </ThemedText>
+            )}
           </View>
-          <ThemedText style={[
-            styles.episodeNumber,
-            isCurrentIssue && { color: actionTextColor, fontFamily: ThemedTextFontFamilyMap.bold }
-          ]}>#{position + 1}</ThemedText>
         </View>
+        <ThemedText style={[
+          styles.episodeNumber,
+          isCurrentIssue && { color: actionTextColor, fontFamily: ThemedTextFontFamilyMap.bold }
+        ]}>#{position + 1}</ThemedText>
       </View>
+    </View>
+  );
+
+  // Similar to web implementation, don't make Patreon exclusive issues clickable
+  if (isPatreonExclusive) {
+    return <ComicIssueContent />;
+  }
+
+  return (
+    <PressableOpacity onPress={handlePress}>
+      <ComicIssueContent />
     </PressableOpacity>
   );
 });
@@ -191,6 +200,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.light.tint,
     marginTop: 4,
+    marginLeft: 4,
   },
   thumbnailImage: {
     width: 64,

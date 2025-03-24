@@ -10,6 +10,7 @@ import { Image } from 'expo-image';
 import { PressableOpacity, Screen, ScreenHeader, ThemedView, ThemedText, ThemedIcon, HeaderBackButton } from '../components/ui';
 import { Colors } from '@/constants/Colors';
 import { openURL, openEmail } from '@/lib/utils';
+import { showShareSheet } from '@/lib/share-sheet';
 
 export type SettingsScreenParams = undefined;
 
@@ -109,8 +110,13 @@ export function SettingsScreen() {
   };
 
   const suggestFeatureButtonPressed = () => {
-    // Implement suggest feature functionality
-    console.log('Suggest feature pressed');
+    const url = 'https://inkverse.canny.io';
+
+    try {
+      openURL({ url });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   const emailHelpButtonPressed = () => {
@@ -124,7 +130,7 @@ export function SettingsScreen() {
 
   const shareInkverseButtonPressed = () => {
     // Implement share functionality
-    console.log('Share pressed');
+    showShareSheet({ type: 'share-inkverse', item: null });
   };
 
   // Define settings items with improved copy
@@ -138,6 +144,7 @@ export function SettingsScreen() {
     // { id: 'update-profile', type: 'button', name: '📸 Edit Profile', onPress: updateProfilePressed },
     // { id: 'signup', type: 'button', name: '✨ Unlock Your Profile!', onPress: signupButtonPressed },
     { id: 'add-your-comic', type: 'button', name: '✚ Publish your webtoon on Inkverse', onPress: addYourComicButtonPressed },
+    { id: 'rate-app', type: 'button', name: `🏅 Rate App (5 stars 🙏)`, onPress: rateAppButtonPressed },
     // { id: 'logout', type: 'button', name: '✌️ Logout', onPress: logoutButtonPressed },
   ];
 
@@ -154,9 +161,8 @@ export function SettingsScreen() {
     { id: 'share-inkverse', type: 'button', name: '🤩 Share Inkverse with your friends', onPress: shareInkverseButtonPressed },
   ];
 
-  const shareItems: SettingItem[] = [
-    { id: 'rate-app', type: 'button', name: `🏅 Rate App (5 stars 🙏)`, onPress: rateAppButtonPressed },
-  ];
+  // const shareItems: SettingItem[] = [
+  // ];
 
   // Combine all items for the main list
   const allSettingsItems: SettingItem[] = [

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 import { StyleSheet, View, FlatList, Alert, ScrollView } from 'react-native';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '@/constants/Navigation';
@@ -6,6 +6,8 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 import { Screen, ScreenHeader, ThemedView, ThemedText, PressableOpacity, HeaderBackButton, ThemedButton } from '../components/ui';
 import { ReportType, getPrettyReportType } from '@/public/report';
+import { publicClient } from '@/lib/apollo';
+import { reportReducer, reportInitialState, submitReportComicSeries } from '@/shared/dispatch/reports';
 
 export type ReportsScreenParams = {
   uuid: string;
@@ -15,9 +17,11 @@ export type ReportsScreenParams = {
 export function ReportsScreen() {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<RootStackParamList, 'ReportsScreen'>>();
+
   const { uuid, type } = route.params || {};
   const [selectedReportType, setSelectedReportType] = useState<ReportType | null>(null);
   const [open, setOpen] = useState(false);
+  const [reportState, dispatch] = useReducer(reportReducer, reportInitialState);
   const [items, setItems] = useState(
     Object.values(ReportType).map(reportType => ({
       label: getPrettyReportType(reportType),
@@ -25,9 +29,24 @@ export function ReportsScreen() {
     }))
   );
 
-  const handleSubmitReport = () => {
-    if (!selectedReportType) return;
-    console.log(selectedReportType);
+  useEffect(() => {
+    if (reportState.success) {
+      navigation.goBack();
+    } else if (reportState.error) {
+      Alert.alert(
+        "Error",
+        "There was an error submitting your report. Please try again.",
+        [{ text: "OK" }]
+      );
+    }
+  }, [reportState.success, reportState.error, navigation]);
+
+  const handleSubmitReport = async () => {
+    if (!selectedReportType || !uuid) return;
+    
+    if (type === 'comicseries') {
+      submitReportComicSeries({ publicClient, uuid, reportType: selectedReportType }, dispatch);
+    }
   };
 
   return (
@@ -64,13 +83,13 @@ export function ReportsScreen() {
         {/* Submit Button */}
         <View style={styles.submitButtonContainer}>
           <ThemedButton
-            buttonText="Submit"
+            buttonText={reportState.isSubmitting ? "Submitting..." : "Submit"}
             onPress={handleSubmitReport}
             style={[
               styles.submitButton,
-              !selectedReportType && styles.disabledButton
+              (!selectedReportType || reportState.isSubmitting) && styles.disabledButton
             ]}
-            disabled={!selectedReportType}
+            disabled={!selectedReportType || reportState.isSubmitting}
           />
         </View>
       </ThemedView>

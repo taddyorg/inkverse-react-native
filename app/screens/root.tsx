@@ -149,8 +149,8 @@ function ProfileStack() {
       <Stack.Screen {...comicSeriesScreenConfig} />
       <Stack.Screen {...comicIssueScreenConfig} />
       <Stack.Screen {...creatorScreenConfig} />
-      <Stack.Screen {...settingsScreenConfig} />
       <Stack.Screen {...listScreenConfig} />
+      <Stack.Screen {...settingsScreenConfig} />
     </Stack.Navigator>
   );
 }

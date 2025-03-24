@@ -17,6 +17,8 @@ export function getMessage({ type, item, parentItem }: ShareItem) {
       return `Hey! Check out ${item.name.trim()}'s profile on Inkverse.`
     case 'list':
       return `Hey! Check out this list of webtoons on Inkverse.`
+    case 'share-inkverse':
+      return `Hey! Check out this new webtoons app!`
     default:
       throw new Error('Invalid share type');
   }
@@ -32,6 +34,8 @@ function getTitle({ type, item, parentItem }: ShareItem) {
       return 'Check out this profile!'
     case 'list':
       return 'Check out this list of comics!'
+    case 'share-inkverse':
+      return 'Check out Inkverse!'
     default:
       throw new Error('Invalid share type');
   }
@@ -51,6 +55,8 @@ function getUrl({ type, item, parentItem }: ShareItem) {
     case 'list':
       if (!item) return undefined;
       return getInkverseUrl({ type: 'list', id: item.id, name: item.name });
+    case 'share-inkverse':
+      return getInkverseUrl({ type: 'share-inkverse' });
     default:
       throw new Error('Invalid share type');
   }

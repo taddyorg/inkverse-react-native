@@ -4,9 +4,10 @@ import { ThemedView } from './ThemedView';
 
 type ScreenHeaderProps = {
   additionalTopPadding?: number;
+  children?: React.ReactNode;
 }
 
-export function ScreenHeader({ additionalTopPadding = 15 }: ScreenHeaderProps) {
+export function ScreenHeader({ additionalTopPadding = 15, children }: ScreenHeaderProps) {
   const insets = useSafeAreaInsets();
   
   return (
