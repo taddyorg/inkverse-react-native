@@ -293,6 +293,9 @@ interface SearchBarProps {
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch, searchText, setSearchText }) => {
+  const color = useThemeColor({}, 'text');
+  const backgroundColor = useThemeColor({}, 'background');
+  const tintColor = useThemeColor({}, 'tint');
   const handleChangeText = (text: string) => {
     setSearchText(text);
     onSearch(text);
@@ -300,12 +303,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, searchText, setSearchTe
 
   return (
     <View style={styles.searchBarContainer}>
-      <View style={styles.searchInputContainer}>
-        <FontAwesome5 name="search" size={16} color={Colors.light.text} style={styles.searchIcon} />
+      <View style={[styles.searchInputContainer, { backgroundColor, borderColor: tintColor + '40' }]}>
+        <FontAwesome5 name="search" size={16} color={color} style={styles.searchIcon} />
         <TextInput
-          style={styles.searchInput}
+          style={[styles.searchInput, { color }]}
           placeholder="Search for comics"
-          placeholderTextColor={Colors.light.text + '80'}
+          placeholderTextColor={color + '80'}
           value={searchText}
           onChangeText={handleChangeText}
           returnKeyType="search"
@@ -315,7 +318,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, searchText, setSearchTe
             onPress={() => handleChangeText('')}
             style={styles.clearButton}
           >
-            <FontAwesome5 name="times" size={16} color={Colors.light.text} />
+            <FontAwesome5 name="times" size={16} color={color} />
           </PressableOpacity>
         )}
       </View>
@@ -488,10 +491,8 @@ const styles = StyleSheet.create({
   searchInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.light.background,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.light.tint + '40',
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
@@ -501,7 +502,6 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 16,
-    color: Colors.light.text,
     paddingVertical: 4,
   },
   clearButton: {

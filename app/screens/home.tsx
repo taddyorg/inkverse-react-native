@@ -1,7 +1,6 @@
 import { useReducer, useState, useCallback, useEffect, memo, useRef } from 'react';
 import { StyleSheet, TouchableOpacity, View, FlatList, ListRenderItem } from 'react-native';
 import { useNavigation, useScrollToTop } from '@react-navigation/native';
-import { StatusBar } from 'expo-status-bar';
 import { FlashList } from '@shopify/flash-list';
 
 import { Screen, ThemedText, ThemedActivityIndicator, ThemedTextFontFamilyMap, HeaderShareButton, PressableOpacity, ThemedRefreshControl } from '@/app/components/ui';
@@ -14,7 +13,6 @@ import { publicClient } from '@/lib/apollo';
 import { ComicSeries, List } from '@/shared/graphql/types';
 import { loadHomeScreen, homefeedQueryReducerDefault, homeScreenInitialState } from '@/shared/dispatch/homefeed';
 import { NewsItem, inkverseNewsItems } from '@/public/news-items';
-import { useThemeColor } from '@/constants/Colors';
 
 // Section types for FlashList
 type SectionType = 
@@ -106,7 +104,6 @@ export function HomeScreen() {
 
   return (
     <Screen style={styles.container}>
-      <StatusBar hidden={true} />
       <FlashList
         ref={flashListRef}
         data={sections()}

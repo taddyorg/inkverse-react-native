@@ -70,6 +70,15 @@
             "assets/fonts/SourceSans3-Bold.ttf"
           ]
         }
+      ],
+      [
+        "react-native-edge-to-edge",
+        {
+          "android": {
+            "parentTheme": "Light",
+            "enforceNavigationBarContrast": false
+          }
+        }
       ]
     ],
     "extra": {
