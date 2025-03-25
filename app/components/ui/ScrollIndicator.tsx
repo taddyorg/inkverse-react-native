@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { StyleSheet, View, PanResponder, GestureResponderEvent, PanResponderGestureState, Animated } from 'react-native';
+import { StyleSheet, View, PanResponder, GestureResponderEvent, PanResponderGestureState, Animated, Platform } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 
@@ -26,11 +26,20 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
   // Adjust container height to account for footer height and add a buffer to prevent overlap
   const containerHeight = screenHeight - headerHeight - footerHeight - 20; // Add buffer to prevent overlap
   
+  // Additional offset for better positioning at bottom on Android
+  const bottomOffset = Platform.OS === 'android' ? -footerHeight : 0;
+  
   // Update animated position when scrollPosition changes (when not controlled by pan)
   useEffect(() => {
     // Calculate indicator position based on scroll percentage
     const scrollPercentage = totalScrollable > 0 ? scrollPosition / totalScrollable : 0;
-    const newPosition = scrollPercentage * containerHeight;
+    
+    // Calculate max position to ensure indicator remains fully visible
+    const maxPosition = containerHeight - bottomOffset;
+    
+    // Clamp the scroll percentage and use it to calculate position
+    const clampedPercentage = Math.min(1.0, scrollPercentage);
+    const newPosition = clampedPercentage * maxPosition;
     
     // Use setValue for immediate updates during scrolling instead of animation
     animatedPosition.setValue(newPosition);
@@ -70,16 +79,19 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
       // Calculate container bounds with exact header position
       const containerTop = headerHeight;
       
+      // Calculate max position to ensure indicator remains fully visible
+      const maxPosition = containerHeight - bottomOffset;
+      
       // Calculate the percentage of the touch within the container
-      let touchPercentage = Math.max(0, Math.min(1, 
-        (touchY - containerTop) / containerHeight
+      let touchPercentage = Math.max(0, Math.min(1.0, 
+        (touchY - containerTop) / maxPosition
       ));
       
       // Convert to scroll position
       const newScrollPos = touchPercentage * totalScrollable;
       
       // Update animated position directly for immediate visual feedback
-      animatedPosition.setValue(touchPercentage * containerHeight);
+      animatedPosition.setValue(touchPercentage * maxPosition);
       
       // Update scroll position in parent
       onScrollTo(newScrollPos);
@@ -121,7 +133,7 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
         top: headerHeight,
         // Set a fixed height instead of using bottom property to avoid footer overlap
         height: containerHeight,
-        opacity: animatedOpacity
+        opacity: animatedOpacity,
       }
     ]}>
       <View style={styles.touchArea} {...panResponder.panHandlers}>

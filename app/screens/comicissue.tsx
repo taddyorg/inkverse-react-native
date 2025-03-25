@@ -267,8 +267,10 @@ export function ComicIssueScreen() {
     
     // Update scroll position for scroll indicator
     setScrollPosition(y);
-    // Adjust content height to account for footer padding
-    setContentHeight(contentSize.height + FOOTER_HEIGHT);
+    setContentHeight(contentSize.height);
+    
+    // Calculate how close to bottom we are (create a small threshold)
+    const isAtBottom = y + layoutMeasurement.height >= contentSize.height - 20;
     
     // Show header and footer when at top
     if (y <= 0 && (!isHeaderOpen.current || !isFooterOpen.current)) {
@@ -276,12 +278,12 @@ export function ComicIssueScreen() {
       animateFooterPosition(FOOTER_OPEN_POSITION);
     } 
     // Hide header and footer when scrolling in the middle
-    else if (y > 0 && y <= (contentSize.height) - (layoutMeasurement.height + 50) && (isHeaderOpen.current || isFooterOpen.current)) {
+    else if (y > 0 && !isAtBottom && (isHeaderOpen.current || isFooterOpen.current)) {
       animateHeaderPosition(HEADER_CLOSED_POSITION);
       animateFooterPosition(FOOTER_CLOSED_POSITION);
     } 
     // Show header and footer when at bottom
-    else if (y > (contentSize.height) - layoutMeasurement.height && (!isHeaderOpen.current || !isFooterOpen.current)) {
+    else if (isAtBottom && (!isHeaderOpen.current || !isFooterOpen.current)) {
       animateHeaderPosition(HEADER_OPEN_POSITION);
       animateFooterPosition(FOOTER_OPEN_POSITION);
     }
