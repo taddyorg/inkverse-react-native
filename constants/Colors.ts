@@ -29,7 +29,7 @@ export const Colors = {
     link: '#A372F2',      // soft-white
     icon: '#3E5FBC',      // taddy-blue-dark
     action: '#A372F2', // brand-purple
-    tag: '#567CD6', // brand-purple
+    tag: '#567CD6', // taddy-blue
     category: '#ED5959', // taddy-blue-dark
     actionText: '#F7F7F7', // action-text
   },

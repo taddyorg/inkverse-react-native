@@ -10,8 +10,7 @@ import { COMICS_LIST_SCREEN, COMICSERIES_SCREEN } from '@/constants/Navigation';
 import { ComicSeries, ContentRating, Genre } from '@/shared/graphql/types';
 import { getBannerImageUrl, getCoverImageUrl, getThumbnailImageUrl } from '@/public/comicseries';
 import { getPrettyGenre } from '@/public/genres';
-import { Colors, useThemeColor } from '@/constants/Colors';
-import { ComicsListPageType } from '@/app/screens/comicslist';
+import { useThemeColor } from '@/constants/Colors';
 
 type ComicSeriesPageType = 
   | 'comicseries-screen'
@@ -169,7 +168,7 @@ export function ComicSeriesDetails({ comicseries, pageType, isHeaderVisible, onH
             <View style={styles.tagsContainer}>
               {comicseries.tags?.map((tag, index) => (
                 <PressableOpacity key={tag?.toLowerCase()} style={[styles.tag, { backgroundColor: tagColor + '20', borderColor: tagColor + '40' }]} onPress={() => tag && navigation.navigate(COMICS_LIST_SCREEN, {
-                  pageType: ComicsListPageType.TAG,
+                  pageType: 'tag',
                   value: tag,
                 })}>
                   <ThemedText style={styles.tagText}>

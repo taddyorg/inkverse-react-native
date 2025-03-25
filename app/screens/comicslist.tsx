@@ -13,10 +13,7 @@ import { comicsListReducer, comicsListInitialState, fetchComics } from '@/shared
 import { COMICSERIES_SCREEN } from '@/constants/Navigation';
 
 // Define page types for the Comics List screen
-export enum ComicsListPageType {
-  TAG = 'tag',
-  GENRE = 'genre',
-}
+export type ComicsListPageType = 'tag' | 'genre';
 
 // Define params for the Comics List screen
 export interface ComicsListScreenParams {
@@ -37,7 +34,7 @@ export function ComicsListScreen() {
   const [state, dispatch] = useReducer(comicsListReducer, comicsListInitialState);
   const { isLoading, isLoadingMore, comics, hasMore } = state;
 
-  const title = pageType === ComicsListPageType.TAG 
+  const title = pageType === 'tag' 
     ? `Comics tagged "${value.toLowerCase()}"`
     : `${value.replace('COMICSERIES_', '').replace(/_/g, ' ').toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} Comics`;
 
@@ -46,9 +43,10 @@ export function ComicsListScreen() {
     const filterParams: any = {};
     
     // Add specific filters based on page type
-    if (pageType === ComicsListPageType.TAG) {
-      filterParams.filterForTags = [value];
-    } else if (pageType === ComicsListPageType.GENRE) {
+    if (pageType === 'tag') {
+      const formattedValue = (value as string).replace(/\s+/g, '');
+      filterParams.filterForTags = [value as string, formattedValue];
+    } else if (pageType === 'genre') {
       filterParams.filterForGenres = [value as Genre];
     }
     

@@ -153,7 +153,7 @@ export function SearchScreen() {
   // Handle tag selection
   const handleTagSelect = useCallback((tag: string) => {
     navigation.navigate(COMICS_LIST_SCREEN, {
-      pageType: ComicsListPageType.TAG,
+      pageType: 'tag',
       value: tag,
     });
   }, [navigation]);
@@ -161,7 +161,7 @@ export function SearchScreen() {
   // Handle category selection
   const handleCategorySelect = useCallback((category: string) => {
     navigation.navigate(COMICS_LIST_SCREEN, {
-      pageType: ComicsListPageType.GENRE,
+      pageType: 'genre',
       value: category,
     });
   }, [navigation]);
