@@ -26,25 +26,26 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
   // Adjust container height to account for footer height and add a buffer to prevent overlap
   const containerHeight = screenHeight - headerHeight - footerHeight - 20; // Add buffer to prevent overlap
   
-  // Additional offset for better positioning at bottom on Android
-  const bottomOffset = Platform.OS === 'android' ? -footerHeight : 0;
+  // Set usable track height - on Android we use a different calculation to ensure accessibility (Hack)
+  const usableTrackHeight = Platform.OS === 'android'
+    ? containerHeight + footerHeight - 10 // Reserve some space at the bottom to ensure indicator remains touchable
+    : containerHeight - 10;
   
   // Update animated position when scrollPosition changes (when not controlled by pan)
   useEffect(() => {
     // Calculate indicator position based on scroll percentage
     const scrollPercentage = totalScrollable > 0 ? scrollPosition / totalScrollable : 0;
     
-    // Calculate max position to ensure indicator remains fully visible
-    const maxPosition = containerHeight - bottomOffset;
-    
-    // Clamp the scroll percentage and use it to calculate position
+    // Apply clamping to keep indicator accessible
     const clampedPercentage = Math.min(1.0, scrollPercentage);
-    const newPosition = clampedPercentage * maxPosition;
+    
+    // Calculate position - for Android, we adjust the range to ensure indicator stays touchable
+    const newPosition = clampedPercentage * usableTrackHeight;
     
     // Use setValue for immediate updates during scrolling instead of animation
     animatedPosition.setValue(newPosition);
     
-  }, [scrollPosition, totalScrollable, containerHeight, animatedPosition]);
+  }, [scrollPosition, totalScrollable, usableTrackHeight, animatedPosition]);
 
   // Update opacity when visibility changes, but stay visible during interaction
   useEffect(() => {
@@ -79,19 +80,16 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
       // Calculate container bounds with exact header position
       const containerTop = headerHeight;
       
-      // Calculate max position to ensure indicator remains fully visible
-      const maxPosition = containerHeight - bottomOffset;
-      
-      // Calculate the percentage of the touch within the container
+      // Calculate the percentage of the touch within the usable area
       let touchPercentage = Math.max(0, Math.min(1.0, 
-        (touchY - containerTop) / maxPosition
+        (touchY - containerTop) / usableTrackHeight
       ));
       
       // Convert to scroll position
       const newScrollPos = touchPercentage * totalScrollable;
       
       // Update animated position directly for immediate visual feedback
-      animatedPosition.setValue(touchPercentage * maxPosition);
+      animatedPosition.setValue(touchPercentage * usableTrackHeight);
       
       // Update scroll position in parent
       onScrollTo(newScrollPos);
@@ -118,7 +116,7 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
         useNativeDriver: true
       }).start();
     },
-  }), [containerHeight, totalScrollable, onScrollTo, animatedPosition, animatedScale, headerHeight]);
+  }), [containerHeight, totalScrollable, onScrollTo, animatedPosition, animatedScale, headerHeight, usableTrackHeight]);
   
   // Don't show scroll tip if content fits in screen
   if (contentHeight <= screenHeight) {

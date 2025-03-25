@@ -38,7 +38,7 @@ export function ComicsListScreen() {
   const { isLoading, isLoadingMore, comics, hasMore } = state;
 
   const title = pageType === ComicsListPageType.TAG 
-    ? `Comics tagged "${value}"`
+    ? `Comics tagged "${value.toLowerCase()}"`
     : `${value.replace('COMICSERIES_', '').replace(/_/g, ' ').toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')} Comics`;
 
   // Function to fetch comics
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   title: {
-    marginTop: 8,
+    marginTop: 16,
     marginBottom: 4,
   },
   subtitle: {

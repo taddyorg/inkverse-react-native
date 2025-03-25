@@ -193,10 +193,12 @@ export function ComicIssueScreen() {
         );
       case 'next-episode':
         return (
-          <ReadNextEpisode
-            comicissue={item.data.comicissue}
-            handleNavigateToIssue={handleNavigateToIssue}
-          />
+          <View style={styles.bottomSpacer}>
+            <ReadNextEpisode
+              comicissue={item.data.comicissue}
+              handleNavigateToIssue={handleNavigateToIssue}
+            />
+          </View>
         );
       default:
         return null;
@@ -378,5 +380,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  bottomSpacer: {
+    marginBottom: 10,
   },
 });
