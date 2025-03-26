@@ -167,7 +167,7 @@ export function ComicSeriesDetails({ comicseries, pageType, isHeaderVisible, onH
             </ThemedText>
             <View style={styles.tagsContainer}>
               {comicseries.tags?.map((tag, index) => (
-                <PressableOpacity key={tag?.toLowerCase()} style={[styles.tag, { backgroundColor: tagColor + '20', borderColor: tagColor + '40' }]} onPress={() => tag && navigation.navigate(COMICS_LIST_SCREEN, {
+                <PressableOpacity key={tag?.toLowerCase()} fadeLevel={0.3} style={[styles.tag, { backgroundColor: tagColor + '20', borderColor: tagColor + '40' }]} onPress={() => tag && navigation.navigate(COMICS_LIST_SCREEN, {
                   pageType: 'tag',
                   value: tag,
                 })}>

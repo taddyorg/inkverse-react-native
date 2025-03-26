@@ -1,5 +1,4 @@
 import React, { memo, useCallback, useState } from 'react';
-import { StyleSheet, Dimensions } from 'react-native';
 import { Image, ImageLoadEventData } from 'expo-image';
 
 import { ComicStory } from '@/shared/graphql/types';
