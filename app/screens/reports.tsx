@@ -8,6 +8,7 @@ import { Screen, ScreenHeader, ThemedView, ThemedText, PressableOpacity, HeaderB
 import { ReportType, getPrettyReportType } from '@/public/report';
 import { publicClient } from '@/lib/apollo';
 import { reportReducer, reportInitialState, submitReportComicSeries } from '@/shared/dispatch/reports';
+import { BLOG_SCREEN } from '@/constants/Navigation';
 
 export type ReportsScreenParams = {
   uuid: string;
@@ -78,6 +79,18 @@ export function ReportsScreen() {
               <ThemedText style={styles.emptyListText}>No options available</ThemedText>
             )}
           />
+        </View>
+
+        <View style={styles.guidelinesContainer}>
+          <ThemedText style={styles.guidelinesText}>
+            See our content guidelines{' '}
+            <ThemedText 
+              style={styles.guidelinesLink}
+              onPress={() => navigation.navigate(BLOG_SCREEN, { url: 'https://inkverse.co/terms-of-service/content-policy' })}
+            >
+              here
+            </ThemedText>.
+          </ThemedText>
         </View>
 
         {/* Submit Button */}
@@ -155,5 +168,17 @@ const styles = StyleSheet.create({
   },
   disabledButton: {
     opacity: 0.5,
+  },
+  guidelinesContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  guidelinesText: {
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  guidelinesLink: {
+    fontSize: 14,
+    color: '#FF5E85', // brand-pink color
   },
 }); 
