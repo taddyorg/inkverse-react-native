@@ -22,6 +22,9 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
   const animatedPosition = useRef(new Animated.Value(0)).current;
   const animatedOpacity = useRef(new Animated.Value(isVisible ? 1 : 0)).current;
   
+  // Track current position for hit testing
+  const currentPositionRef = useRef(0);
+  
   const totalScrollable = Math.max(0, contentHeight - screenHeight);
   // Adjust container height to account for footer height and add a buffer to prevent overlap
   const containerHeight = screenHeight - headerHeight - footerHeight - 20; // Add buffer to prevent overlap
@@ -42,6 +45,9 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
     // Calculate position - for Android, we adjust the range to ensure indicator stays touchable
     const newPosition = clampedPercentage * usableTrackHeight;
     
+    // Store current position for hit testing
+    currentPositionRef.current = newPosition;
+    
     // Use setValue for immediate updates during scrolling instead of animation
     animatedPosition.setValue(newPosition);
     
@@ -60,8 +66,16 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
   }, [isVisible, isInteracting, animatedOpacity]);
   
   const panResponder = React.useMemo(() => PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onMoveShouldSetPanResponder: () => true,
+    onStartShouldSetPanResponder: (evt: GestureResponderEvent) => {
+      // Check if touch is on the scroll indicator button
+      const touchY = evt.nativeEvent.pageY;
+      const buttonPosition = currentPositionRef.current;
+      const buttonTop = headerHeight + buttonPosition;
+      const buttonBottom = buttonTop + 40; // Height of the scroll tip
+      
+      return touchY >= buttonTop && touchY <= buttonBottom;
+    },
+    onMoveShouldSetPanResponder: () => isInteracting, // Only allow moves if initially interacting
     onPanResponderGrant: () => {
       // Set interaction state to true when user starts dragging
       setIsInteracting(true);
@@ -87,6 +101,9 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
       
       // Convert to scroll position
       const newScrollPos = touchPercentage * totalScrollable;
+      
+      // Update current position ref for hit testing
+      currentPositionRef.current = touchPercentage * usableTrackHeight;
       
       // Update animated position directly for immediate visual feedback
       animatedPosition.setValue(touchPercentage * usableTrackHeight);
@@ -116,7 +133,7 @@ export function ScrollIndicator({ scrollPosition, contentHeight, screenHeight, h
         useNativeDriver: true
       }).start();
     },
-  }), [containerHeight, totalScrollable, onScrollTo, animatedPosition, animatedScale, headerHeight, usableTrackHeight]);
+  }), [containerHeight, totalScrollable, onScrollTo, animatedPosition, animatedScale, headerHeight, usableTrackHeight, isInteracting]);
   
   // Don't show scroll tip if content fits in screen
   if (contentHeight <= screenHeight) {
