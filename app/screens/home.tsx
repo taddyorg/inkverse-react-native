@@ -3,11 +3,11 @@ import { StyleSheet, TouchableOpacity, View, FlatList, ListRenderItem } from 're
 import { useNavigation, useScrollToTop } from '@react-navigation/native';
 import { FlashList } from '@shopify/flash-list';
 
-import { Screen, ThemedText, ThemedActivityIndicator, ThemedTextFontFamilyMap, HeaderShareButton, PressableOpacity, ThemedRefreshControl } from '@/app/components/ui';
+import { Screen, ThemedText, ThemedActivityIndicator, ThemedTextFontFamilyMap, PressableOpacity, ThemedRefreshControl } from '@/app/components/ui';
 import { ComicSeriesDetails } from '@/app/components/comics/ComicSeriesDetails';
 import { ListDetails } from '@/app/components/list/ListDetails';
 import { Header } from '@/app/components/home/Header';
-import { BLOG_SCREEN } from '@/constants/Navigation';
+import { BLOG_SCREEN, LIST_SCREEN } from '@/constants/Navigation';
 
 import { publicClient } from '@/lib/apollo';
 import { ComicSeries, List } from '@/shared/graphql/types';
@@ -136,6 +136,9 @@ const FeaturedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[] | n
 });
 
 const MostRecommendedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSeries[] | null | undefined }) => {
+  const slicedComicSeries = comicSeries?.slice(0, 3);
+  const navigation = useNavigation();
+  
   const renderItem: ListRenderItem<ComicSeries> = useCallback(({ item, index }) => (
     <ComicSeriesDetails
       comicseries={item}
@@ -146,16 +149,25 @@ const MostRecommendedWebtoons = memo(({ comicSeries }: { comicSeries: ComicSerie
 
   const keyExtractor = useCallback((item: ComicSeries) => item.uuid, []);
 
+  const handleSeeAllPress = useCallback(() => {
+    navigation.navigate(LIST_SCREEN, { id: '1' });
+  }, [navigation]);
+
   return (
     <View style={styles.section}>
       <ThemedText style={styles.sectionTitle}>Most Recommended Comics</ThemedText>
       <FlatList
-        data={comicSeries ?? []}
+        data={slicedComicSeries ?? []}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
         scrollEnabled={false}
       />
+      <PressableOpacity 
+        style={styles.seeAllButton} 
+        onPress={handleSeeAllPress}>
+        <ThemedText style={styles.seeAllText}>See All</ThemedText>
+      </PressableOpacity>
     </View>
   );
 });
@@ -348,5 +360,13 @@ const styles = StyleSheet.create({
   },
   newsListContent: {
     paddingRight: 16,
+  },
+  seeAllButton: {
+    alignSelf: 'center',
+    marginTop: 4,
+  },
+  seeAllText: {
+    fontSize: 16,
+    fontFamily: ThemedTextFontFamilyMap.semiBold,
   },
 }); 

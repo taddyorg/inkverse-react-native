@@ -103,7 +103,7 @@ export function ComicSeriesScreen() {
       { type: 'header', data: comicseries },
       { type: 'issues', data: { comicissues: issues, comicseries, currentIssueUuid: issues[0]?.uuid } },
       { type: 'info', data: comicseries },
-      { type: 'next-episode', data: issues[0] }
+      ...(issues.length > 3 ? [{ type: 'next-episode' as const, data: issues[0] }] : []),
     ];
   }, [comicseries, issues]);
 
