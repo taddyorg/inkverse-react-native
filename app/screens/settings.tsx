@@ -140,6 +140,7 @@ export function SettingsScreen() {
       const newColorScheme = colorScheme === 'light' ? 'dark' : 'light';
       setIsDarkMode(newColorScheme === 'dark');
       Appearance.setColorScheme(newColorScheme);
+      AsyncStorage.setItem('userThemePreference', newColorScheme);
     }},
     // { id: 'update-profile', type: 'button', name: '📸 Edit Profile', onPress: updateProfilePressed },
     // { id: 'signup', type: 'button', name: '✨ Unlock Your Profile!', onPress: signupButtonPressed },

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { ThemeProvider } from './ThemeProvider';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
@@ -27,5 +28,5 @@ export function AppLoaderProvider({ children }: AppLoaderProviderProps) {
     return null;
   }
 
-  return <>{children}</>;
+  return <ThemeProvider>{children}</ThemeProvider>;
 }
