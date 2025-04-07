@@ -44,8 +44,14 @@ export function ComicsListScreen() {
     
     // Add specific filters based on page type
     if (pageType === 'tag') {
-      const formattedValue = (value as string).replace(/\s+/g, '');
-      filterParams.filterForTags = [value as string, formattedValue];
+      if (value === 'strong female lead') {
+        const possibleValues = ['strong female lead', 'female lead', 'female protagonist', 'female heroine', 'female lead character', 'female lead heroine', 'female lead character'];
+        const formattedValue = possibleValues.map(val => val.replace(/\s+/g, ''));
+        filterParams.filterForTags = [value as string, ...formattedValue];  
+      }else{
+        const formattedValue = (value as string).replace(/\s+/g, '');
+        filterParams.filterForTags = [value as string, formattedValue];  
+      }
     } else if (pageType === 'genre') {
       filterParams.filterForGenres = [value as Genre];
     }

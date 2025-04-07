@@ -16,10 +16,16 @@ import { COMICS_LIST_SCREEN } from '@/constants/Navigation';
 import { ComicsListPageType } from '@/app/screens/comicslist';
 
 // Popular webtoon tags
+// const POPULAR_TAGS = [
+//   'enemies to lovers', 'friends to lovers', 'love triangle', 'slow burn', 'found family',
+//   'revenge story', 'fake dating', 'contract marriage', 'childhood friends', 'unrequited love',
+//   'strong female lead', 'villainess', 'antihero', 'royalty',
+// ];
+
 const POPULAR_TAGS = [
-  'Enemies To Lovers', 'Friends To Lovers', 'Love Triangle', 'Slow Burn', 'Found Family',
-  'Revenge Story', 'Fake Dating', 'Contract Marriage', 'Childhood Friends', 'Unrequited Love',
-  'Strong Female Lead', 'Villainess', 'Antihero', 'Royalty',
+  'enemies to lovers', 'friends to lovers', 'slow burn', 'found family',
+  'revenge', 'arranged marriage', 'childhood friends',
+  'love triangle', 'strong female lead', 'antihero', 'royal',
 ];
 
 // Popular webtoon categories
@@ -213,7 +219,7 @@ export function SearchScreen() {
               {POPULAR_TAGS.map((tag) => (
                 <SelectableItem 
                   key={tag}
-                  label={tag.toLowerCase()}
+                  label={tag}
                   onPress={() => handleTagSelect(tag)}
                   variant="tag"
                 />
