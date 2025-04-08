@@ -10,7 +10,9 @@ import { ComicsListScreenParams } from "@/app/screens/comicslist";
 import { BlogScreenParams } from "@/app/screens/blog";
 import { ReportsScreenParams } from "@/app/screens/reports";
 import { WrappedComicSeriesScreenParams } from "@/app/screens/wrapped-screens/wrappedcomicseries";
+import { WrappedComicIssueScreenParams } from "@/app/screens/wrapped-screens/wrappedcomicissue";
 import { WrappedCreatorScreenParams } from "@/app/screens/wrapped-screens/wrappedcreator";
+import { WrappedListScreenParams } from "@/app/screens/wrapped-screens/wrappedlist";
 
 export const HOME_TAB = "HomeTab";
 export const SEARCH_TAB = "SearchTab";
@@ -28,7 +30,9 @@ export const BLOG_SCREEN = "BlogScreen";
 export const REPORTS_SCREEN = "ReportsScreen";
 export const MAIN_SCREEN = "MainScreen";
 export const WRAPPED_COMICSERIES_SCREEN = "WrappedComicSeriesScreen";
+export const WRAPPED_COMICISSUE_SCREEN = "WrappedComicIssueScreen";
 export const WRAPPED_CREATOR_SCREEN = "WrappedCreatorScreen";
+export const WRAPPED_LIST_SCREEN = "WrappedListScreen";
 
 export type RootStackParamList = {
   [HOME_TAB]: undefined;
@@ -47,13 +51,17 @@ export type RootStackParamList = {
   [REPORTS_SCREEN]: ReportsScreenParams;
   [MAIN_SCREEN]: undefined;
   [WRAPPED_COMICSERIES_SCREEN]: WrappedComicSeriesScreenParams;
+  [WRAPPED_COMICISSUE_SCREEN]: WrappedComicIssueScreenParams;
   [WRAPPED_CREATOR_SCREEN]: WrappedCreatorScreenParams;
+  [WRAPPED_LIST_SCREEN]: WrappedListScreenParams;
 };
 
 interface ResetNavigationToContentScreenParams {
   navigation: NativeStackNavigationProp<RootStackParamList>;
   rootTab?: keyof RootStackParamList;
   rootScreen?: keyof RootStackParamList;
+  parentScreenName?: keyof RootStackParamList;
+  parentScreenParams?: object;
   screenName: keyof RootStackParamList;
   screenParams: object;
 }
@@ -63,6 +71,8 @@ export const navigateToDeepLinkAndResetNavigation = ({
   navigation,
   rootTab = HOME_TAB,
   rootScreen = HOME_SCREEN,
+  parentScreenName,
+  parentScreenParams,
   screenName,
   screenParams
 }: ResetNavigationToContentScreenParams) => {
@@ -77,9 +87,13 @@ export const navigateToDeepLinkAndResetNavigation = ({
               {
                 name: rootTab,
                 state: {
-                  index: 1, // Set index to 1 to include HomeScreen in history
+                  index: parentScreenName ? 2 : 1, // Set index to 1 to include HomeScreen in history
                   routes: [
                     { name: rootScreen }, // Add Home Screen as base for history
+                    ...(parentScreenName && parentScreenParams ? [{
+                      name: parentScreenName,
+                      params: parentScreenParams
+                    }] : []),
                     {
                       name: screenName,
                       params: screenParams

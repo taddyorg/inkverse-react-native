@@ -23,7 +23,9 @@ import { BlogScreen } from './blog';
 import { ReportsScreen } from './reports';
 import { AppLoaderProvider } from '../components/providers/AppLoaderProvider';
 import { WrappedComicSeriesScreen } from './wrapped-screens/wrappedcomicseries';
+import { WrappedComicIssueScreen } from './wrapped-screens/wrappedcomicissue';
 import { WrappedCreatorScreen } from './wrapped-screens/wrappedcreator';
+import { WrappedListScreen } from './wrapped-screens/wrappedlist';
 
 import { 
   HOME_TAB, 
@@ -34,7 +36,9 @@ import {
   PROFILE_SCREEN, 
   COMICSERIES_SCREEN,
   WRAPPED_COMICSERIES_SCREEN,
+  WRAPPED_COMICISSUE_SCREEN,
   WRAPPED_CREATOR_SCREEN,
+  WRAPPED_LIST_SCREEN,
   COMICISSUE_SCREEN, 
   CREATOR_SCREEN, 
   SETTINGS_SCREEN,
@@ -278,7 +282,9 @@ function App() {
       screens: {
         [BLOG_SCREEN]: 'blog/:slug',
         [WRAPPED_COMICSERIES_SCREEN]: 'comics/:shortUrl',
+        [WRAPPED_COMICISSUE_SCREEN]: 'comics/:shortUrl/:episodeId',
         [WRAPPED_CREATOR_SCREEN]: 'creators/:shortUrl',
+        [WRAPPED_LIST_SCREEN]: 'lists/:idAndName',
       },
     },
   };
@@ -331,8 +337,18 @@ function App() {
               options={modalScreenOptions}
             />
             <Stack.Screen 
+              name={WRAPPED_COMICISSUE_SCREEN} 
+              component={WrappedComicIssueScreen}
+              options={modalScreenOptions}
+            />
+            <Stack.Screen 
               name={WRAPPED_CREATOR_SCREEN} 
               component={WrappedCreatorScreen}
+              options={modalScreenOptions}
+            />
+            <Stack.Screen 
+              name={WRAPPED_LIST_SCREEN} 
+              component={WrappedListScreen}
               options={modalScreenOptions}
             />
           </Stack.Navigator>
