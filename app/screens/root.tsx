@@ -1,12 +1,13 @@
 import * as React from 'react';
-import { Platform, useColorScheme, ColorSchemeName } from 'react-native';
-import { NavigationContainer, ParamListBase, RouteProp, LinkingOptions, getStateFromPath } from '@react-navigation/native';
+import { Platform, useColorScheme, ColorSchemeName, Linking } from 'react-native';
+import { NavigationContainer, ParamListBase, RouteProp, LinkingOptions, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome5 } from '@expo/vector-icons';
 import * as Sentry from '@sentry/react-native';
 import { PostHogProvider } from 'posthog-react-native'
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { Colors } from '../../constants/Colors';
 
 import config from '@/config';
 import { HomeScreen } from './home';
@@ -21,9 +22,28 @@ import { ComicsListScreen } from './comicslist';
 import { BlogScreen } from './blog';
 import { ReportsScreen } from './reports';
 import { AppLoaderProvider } from '../components/providers/AppLoaderProvider';
+import { WrappedComicSeriesScreen } from './wrapped-screens/wrappedcomicseries';
+import { WrappedCreatorScreen } from './wrapped-screens/wrappedcreator';
 
-import { HOME_TAB, SEARCH_TAB, PROFILE_TAB, HOME_SCREEN, SEARCH_SCREEN, PROFILE_SCREEN, COMICSERIES_SCREEN, COMICISSUE_SCREEN, CREATOR_SCREEN, SETTINGS_SCREEN, LIST_SCREEN, COMICS_LIST_SCREEN, BLOG_SCREEN, REPORTS_SCREEN, MAIN_SCREEN } from '../../constants/Navigation';
-import { Colors } from '../../constants/Colors';
+import { 
+  HOME_TAB, 
+  SEARCH_TAB, 
+  PROFILE_TAB, 
+  HOME_SCREEN, 
+  SEARCH_SCREEN, 
+  PROFILE_SCREEN, 
+  COMICSERIES_SCREEN,
+  WRAPPED_COMICSERIES_SCREEN,
+  WRAPPED_CREATOR_SCREEN,
+  COMICISSUE_SCREEN, 
+  CREATOR_SCREEN, 
+  SETTINGS_SCREEN,
+  LIST_SCREEN, 
+  COMICS_LIST_SCREEN, 
+  BLOG_SCREEN, 
+  REPORTS_SCREEN, 
+  MAIN_SCREEN,
+} from '../../constants/Navigation';
 
 Sentry.init({
   dsn: config.SENTRY_URI,
@@ -249,55 +269,17 @@ function RootStack() {
 }
 
 function App() {
+  const navigationRef = React.useRef<NavigationContainerRef<ReactNavigation.RootParamList>>(null);
+
   const linking: LinkingOptions<ReactNavigation.RootParamList> = {
     prefixes: ['https://inkverse.co'],
     config: {
       initialRouteName: MAIN_SCREEN,
       screens: {
-        [MAIN_SCREEN]: {
-          screens: {
-            [HOME_TAB]: {
-              screens: {
-                [HOME_SCREEN]: '',
-                [COMICSERIES_SCREEN]: 'comics/:shortUrl',
-                [COMICISSUE_SCREEN]: 'comics/:shortUrl/:uuid-and-name',
-                [CREATOR_SCREEN]: 'creators/:shortUrl',
-                [LIST_SCREEN]: 'lists/:id',
-              }
-            },
-            [SEARCH_TAB]: {
-              screens: {
-                [SEARCH_SCREEN]: 'search',
-                [COMICSERIES_SCREEN]: 'comics/:shortUrl',
-                [COMICISSUE_SCREEN]: 'comics/:shortUrl/:uuid-and-name',
-                [CREATOR_SCREEN]: 'creators/:shortUrl',
-                [LIST_SCREEN]: 'lists/:id',
-              }
-            },
-            [PROFILE_TAB]: {
-              screens: {
-                [PROFILE_SCREEN]: 'profile',
-                [COMICSERIES_SCREEN]: 'comics/:shortUrl',
-                [COMICISSUE_SCREEN]: 'comics/:shortUrl/:uuid-and-name',
-                [CREATOR_SCREEN]: 'creators/:shortUrl',
-                [LIST_SCREEN]: 'lists/:id',
-              }
-            },
-          }
-        },
         [BLOG_SCREEN]: 'blog/:slug',
+        [WRAPPED_COMICSERIES_SCREEN]: 'comics/:shortUrl',
+        [WRAPPED_CREATOR_SCREEN]: 'creators/:shortUrl',
       },
-    },
-    // Custom function to handle URLs that the built-in parser cannot handle
-    getStateFromPath: (path, options) => {
-      // Use the default parser first
-      const state = getStateFromPath(path, options);
-      
-      // If the default parser worked, return its result
-      if (state) return state;
-      
-      // Handle any custom URL formats here if needed
-      return undefined;
     },
   };
 
@@ -312,7 +294,10 @@ function App() {
 
   return (
     <AppLoaderProvider>
-      <NavigationContainer linking={linking}>
+      <NavigationContainer 
+        ref={navigationRef}
+        linking={linking}
+      >
         <PostHogProvider 
           apiKey={config.POST_HOG_INFO.API_KEY}
           options={{
@@ -338,6 +323,16 @@ function App() {
             <Stack.Screen 
               name={REPORTS_SCREEN} 
               component={ReportsScreen}
+              options={modalScreenOptions}
+            />
+            <Stack.Screen 
+              name={WRAPPED_COMICSERIES_SCREEN} 
+              component={WrappedComicSeriesScreen}
+              options={modalScreenOptions}
+            />
+            <Stack.Screen 
+              name={WRAPPED_CREATOR_SCREEN} 
+              component={WrappedCreatorScreen}
               options={modalScreenOptions}
             />
           </Stack.Navigator>
