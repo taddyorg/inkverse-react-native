@@ -1,3 +1,17 @@
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { CommonActions } from "@react-navigation/native";
+
+import { ComicSeriesScreenParams } from "@/app/screens/comicseries";
+import { ComicIssueScreenParams } from "@/app/screens/comicissue";
+import { CreatorScreenParams } from "@/app/screens/creator";
+import { SettingsScreenParams } from "@/app/screens/settings";
+import { ListScreenParams } from "@/app/screens/list";
+import { ComicsListScreenParams } from "@/app/screens/comicslist";
+import { BlogScreenParams } from "@/app/screens/blog";
+import { ReportsScreenParams } from "@/app/screens/reports";
+import { WrappedComicSeriesScreenParams } from "@/app/screens/wrapped-screens/wrappedcomicseries";
+import { WrappedCreatorScreenParams } from "@/app/screens/wrapped-screens/wrappedcreator";
+
 export const HOME_TAB = "HomeTab";
 export const SEARCH_TAB = "SearchTab";
 export const PROFILE_TAB = "ProfileTab";
@@ -13,15 +27,8 @@ export const COMICS_LIST_SCREEN = "ComicsListScreen";
 export const BLOG_SCREEN = "BlogScreen";
 export const REPORTS_SCREEN = "ReportsScreen";
 export const MAIN_SCREEN = "MainScreen";
-
-import { ComicSeriesScreenParams } from "@/app/screens/comicseries";
-import { ComicIssueScreenParams } from "@/app/screens/comicissue";
-import { CreatorScreenParams } from "@/app/screens/creator";
-import { SettingsScreenParams } from "@/app/screens/settings";
-import { ListScreenParams } from "@/app/screens/list";
-import { ComicsListScreenParams } from "@/app/screens/comicslist";
-import { BlogScreenParams } from "@/app/screens/blog";
-import { ReportsScreenParams } from "@/app/screens/reports";
+export const WRAPPED_COMICSERIES_SCREEN = "WrappedComicSeriesScreen";
+export const WRAPPED_CREATOR_SCREEN = "WrappedCreatorScreen";
 
 export type RootStackParamList = {
   [HOME_TAB]: undefined;
@@ -39,6 +46,53 @@ export type RootStackParamList = {
   [BLOG_SCREEN]: BlogScreenParams;
   [REPORTS_SCREEN]: ReportsScreenParams;
   [MAIN_SCREEN]: undefined;
+  [WRAPPED_COMICSERIES_SCREEN]: WrappedComicSeriesScreenParams;
+  [WRAPPED_CREATOR_SCREEN]: WrappedCreatorScreenParams;
+};
+
+interface ResetNavigationToContentScreenParams {
+  navigation: NativeStackNavigationProp<RootStackParamList>;
+  rootTab?: keyof RootStackParamList;
+  rootScreen?: keyof RootStackParamList;
+  screenName: keyof RootStackParamList;
+  screenParams: object;
+}
+
+// Reusable navigation utility for wrapped screens
+export const navigateToDeepLinkAndResetNavigation = ({
+  navigation,
+  rootTab = HOME_TAB,
+  rootScreen = HOME_SCREEN,
+  screenName,
+  screenParams
+}: ResetNavigationToContentScreenParams) => {
+  navigation.dispatch(
+    CommonActions.reset({
+      index: 1, // Set index to 1 to include HomeScreen in history
+      routes: [
+        { 
+          name: MAIN_SCREEN,
+          state: {
+            routes: [
+              {
+                name: rootTab,
+                state: {
+                  index: 1, // Set index to 1 to include HomeScreen in history
+                  routes: [
+                    { name: rootScreen }, // Add Home Screen as base for history
+                    {
+                      name: screenName,
+                      params: screenParams
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    })
+  );
 };
 
 declare global {
