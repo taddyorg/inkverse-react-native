@@ -4,7 +4,7 @@ import { FlashList } from '@shopify/flash-list';
 import { Octicons } from '@expo/vector-icons';
 
 import { Colors } from '@/constants/Colors';
-import { ThemedText } from '../ui';
+import { ThemedText, ThemedIcon } from '../ui';
 import { ComicIssue, ComicSeries } from '@/shared/graphql/types';
 import { ComicIssueDetails } from './ComicIssueDetails';
 import { PressableOpacity } from '../ui/PressableOpacity';
@@ -67,11 +67,12 @@ export const ComicIssuesList = (props: ComicIssuesListProps) => {
       <View style={styles.sectionHeader}>
         <ThemedText size="subtitle">{'Episodes'}</ThemedText>
         <PressableOpacity onPress={toggleSortOrder} style={styles.sortButton}>
-          <Octicons 
-            name={isNewestFirst ? "sort-asc" : "sort-desc"} 
-            size={20} 
-            color={Colors.light.text} 
-          />
+          <ThemedIcon size='medium'>
+            <Octicons 
+              name={isNewestFirst ? "sort-asc" : "sort-desc"} 
+              size={20}
+            />
+          </ThemedIcon>
         </PressableOpacity>
       </View>
       <View style={styles.flashListContainer}>

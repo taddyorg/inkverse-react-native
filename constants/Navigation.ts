@@ -13,6 +13,7 @@ import { WrappedComicSeriesScreenParams } from "@/app/screens/wrapped-screens/wr
 import { WrappedComicIssueScreenParams } from "@/app/screens/wrapped-screens/wrappedcomicissue";
 import { WrappedCreatorScreenParams } from "@/app/screens/wrapped-screens/wrappedcreator";
 import { WrappedListScreenParams } from "@/app/screens/wrapped-screens/wrappedlist";
+import { WrappedTaggedScreenParams } from "@/app/screens/wrapped-screens/wrappedtagged";
 
 export const HOME_TAB = "HomeTab";
 export const SEARCH_TAB = "SearchTab";
@@ -33,6 +34,7 @@ export const WRAPPED_COMICSERIES_SCREEN = "WrappedComicSeriesScreen";
 export const WRAPPED_COMICISSUE_SCREEN = "WrappedComicIssueScreen";
 export const WRAPPED_CREATOR_SCREEN = "WrappedCreatorScreen";
 export const WRAPPED_LIST_SCREEN = "WrappedListScreen";
+export const WRAPPED_TAGGED_SCREEN = "WrappedTaggedScreen";
 
 export type RootStackParamList = {
   [HOME_TAB]: undefined;
@@ -54,6 +56,7 @@ export type RootStackParamList = {
   [WRAPPED_COMICISSUE_SCREEN]: WrappedComicIssueScreenParams;
   [WRAPPED_CREATOR_SCREEN]: WrappedCreatorScreenParams;
   [WRAPPED_LIST_SCREEN]: WrappedListScreenParams;
+  [WRAPPED_TAGGED_SCREEN]: WrappedTaggedScreenParams;
 };
 
 interface ResetNavigationToContentScreenParams {

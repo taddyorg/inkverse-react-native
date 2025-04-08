@@ -15,6 +15,7 @@ export type BlogScreenParams = {
 export function BlogScreen() {
   const route = useRoute<NativeStackScreenProps<RootStackParamList, typeof BLOG_SCREEN>['route']>();
   const navigation = useNavigation();
+  const path = route.path;
   const { url } = route.params;
   const [canGoBack, setCanGoBack] = useState(false);
   const webViewRef = useRef<WebView>(null);
@@ -51,7 +52,7 @@ export function BlogScreen() {
       </View>
       <WebView
         ref={webViewRef}
-        source={{ uri: url }}
+        source={{ uri: url || `https://inkverse.co${path}` }}
         style={styles.webView}
         onNavigationStateChange={(navState) => setCanGoBack(navState.canGoBack)}
         renderLoading={() => (

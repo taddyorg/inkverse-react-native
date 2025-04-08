@@ -26,6 +26,7 @@ import { WrappedComicSeriesScreen } from './wrapped-screens/wrappedcomicseries';
 import { WrappedComicIssueScreen } from './wrapped-screens/wrappedcomicissue';
 import { WrappedCreatorScreen } from './wrapped-screens/wrappedcreator';
 import { WrappedListScreen } from './wrapped-screens/wrappedlist';
+import { WrappedTaggedScreen } from './wrapped-screens/wrappedtagged';
 
 import { 
   HOME_TAB, 
@@ -39,6 +40,7 @@ import {
   WRAPPED_COMICISSUE_SCREEN,
   WRAPPED_CREATOR_SCREEN,
   WRAPPED_LIST_SCREEN,
+  WRAPPED_TAGGED_SCREEN,
   COMICISSUE_SCREEN, 
   CREATOR_SCREEN, 
   SETTINGS_SCREEN,
@@ -280,11 +282,40 @@ function App() {
     config: {
       initialRouteName: MAIN_SCREEN,
       screens: {
-        [BLOG_SCREEN]: 'blog/:slug',
+        [BLOG_SCREEN]: {
+          path: 'blog',
+          alias: [
+            {
+              path: 'blog/:slug',
+            },
+            {
+              path: 'terms-of-service',
+            },
+            {
+              path: 'terms-of-service/:slug',
+            },
+            {
+              path: 'open-source',
+            },
+            {
+              path: 'open-source/:slug',
+            },
+            {
+              path: 'updates',
+            },
+            {
+              path: 'updates/:slug',
+            },
+            {
+              path: 'brand-kit',
+            },
+          ],
+        },
         [WRAPPED_COMICSERIES_SCREEN]: 'comics/:shortUrl',
         [WRAPPED_COMICISSUE_SCREEN]: 'comics/:shortUrl/:episodeId',
         [WRAPPED_CREATOR_SCREEN]: 'creators/:shortUrl',
         [WRAPPED_LIST_SCREEN]: 'lists/:idAndName',
+        [WRAPPED_TAGGED_SCREEN]: 'tagged/:tag',
       },
     },
   };
@@ -325,7 +356,7 @@ function App() {
               name={BLOG_SCREEN} 
               component={BlogScreen}
               options={modalScreenOptions}
-            />
+            />            
             <Stack.Screen 
               name={REPORTS_SCREEN} 
               component={ReportsScreen}
@@ -349,6 +380,11 @@ function App() {
             <Stack.Screen 
               name={WRAPPED_LIST_SCREEN} 
               component={WrappedListScreen}
+              options={modalScreenOptions}
+            />
+            <Stack.Screen 
+              name={WRAPPED_TAGGED_SCREEN} 
+              component={WrappedTaggedScreen}
               options={modalScreenOptions}
             />
           </Stack.Navigator>
