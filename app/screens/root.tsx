@@ -52,7 +52,7 @@ import {
 } from '../../constants/Navigation';
 
 Sentry.init({
-  dsn: config.SENTRY_URI,
+  dsn: config.SENTRY_URL,
 });
 
 const Stack = createNativeStackNavigator();

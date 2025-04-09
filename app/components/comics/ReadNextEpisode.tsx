@@ -1,12 +1,14 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
+import { MaterialIcons } from '@expo/vector-icons';
 
 import { ThemedText, ThemedTextFontFamilyMap, PressableOpacity } from '../ui';
 
 import { ComicIssue } from '@/shared/graphql/types';
 import { getThumbnailImageUrl } from '@/public/comicissue';
 import { useThemeColor } from '@/constants/Colors';
+import { Colors } from '@/constants/Colors';
 
 interface ReadNextEpisodeProps {
   comicissue: ComicIssue;
@@ -32,32 +34,55 @@ export function ReadNextEpisode({ comicissue, showEmptyState = true, firstTextCT
     );
   }
 
-  return (
-    <View style={styles.container}>
-      <PressableOpacity
-        style={styles.button} 
-        onPress={() => {
-          if (handleNavigateToIssue && comicissue.uuid && comicissue.seriesUuid) {
-            handleNavigateToIssue(comicissue.uuid, comicissue.seriesUuid);
-          }
-        }}
-      >
-        <View style={[styles.nextIssueButtonContainer, { borderColor: color }]}>
-          {comicissue.thumbnailImageAsString && (
-            <View>
-              <Image
-                source={getThumbnailImageUrl({ thumbnailImageAsString: comicissue.thumbnailImageAsString })}
-                style={styles.thumbnail}
-                contentFit="cover"
-              />
+  const isPatreonExclusive = comicissue.scopesForExclusiveContent?.includes('patreon');
+
+  const NextEpisodeContent = () => (
+    <View style={[styles.nextIssueButtonContainer, { borderColor: color }]}>
+      {comicissue.thumbnailImageAsString && (
+        <View style={styles.thumbnailWrapper}>
+          <Image
+            source={getThumbnailImageUrl({ thumbnailImageAsString: comicissue.thumbnailImageAsString })}
+            style={[
+              styles.thumbnail,
+              isPatreonExclusive && styles.thumbnailLocked
+            ]}
+            contentFit="cover"
+          />
+          {isPatreonExclusive && (
+            <View style={styles.lockIconContainer}>
+              <MaterialIcons name="lock" size={50} color={color} />
             </View>
           )}
-          <View style={styles.titleContainer}>
-            <ThemedText style={[styles.title, { color }]}>{firstTextCTA.toUpperCase()}</ThemedText>
-            <ThemedText style={[styles.title, { color }]}>{secondTextCTA.toUpperCase()}</ThemedText>
-          </View>
         </View>
-      </PressableOpacity>
+      )}
+      <View style={styles.titleContainer}>
+        <ThemedText style={[styles.title, { color }]}>{firstTextCTA.toUpperCase()}</ThemedText>
+        <ThemedText style={[styles.title, { color }]}>{secondTextCTA.toUpperCase()}</ThemedText>
+        {isPatreonExclusive && (
+          <ThemedText style={[styles.patreonExclusiveText, { color }]}>PATREON EXCLUSIVE</ThemedText>
+        )}
+      </View>
+    </View>
+  );
+
+  return (
+    <View style={styles.container}>
+      {isPatreonExclusive ? (
+        <View style={styles.button}>
+          <NextEpisodeContent />
+        </View>
+      ) : (
+        <PressableOpacity
+          style={styles.button} 
+          onPress={() => {
+            if (handleNavigateToIssue && comicissue.uuid && comicissue.seriesUuid) {
+              handleNavigateToIssue(comicissue.uuid, comicissue.seriesUuid);
+            }
+          }}
+        >
+          <NextEpisodeContent />
+        </PressableOpacity>
+      )}
     </View>
   );
 }
@@ -81,10 +106,22 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 3,
   },
+  thumbnailWrapper: {
+    position: 'relative',
+  },
   thumbnail: {
     width: 104,
     height: 104,
     borderRadius: 20,
+  },
+  thumbnailLocked: {
+    opacity: 0.5,
+  },
+  lockIconContainer: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: [{ translateX: -25 }, { translateY: -25 }],
   },
   title: {
     textAlign: "center",
@@ -95,6 +132,10 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+  },
+  patreonExclusiveText: {
+    fontSize: 14,
+    marginTop: 8,
   },
   endButtonContainer: {
     alignItems: "center",

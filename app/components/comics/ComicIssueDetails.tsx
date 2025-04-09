@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
 
@@ -39,6 +39,7 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCu
 
   const actionColor = useThemeColor({}, 'action');
   const actionTextColor = useThemeColor({}, 'actionText');
+  const textColor = useThemeColor({}, 'text');
 
   const ComicIssueContent = () => (
     <View style={[
@@ -63,7 +64,7 @@ export const ComicIssueDetails = memo(({ comicissue, comicseries, position, isCu
           />
           {isPatreonExclusive && (
             <View style={styles.lockIcon}>
-              <Ionicons name="lock-closed" size={24} color={Colors.light.text} />
+              <MaterialIcons name="lock" size={34} color={textColor} />
             </View>
           )}
         </View>
@@ -214,6 +215,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '50%',
     left: '50%',
-    transform: [{ translateX: -12 }, { translateY: -12 }],
+    transform: [{ translateX: -17 }, { translateY: -17 }],
   },
 }); 

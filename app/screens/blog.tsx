@@ -3,9 +3,10 @@ import { StyleSheet, View, BackHandler, StatusBar } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useRoute, useFocusEffect, useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
 import { RootStackParamList, BLOG_SCREEN } from '@/constants/Navigation';
-import { HeaderBackButton, ThemedActivityIndicator } from '@/app/components/ui';
+import { HeaderBackButton, ThemedActivityIndicator, PressableOpacity } from '@/app/components/ui';
 
 export type BlogScreenParams = {
   url: string;
@@ -39,16 +40,21 @@ export function BlogScreen() {
   const handleBackPress = useCallback(() => {
     if (canGoBack && webViewRef.current) {
       webViewRef.current.goBack();
-    } else {
-      navigation.goBack();
     }
   }, [canGoBack, navigation]);
+
+  const handleClosePress = useCallback(() => {
+    navigation.goBack();
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <View style={styles.header}>
-        <HeaderBackButton onPress={handleBackPress} />
+        {canGoBack && <HeaderBackButton onPress={handleBackPress} />}
+        <PressableOpacity style={styles.closeButton} onPress={handleClosePress}>
+          <Ionicons name="close" size={24} color="black" />
+        </PressableOpacity>
       </View>
       <WebView
         ref={webViewRef}
@@ -114,5 +120,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 40,
+    right: 16,
+    zIndex: 1,
+    padding: 8,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 20,
   },
 }); 

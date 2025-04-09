@@ -27,7 +27,7 @@ export const ComicIssuesList = (props: ComicIssuesListProps) => {
 
   const listData = useMemo(() => {
     // Use immutable sort rather than mutable reverse
-    return [...comicissues]
+    const sortedData = [...comicissues]
       .sort((a, b) => {
         // Get position values with defaults if null/undefined
         const posA = a.position ?? 0;
@@ -38,14 +38,17 @@ export const ComicIssuesList = (props: ComicIssuesListProps) => {
         return isNewestFirst 
           ? posB - posA // Newest first
           : posA - posB; // Oldest first
-      })
-      .map((comicissue, index) => ({
-        key: comicissue.uuid,
-        type: "issue",
-        comicissue,
-        comicseries,
-        position: index,
-      }));
+      });
+      
+    return sortedData.map((comicissue, index) => ({
+      key: comicissue.uuid,
+      type: "issue",
+      comicissue,
+      comicseries,
+      position: isNewestFirst 
+        ? sortedData.length - 1 - index // Count down for newest first
+        : index, // Count up for oldest first
+    }));
   }, [comicissues, comicseries, isNewestFirst]);
 
   const toggleSortOrder = () => {
