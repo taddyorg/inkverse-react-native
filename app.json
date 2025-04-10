@@ -2,7 +2,7 @@
   "expo": {
     "name": "Inkverse",
     "slug": "inkverse",
-    "version": "3.0.0",
+    "version": "3.0",
     "orientation": "portrait",
     "icon": "./assets/icons/ios-light.png",
     "scheme": "inkverse",
@@ -11,8 +11,8 @@
     "jsEngine": "hermes",
     "ios": {
       "bundleIdentifier": "art.bamcomics.taddy",
-      "buildNumber": "3.0.0",
-      "supportsTablet": true,
+      "buildNumber": "2",
+      "supportsTablet": false,
       "infoPlist": {
         "LSApplicationQueriesSchemes": [
           "https",
@@ -27,6 +27,7 @@
     },
     "android": {
       "package": "com.bamtoons",
+      "versionCode": 73,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icons/adaptive-icon.png",
         "backgroundColor": "#FFE9E4"
@@ -41,8 +42,7 @@
           "data": [
             {
               "scheme": "https",
-              "host": "inkverse.co",
-              "pathPrefix": "/"
+              "host": "inkverse.co"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
