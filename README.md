@@ -1,50 +1,46 @@
-# Welcome to your Expo app 👋
+# Inkverse React Native App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
-
-## Get started
+## Quick Setup (Using Production Inkverse API)
 
 1. Install dependencies
 
-   ```bash
-   yarn install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+yarn install - W
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+We use yarn workspaces to install packages for the whole project, including the shared modules.
 
-## Learn more
+This project contains 2 shared modules: shared & public:
+- shared: contains shared code for both the Web & React Native apps. ex) GraphQL Queries and Mutations needed for the app.
+- public: contains constants used for all Inkverse repos.
 
-To learn more about developing your project with Expo, look at the following resources:
+Using -W installs dependencies for the whole project, including the shared modules.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+2.Setup config file
 
-## Join the community
+Inside `config.ts`, change developmentConfig to developmentConfigButProductionData. This will use Inkverse's production API.
 
-Join our community of developers creating universal apps.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+3. Start the app
+
+```
+   yarn start
+```
+
+You can now select the option to run the app on the iOS Simulator or Android Emulator.
+
+## Local Development Setup
+
+If you want to build new features or fix bugs, you will need to setup your own local server. See [graphql-server/README.md](https://github.com/taddyorg/inkverse-graphql-server) for instructions on how to setup a local server. Once you have your local server running, you can use the following steps to setup the React Native app to use your local server.
+
+1. Reset config file back to developmentConfig.
+
+Inside `config.ts`, if you have updated developmentConfig to developmentConfigButProductionData, make sure to reset it back to developmentConfig. This will use your local server.
+
+2. Run the app
+
+```
+   yarn start
+```
+
+If you get an Apollo error, your local server is not running or it is not pointing to the correct url.
